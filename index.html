@@ -633,7 +633,7 @@
                     <div class="performer-rank">${index + 1}</div>
                     <div class="performer-info">
                         <div class="performer-name">${player.Name}</div>
-                        <div class="performer-stat">타율 ${parseFloat(player.AVG || 0).toFixed(3)}</div>
+                        <div class="performer-stat">${getTeamName(player.Team)} | 타율 ${parseFloat(player.AVG || 0).toFixed(3)}</div>
                     </div>
                     <div class="performer-value">${player['wRC+'] || '-'}</div>
                 `;
@@ -654,7 +654,7 @@
                     <div class="performer-rank">${index + 1}</div>
                     <div class="performer-info">
                         <div class="performer-name">${pitcher.Name}</div>
-                        <div class="performer-stat">ERA ${parseFloat(pitcher.ERA || 0).toFixed(2)}</div>
+                        <div class="performer-stat">${getTeamName(pitcher.Team)} | ERA ${parseFloat(pitcher.ERA || 0).toFixed(2)}</div>
                     </div>
                     <div class="performer-value">${pitcher['ERA+'] || '-'}</div>
                 `;
