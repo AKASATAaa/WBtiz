@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>야구 전적 기록실</title>
+    <title>기록실</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         * {
@@ -668,10 +668,11 @@
             if (pitchersBtn) pitchersBtn.classList.add('active');
         }
         
-        // CSV 파일 로드 및 파싱
+      // CSV 파일 로드 및 파싱
         async function loadData() {
             try {
-                const playerResponse = await fetch('Player statistics  player.csv');
+                // 선수 데이터 로드
+                const playerResponse = await fetch('player.csv');
                 const playerCsvText = await playerResponse.text();
                 
                 Papa.parse(playerCsvText, {
@@ -702,14 +703,15 @@
                     header: false,
                     skipEmptyLines: true,
                     complete: function(results) {
+                        // 선수명 -> 팀명 매핑 생성
                         const playerTeamMap = new Map();
                         const teamSet = new Set();
                         
                         results.data.forEach(row => {
                             if (row.length >= 3) {
                                 const playerName = row[0];
-                                const category = row[1];
-                                const teamName = row[2];
+                                const category = row[1]; // "Team", "KR", "JP"
+                                const teamName = row[2]; // 실제 팀명
                                 
                                 if (category === "Team" && teamName) {
                                     playerTeamMap.set(playerName, teamName);
@@ -724,12 +726,14 @@
                             }
                         });
                         
+                        // playersData의 Team 정보 업데이트
                         playersData.forEach(player => {
                             if (playerTeamMap.has(player.Name)) {
                                 player.Team = playerTeamMap.get(player.Name);
                             }
                         });
                         
+                        // teamsData 생성
                         teamsData = [];
                         teamSet.forEach(teamName => {
                             let displayName = teamName;
@@ -742,6 +746,8 @@
                             });
                         });
                         
+                        console.log("로드된 팀 데이터:", teamsData);
+                        console.log("업데이트된 선수 데이터 샘플:", playersData.slice(0, 5));
                         initializeData();
                     },
                     error: function(error) {
