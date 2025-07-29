@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>야구 전적 기록실</title>
+    <title>기록실</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         * {
@@ -670,16 +670,59 @@
         
         // CSV 파일 로드 및 파싱
         async function loadData() {
+            console.log('데이터 로드 시작...');
+            
             try {
-                const playerResponse = await fetch('Player statistics  player.csv');
+                // 여러 가능한 파일명 시도
+                const possibleFiles = [
+                    'Player statistics  player.csv',
+                    'Player_statistics_player.csv',
+                    'player.csv',
+                    'players.csv'
+                ];
+                
+                let playerResponse = null;
+                let loadedFileName = '';
+                
+                for (const fileName of possibleFiles) {
+                    try {
+                        console.log(`파일 시도: ${fileName}`);
+                        playerResponse = await fetch(fileName);
+                        if (playerResponse.ok) {
+                            loadedFileName = fileName;
+                            console.log(`파일 로드 성공: ${fileName}`);
+                            break;
+                        }
+                    } catch (e) {
+                        console.log(`파일 로드 실패: ${fileName}`, e);
+                        continue;
+                    }
+                }
+                
+                if (!playerResponse || !playerResponse.ok) {
+                    throw new Error('CSV 파일을 찾을 수 없습니다.');
+                }
+                
                 const playerCsvText = await playerResponse.text();
+                console.log('CSV 내용 미리보기:', playerCsvText.substring(0, 200));
                 
                 Papa.parse(playerCsvText, {
                     header: true,
                     skipEmptyLines: true,
+                    dynamicTyping: true,
                     complete: function(results) {
-                        playersData = results.data;
-                        loadTeamsData();
+                        console.log('파싱 완료:', results);
+                        console.log('데이터 행 수:', results.data.length);
+                        console.log('헤더:', results.meta.fields);
+                        
+                        if (results.data && results.data.length > 0) {
+                            playersData = results.data;
+                            console.log('첫 번째 선수 데이터:', results.data[0]);
+                            loadTeamsData();
+                        } else {
+                            console.warn('CSV 데이터가 비어있습니다.');
+                            loadDemoData();
+                        }
                     },
                     error: function(error) {
                         console.error('선수 CSV 파싱 오류:', error);
@@ -688,20 +731,54 @@
                 });
             } catch (error) {
                 console.error('데이터 로드 오류:', error);
+                console.log('데모 데이터로 전환합니다.');
                 loadDemoData();
             }
         }
         
         // 팀 데이터 로드
         async function loadTeamsData() {
+            console.log('팀 데이터 로드 시작...');
+            
             try {
-                const teamResponse = await fetch('teams.csv');
+                const possibleTeamFiles = [
+                    'teams.csv',
+                    'team.csv',
+                    'Teams.csv'
+                ];
+                
+                let teamResponse = null;
+                
+                for (const fileName of possibleTeamFiles) {
+                    try {
+                        console.log(`팀 파일 시도: ${fileName}`);
+                        teamResponse = await fetch(fileName);
+                        if (teamResponse.ok) {
+                            console.log(`팀 파일 로드 성공: ${fileName}`);
+                            break;
+                        }
+                    } catch (e) {
+                        console.log(`팀 파일 로드 실패: ${fileName}`, e);
+                        continue;
+                    }
+                }
+                
+                if (!teamResponse || !teamResponse.ok) {
+                    console.warn('팀 CSV 파일을 찾을 수 없습니다. 기본 팀 데이터를 사용합니다.');
+                    createDefaultTeamData();
+                    initializeData();
+                    return;
+                }
+                
                 const teamCsvText = await teamResponse.text();
+                console.log('팀 CSV 내용 미리보기:', teamCsvText.substring(0, 200));
                 
                 Papa.parse(teamCsvText, {
                     header: false,
                     skipEmptyLines: true,
                     complete: function(results) {
+                        console.log('팀 파싱 결과:', results);
+                        
                         const playerTeamMap = new Map();
                         const teamSet = new Set();
                         
@@ -724,6 +801,9 @@
                             }
                         });
                         
+                        console.log('플레이어-팀 매핑:', playerTeamMap);
+                        console.log('팀 목록:', teamSet);
+                        
                         playersData.forEach(player => {
                             if (playerTeamMap.has(player.Name)) {
                                 player.Team = playerTeamMap.get(player.Name);
@@ -742,26 +822,56 @@
                             });
                         });
                         
+                        console.log('최종 팀 데이터:', teamsData);
                         initializeData();
                     },
                     error: function(error) {
                         console.error('팀 CSV 파싱 오류:', error);
+                        createDefaultTeamData();
                         initializeData();
                     }
                 });
             } catch (error) {
                 console.error('팀 데이터 로드 오류:', error);
+                createDefaultTeamData();
                 initializeData();
             }
         }
         
+        // 기본 팀 데이터 생성
+        function createDefaultTeamData() {
+            console.log('기본 팀 데이터 생성 중...');
+            
+            // 플레이어 데이터에서 팀 정보 추출
+            const teams = [...new Set(playersData.map(player => player.Team).filter(team => team))];
+            
+            teamsData = teams.map(teamId => {
+                let displayName = teamId;
+                if (teamId === "KR") displayName = "한국";
+                else if (teamId === "JP") displayName = "일본";
+                
+                return {
+                    ID: teamId,
+                    Name: displayName
+                };
+            });
+            
+            console.log('생성된 기본 팀 데이터:', teamsData);
+        }
+        
         // 데이터 초기화
         function initializeData() {
+            console.log('데이터 초기화 시작...');
+            console.log('플레이어 데이터 수:', playersData.length);
+            console.log('팀 데이터 수:', teamsData.length);
+            
             setupTeamFilter();
             applyFilters();
             displayTopPerformers();
             displayCareerStats();
             displayCategoryLeaders();
+            
+            console.log('데이터 초기화 완료');
         }
         
         // 팀 필터 설정
