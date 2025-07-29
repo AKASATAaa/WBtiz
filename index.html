@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WDB 전적검색 사이트</title>
+    <title>야구 전적 기록실</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         * {
@@ -251,9 +251,24 @@
                 <div class="stats-section">
                     <div class="section-title">📊 시즌 기록실</div>
                     
-                    <div style="margin-bottom: 20px;">
-                        <button onclick="showBatters()" id="battersBtn" class="nav-item active" style="margin-right: 10px;">타자</button>
-                        <button onclick="showPitchers()" id="pitchersBtn" class="nav-item">투수</button>
+                    <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                        <div>
+                            <button onclick="showBatters()" id="battersBtn" class="nav-item active" style="margin-right: 10px;">타자</button>
+                            <button onclick="showPitchers()" id="pitchersBtn" class="nav-item">투수</button>
+                        </div>
+                        
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            <select id="teamFilter" onchange="applyFilters()" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+                                <option value="">전체 팀</option>
+                            </select>
+                            
+                            <input type="text" id="nameFilter" placeholder="선수명 검색" onkeyup="applyFilters()" 
+                                   style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; width: 120px;">
+                            
+                            <button onclick="resetFilters()" style="padding: 8px 15px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                초기화
+                            </button>
+                        </div>
                     </div>
                     
                     <div id="battersTable">
@@ -261,16 +276,16 @@
                             <thead>
                                 <tr>
                                     <th>순위</th>
-                                    <th>선수명</th>
-                                    <th>팀</th>
-                                    <th>타수</th>
-                                    <th>안타</th>
-                                    <th>홈런</th>
-                                    <th>도루</th>
-                                    <th>타율</th>
-                                    <th>출루율</th>
-                                    <th>장타율</th>
-                                    <th>wRC+</th>
+                                    <th onclick="sortTable('batters', 'Name')" style="cursor: pointer;">선수명 ↕️</th>
+                                    <th onclick="sortTable('batters', 'Team')" style="cursor: pointer;">팀 ↕️</th>
+                                    <th onclick="sortTable('batters', 'AB')" style="cursor: pointer;">타수 ↕️</th>
+                                    <th onclick="sortTable('batters', 'H')" style="cursor: pointer;">안타 ↕️</th>
+                                    <th onclick="sortTable('batters', 'HR')" style="cursor: pointer;">홈런 ↕️</th>
+                                    <th onclick="sortTable('batters', 'SB')" style="cursor: pointer;">도루 ↕️</th>
+                                    <th onclick="sortTable('batters', 'AVG')" style="cursor: pointer;">타율 ↕️</th>
+                                    <th onclick="sortTable('batters', 'OBP')" style="cursor: pointer;">출루율 ↕️</th>
+                                    <th onclick="sortTable('batters', 'SLG')" style="cursor: pointer;">장타율 ↕️</th>
+                                    <th onclick="sortTable('batters', 'wRC+')" style="cursor: pointer;">wRC+ ↕️</th>
                                 </tr>
                             </thead>
                             <tbody id="battersBody">
@@ -286,13 +301,13 @@
                             <thead>
                                 <tr>
                                     <th>순위</th>
-                                    <th>선수명</th>
-                                    <th>팀</th>
-                                    <th>평균자책점</th>
-                                    <th>이닝</th>
-                                    <th>탈삼진</th>
-                                    <th>WHIP</th>
-                                    <th>ERA+</th>
+                                    <th onclick="sortTable('pitchers', 'Name')" style="cursor: pointer;">선수명 ↕️</th>
+                                    <th onclick="sortTable('pitchers', 'Team')" style="cursor: pointer;">팀 ↕️</th>
+                                    <th onclick="sortTable('pitchers', 'ERA')" style="cursor: pointer;">평균자책점 ↕️</th>
+                                    <th onclick="sortTable('pitchers', 'IP')" style="cursor: pointer;">이닝 ↕️</th>
+                                    <th onclick="sortTable('pitchers', 'K')" style="cursor: pointer;">탈삼진 ↕️</th>
+                                    <th onclick="sortTable('pitchers', 'WHIP')" style="cursor: pointer;">WHIP ↕️</th>
+                                    <th onclick="sortTable('pitchers', 'ERA+')" style="cursor: pointer;">ERA+ ↕️</th>
                                 </tr>
                             </thead>
                             <tbody id="pitchersBody">
@@ -354,25 +369,28 @@
 
     <script>
         let playersData = [];
+        let teamsData = [];
+        let filteredBatters = [];
+        let filteredPitchers = [];
+        let currentSortColumn = '';
+        let currentSortDirection = 'desc';
         
         // CSV 파일 로드 및 파싱
         async function loadData() {
             try {
-                // GitHub raw URL로 변경해야 함 (실제 파일 업로드 후)
-                const response = await fetch('player.csv');
-                const csvText = await response.text();
+                // 선수 데이터 로드
+                const playerResponse = await fetch('player.csv');
+                const playerCsvText = await playerResponse.text();
                 
-                Papa.parse(csvText, {
+                Papa.parse(playerCsvText, {
                     header: true,
                     skipEmptyLines: true,
                     complete: function(results) {
                         playersData = results.data;
-                        displayBatters();
-                        displayTopPerformers();
+                        loadTeamsData();
                     },
                     error: function(error) {
-                        console.error('CSV 파싱 오류:', error);
-                        // 데모 데이터로 대체
+                        console.error('선수 CSV 파싱 오류:', error);
                         loadDemoData();
                     }
                 });
@@ -382,32 +400,182 @@
             }
         }
         
-        // 데모 데이터 (실제 CSV 파일이 없을 때)
-        function loadDemoData() {
-            playersData = [
-                {Name: "홍길동", Team: "1", AB: "120", H: "45", HR: "8", SB: "5", AVG: "0.375", OBP: "0.420", SLG: "0.580", "wRC+": "145", ERA: "", IP: "", K: "", WHIP: "", "ERA+": ""},
-                {Name: "김철수", Team: "2", AB: "115", H: "38", HR: "12", SB: "2", AVG: "0.330", OBP: "0.385", SLG: "0.565", "wRC+": "138", ERA: "", IP: "", K: "", WHIP: "", "ERA+": ""},
-                {Name: "박영희", Team: "1", AB: "", H: "", HR: "", SB: "", AVG: "", OBP: "", SLG: "", "wRC+": "", ERA: "2.45", IP: "87.2", K: "95", WHIP: "1.15", "ERA+": "165"},
-                {Name: "이민수", Team: "3", AB: "", H: "", HR: "", SB: "", AVG: "", OBP: "", SLG: "", "wRC+": "", ERA: "3.12", IP: "76.1", K: "82", WHIP: "1.28", "ERA+": "142"}
-            ];
-            displayBatters();
+        // 팀 데이터 로드
+        async function loadTeamsData() {
+            try {
+                const teamResponse = await fetch('teams.csv');
+                const teamCsvText = await teamResponse.text();
+                
+                Papa.parse(teamCsvText, {
+                    header: false, // 헤더가 없으므로 false
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        // teams.csv에서 팀 정보 추출
+                        const teamMap = new Map();
+                        
+                        results.data.forEach(row => {
+                            if (row.length >= 3) {
+                                const playerName = row[0];
+                                const category = row[1]; // "Team", "KR", "JP"
+                                const teamName = row[2]; // 실제 팀명
+                                
+                                if (category === "Team" && teamName) {
+                                    teamMap.set(teamName, teamName);
+                                } else if (category === "KR") {
+                                    teamMap.set("KR", "한국");
+                                } else if (category === "JP") {
+                                    teamMap.set("JP", "일본");
+                                }
+                            }
+                        });
+                        
+                        // teamsData 배열로 변환
+                        teamsData = Array.from(teamMap.entries()).map(([id, name]) => ({
+                            ID: id,
+                            Name: name
+                        }));
+                        
+                        console.log("로드된 팀 데이터:", teamsData);
+                        initializeData();
+                    },
+                    error: function(error) {
+                        console.error('팀 CSV 파싱 오류:', error);
+                        initializeData();
+                    }
+                });
+            } catch (error) {
+                console.error('팀 데이터 로드 오류:', error);
+                initializeData();
+            }
+        }
+        
+        // 데이터 초기화
+        function initializeData() {
+            setupTeamFilter();
+            applyFilters();
             displayTopPerformers();
+        }
+        
+        // 팀 필터 설정
+        function setupTeamFilter() {
+            const teamFilter = document.getElementById('teamFilter');
+            const teams = [...new Set(playersData.map(player => player.Team).filter(team => team))];
+            
+            teams.forEach(teamId => {
+                const option = document.createElement('option');
+                option.value = teamId;
+                
+                // 팀 데이터가 있으면 팀명 사용, 없으면 원본 사용
+                const teamInfo = teamsData.find(team => team.ID === teamId);
+                option.textContent = teamInfo ? teamInfo.Name : teamId;
+                
+                teamFilter.appendChild(option);
+            });
+        }
+        
+        // 필터 적용
+        function applyFilters() {
+            const teamFilter = document.getElementById('teamFilter').value;
+            const nameFilter = document.getElementById('nameFilter').value.toLowerCase();
+            
+            // 타자 필터링
+            filteredBatters = playersData.filter(player => {
+                const hasHittingStats = player.AB && parseFloat(player.AB) > 0;
+                const teamMatch = !teamFilter || player.Team === teamFilter;
+                const nameMatch = !nameFilter || player.Name.toLowerCase().includes(nameFilter);
+                
+                return hasHittingStats && teamMatch && nameMatch;
+            });
+            
+            // 투수 필터링
+            filteredPitchers = playersData.filter(player => {
+                const hasPitchingStats = player.ERA && parseFloat(player.IP || 0) > 0;
+                const teamMatch = !teamFilter || player.Team === teamFilter;
+                const nameMatch = !nameFilter || player.Name.toLowerCase().includes(nameFilter);
+                
+                return hasPitchingStats && teamMatch && nameMatch;
+            });
+            
+            // 현재 보여지는 탭에 따라 데이터 표시
+            if (document.getElementById('battersTable').style.display !== 'none') {
+                displayBatters();
+            } else {
+                displayPitchers();
+            }
+        }
+        
+        // 필터 초기화
+        function resetFilters() {
+            document.getElementById('teamFilter').value = '';
+            document.getElementById('nameFilter').value = '';
+            currentSortColumn = '';
+            currentSortDirection = 'desc';
+            applyFilters();
+        }
+        
+        // 테이블 정렬
+        function sortTable(tableType, column) {
+            if (currentSortColumn === column) {
+                currentSortDirection = currentSortDirection === 'desc' ? 'asc' : 'desc';
+            } else {
+                currentSortColumn = column;
+                currentSortDirection = 'desc';
+            }
+            
+            const data = tableType === 'batters' ? filteredBatters : filteredPitchers;
+            
+            data.sort((a, b) => {
+                let valueA = a[column];
+                let valueB = b[column];
+                
+                // 숫자형 데이터 처리
+                if (!isNaN(parseFloat(valueA)) && !isNaN(parseFloat(valueB))) {
+                    valueA = parseFloat(valueA) || 0;
+                    valueB = parseFloat(valueB) || 0;
+                } else {
+                    // 문자열 데이터 처리
+                    valueA = (valueA || '').toString().toLowerCase();
+                    valueB = (valueB || '').toString().toLowerCase();
+                }
+                
+                if (currentSortDirection === 'desc') {
+                    return valueB > valueA ? 1 : valueB < valueA ? -1 : 0;
+                } else {
+                    return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+                }
+            });
+            
+            if (tableType === 'batters') {
+                displayBatters();
+            } else {
+                displayPitchers();
+            }
+        }
+        
+        // 팀명 가져오기
+        function getTeamName(teamId) {
+            const teamInfo = teamsData.find(team => team.ID === teamId);
+            return teamInfo ? teamInfo.Name : teamId;
         }
         
         // 타자 데이터 표시
         function displayBatters() {
-            const batters = playersData.filter(player => player.AB && parseFloat(player.AB) > 0);
-            batters.sort((a, b) => parseFloat(b.AVG || 0) - parseFloat(a.AVG || 0));
-            
             const tbody = document.getElementById('battersBody');
             tbody.innerHTML = '';
             
-            batters.forEach((player, index) => {
+            if (filteredBatters.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="11" style="text-align: center; padding: 30px; color: #666;">조건에 맞는 선수가 없습니다.</td>';
+                tbody.appendChild(row);
+                return;
+            }
+            
+            filteredBatters.forEach((player, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td class="rank">${index + 1}</td>
                     <td class="player-name">${player.Name}</td>
-                    <td>팀${player.Team}</td>
+                    <td>${getTeamName(player.Team)}</td>
                     <td>${player.AB || '-'}</td>
                     <td>${player.H || '-'}</td>
                     <td>${player.HR || '-'}</td>
@@ -423,18 +591,22 @@
         
         // 투수 데이터 표시
         function displayPitchers() {
-            const pitchers = playersData.filter(player => player.ERA && parseFloat(player.IP || 0) > 0);
-            pitchers.sort((a, b) => parseFloat(a.ERA || 10) - parseFloat(b.ERA || 10));
-            
             const tbody = document.getElementById('pitchersBody');
             tbody.innerHTML = '';
             
-            pitchers.forEach((pitcher, index) => {
+            if (filteredPitchers.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="8" style="text-align: center; padding: 30px; color: #666;">조건에 맞는 선수가 없습니다.</td>';
+                tbody.appendChild(row);
+                return;
+            }
+            
+            filteredPitchers.forEach((pitcher, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td class="rank">${index + 1}</td>
                     <td class="player-name">${pitcher.Name}</td>
-                    <td>팀${pitcher.Team}</td>
+                    <td>${getTeamName(pitcher.Team)}</td>
                     <td><strong>${parseFloat(pitcher.ERA || 0).toFixed(2)}</strong></td>
                     <td>${pitcher.IP || '-'}</td>
                     <td>${pitcher.K || '-'}</td>
@@ -490,6 +662,29 @@
             });
         }
         
+        // 데모 데이터 (실제 CSV 파일이 없을 때)
+        function loadDemoData() {
+            playersData = [
+                {Name: "홍길동", Team: "LEROLEROS", AB: "120", H: "45", HR: "8", SB: "5", AVG: "0.375", OBP: "0.420", SLG: "0.580", "wRC+": "145", ERA: "", IP: "", K: "", WHIP: "", "ERA+": ""},
+                {Name: "김철수", Team: "BUBBLE STARS", AB: "115", H: "38", HR: "12", SB: "2", AVG: "0.330", OBP: "0.385", SLG: "0.565", "wRC+": "138", ERA: "", IP: "", K: "", WHIP: "", "ERA+": ""},
+                {Name: "박영희", Team: "MoonShot Spirits", AB: "", H: "", HR: "", SB: "", AVG: "", OBP: "", SLG: "", "wRC+": "", ERA: "2.45", IP: "87.2", K: "95", WHIP: "1.15", "ERA+": "165"},
+                {Name: "이민수", Team: "KR", AB: "", H: "", HR: "", SB: "", AVG: "", OBP: "", SLG: "", "wRC+": "", ERA: "3.12", IP: "76.1", K: "82", WHIP: "1.28", "ERA+": "142"}
+            ];
+            
+            teamsData = [
+                {ID: "LEROLEROS", Name: "LEROLEROS"},
+                {ID: "BUBBLE STARS", Name: "BUBBLE STARS"},
+                {ID: "MoonShot Spirits", Name: "MoonShot Spirits"},
+                {ID: "FLORIAN T-SHIRTS", Name: "FLORIAN T-SHIRTS"},
+                {ID: "Nyanko AVENGERS", Name: "Nyanko AVENGERS"},
+                {ID: "Ishikawa Fighting Folks", Name: "Ishikawa Fighting Folks"},
+                {ID: "KR", Name: "한국"},
+                {ID: "JP", Name: "일본"}
+            ];
+            
+            initializeData();
+        }
+        
         // 탭 전환
         function showTab(tabName) {
             // 모든 탭 숨기기
@@ -513,6 +708,7 @@
             document.getElementById('pitchersTable').style.display = 'none';
             document.getElementById('battersBtn').classList.add('active');
             document.getElementById('pitchersBtn').classList.remove('active');
+            displayBatters();
         }
         
         function showPitchers() {
