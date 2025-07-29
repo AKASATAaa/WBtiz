@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>야구 전적 기록실</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #e91e63, #ad1457);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            text-align: center;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        
+        .nav {
+            background: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+        
+        .nav-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: #e91e63;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .stats-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #e91e63;
+            border-bottom: 3px solid #e91e63;
+            padding-bottom: 10px;
+        }
+        
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .stats-table th {
+            background: linear-gradient(135deg, #e91e63, #ad1457);
+            color: white;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
+        .stats-table td {
+            padding: 10px 8px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9em;
+        }
+        
+        .stats-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .stats-table tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+        
+        .rank {
+            font-weight: bold;
+            color: #e91e63;
+        }
+        
+        .team-logo {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+        
+        .player-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .top-performers {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .performer-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .performer-item:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+        
+        .performer-rank {
+            font-weight: bold;
+            color: #e91e63;
+            margin-right: 15px;
+            min-width: 30px;
+        }
+        
+        .performer-info {
+            flex: 1;
+        }
+        
+        .performer-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .performer-stat {
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        .performer-value {
+            font-weight: bold;
+            color: #e91e63;
+            font-size: 1.1em;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2em;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-container {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .stats-table {
+                font-size: 0.8em;
+            }
+            
+            .stats-table th,
+            .stats-table td {
+                padding: 8px 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚾ 야구 전적 기록실</h1>
+    </div>
+    
+    <div class="nav">
+        <div class="nav-container">
+            <div class="nav-item active" onclick="showTab('records')">기록실</div>
+            <div class="nav-item" onclick="showTab('teams')">팀 정보</div>
+            <div class="nav-item" onclick="showTab('players')">선수정보</div>
+            <div class="nav-item" onclick="showTab('schedule')">경기 일정</div>
+            <div class="nav-item" onclick="showTab('prediction')">승부 예측</div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- 기록실 탭 -->
+        <div id="records" class="tab-content active">
+            <div class="main-content">
+                <div class="stats-section">
+                    <div class="section-title">📊 시즌 기록실</div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <button onclick="showBatters()" id="battersBtn" class="nav-item active" style="margin-right: 10px;">타자</button>
+                        <button onclick="showPitchers()" id="pitchersBtn" class="nav-item">투수</button>
+                    </div>
+                    
+                    <div id="battersTable">
+                        <table class="stats-table">
+                            <thead>
+                                <tr>
+                                    <th>순위</th>
+                                    <th>선수명</th>
+                                    <th>팀</th>
+                                    <th>타수</th>
+                                    <th>안타</th>
+                                    <th>홈런</th>
+                                    <th>도루</th>
+                                    <th>타율</th>
+                                    <th>출루율</th>
+                                    <th>장타율</th>
+                                    <th>wRC+</th>
+                                </tr>
+                            </thead>
+                            <tbody id="battersBody">
+                                <tr>
+                                    <td colspan="11" class="loading">데이터를 불러오는 중...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div id="pitchersTable" style="display: none;">
+                        <table class="stats-table">
+                            <thead>
+                                <tr>
+                                    <th>순위</th>
+                                    <th>선수명</th>
+                                    <th>팀</th>
+                                    <th>평균자책점</th>
+                                    <th>이닝</th>
+                                    <th>탈삼진</th>
+                                    <th>WHIP</th>
+                                    <th>ERA+</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pitchersBody">
+                                <tr>
+                                    <td colspan="8" class="loading">데이터를 불러오는 중...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="sidebar">
+                    <div class="top-performers">
+                        <div class="section-title">🏆 Top Performers</div>
+                        
+                        <div style="margin-bottom: 15px; font-weight: bold; color: #666;">타격 부문</div>
+                        <div id="topBatters">
+                            <div class="loading">데이터 로딩 중...</div>
+                        </div>
+                        
+                        <div style="margin: 20px 0 15px 0; font-weight: bold; color: #666;">투수 부문</div>
+                        <div id="topPitchers">
+                            <div class="loading">데이터 로딩 중...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 다른 탭들 -->
+        <div id="teams" class="tab-content">
+            <div class="stats-section">
+                <div class="section-title">🏟️ 팀 정보</div>
+                <p>팀 정보 페이지 준비 중...</p>
+            </div>
+        </div>
+        
+        <div id="players" class="tab-content">
+            <div class="stats-section">
+                <div class="section-title">👤 선수정보</div>
+                <p>선수정보 페이지 준비 중...</p>
+            </div>
+        </div>
+        
+        <div id="schedule" class="tab-content">
+            <div class="stats-section">
+                <div class="section-title">📅 경기 일정</div>
+                <p>경기 일정 페이지 준비 중...</p>
+            </div>
+        </div>
+        
+        <div id="prediction" class="tab-content">
+            <div class="stats-section">
+                <div class="section-title">🔮 승부 예측</div>
+                <p>승부 예측 페이지 준비 중...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let playersData = [];
+        
+        // CSV 파일 로드 및 파싱
+        async function loadData() {
+            try {
+                // GitHub raw URL로 변경해야 함 (실제 파일 업로드 후)
+                const response = await fetch('player.csv');
+                const csvText = await response.text();
+                
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        playersData = results.data;
+                        displayBatters();
+                        displayTopPerformers();
+                    },
+                    error: function(error) {
+                        console.error('CSV 파싱 오류:', error);
+                        // 데모 데이터로 대체
+                        loadDemoData();
+                    }
+                });
+            } catch (error) {
+                console.error('데이터 로드 오류:', error);
+                loadDemoData();
+            }
+        }
+        
+        // 데모 데이터 (실제 CSV 파일이 없을 때)
+        function loadDemoData() {
+            playersData = [
+                {Name: "홍길동", Team: "1", AB: "120", H: "45", HR: "8", SB: "5", AVG: "0.375", OBP: "0.420", SLG: "0.580", "wRC+": "145", ERA: "", IP: "", K: "", WHIP: "", "ERA+": ""},
+                {Name: "김철수", Team: "2", AB: "115", H: "38", HR: "12", SB: "2", AVG: "0.330", OBP: "0.385", SLG: "0.565", "wRC+": "138", ERA: "", IP: "", K: "", WHIP: "", "ERA+": ""},
+                {Name: "박영희", Team: "1", AB: "", H: "", HR: "", SB: "", AVG: "", OBP: "", SLG: "", "wRC+": "", ERA: "2.45", IP: "87.2", K: "95", WHIP: "1.15", "ERA+": "165"},
+                {Name: "이민수", Team: "3", AB: "", H: "", HR: "", SB: "", AVG: "", OBP: "", SLG: "", "wRC+": "", ERA: "3.12", IP: "76.1", K: "82", WHIP: "1.28", "ERA+": "142"}
+            ];
+            displayBatters();
+            displayTopPerformers();
+        }
+        
+        // 타자 데이터 표시
+        function displayBatters() {
+            const batters = playersData.filter(player => player.AB && parseFloat(player.AB) > 0);
+            batters.sort((a, b) => parseFloat(b.AVG || 0) - parseFloat(a.AVG || 0));
+            
+            const tbody = document.getElementById('battersBody');
+            tbody.innerHTML = '';
+            
+            batters.forEach((player, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="rank">${index + 1}</td>
+                    <td class="player-name">${player.Name}</td>
+                    <td>팀${player.Team}</td>
+                    <td>${player.AB || '-'}</td>
+                    <td>${player.H || '-'}</td>
+                    <td>${player.HR || '-'}</td>
+                    <td>${player.SB || '-'}</td>
+                    <td><strong>${parseFloat(player.AVG || 0).toFixed(3)}</strong></td>
+                    <td>${parseFloat(player.OBP || 0).toFixed(3)}</td>
+                    <td>${parseFloat(player.SLG || 0).toFixed(3)}</td>
+                    <td>${player['wRC+'] || '-'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // 투수 데이터 표시
+        function displayPitchers() {
+            const pitchers = playersData.filter(player => player.ERA && parseFloat(player.IP || 0) > 0);
+            pitchers.sort((a, b) => parseFloat(a.ERA || 10) - parseFloat(b.ERA || 10));
+            
+            const tbody = document.getElementById('pitchersBody');
+            tbody.innerHTML = '';
+            
+            pitchers.forEach((pitcher, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="rank">${index + 1}</td>
+                    <td class="player-name">${pitcher.Name}</td>
+                    <td>팀${pitcher.Team}</td>
+                    <td><strong>${parseFloat(pitcher.ERA || 0).toFixed(2)}</strong></td>
+                    <td>${pitcher.IP || '-'}</td>
+                    <td>${pitcher.K || '-'}</td>
+                    <td>${parseFloat(pitcher.WHIP || 0).toFixed(2)}</td>
+                    <td>${pitcher['ERA+'] || '-'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Top Performers 표시
+        function displayTopPerformers() {
+            // 타자 Top 5
+            const batters = playersData.filter(player => player.AB && parseFloat(player.AB) > 0);
+            batters.sort((a, b) => parseFloat(b['wRC+'] || 0) - parseFloat(a['wRC+'] || 0));
+            
+            const topBattersDiv = document.getElementById('topBatters');
+            topBattersDiv.innerHTML = '';
+            
+            batters.slice(0, 5).forEach((player, index) => {
+                const item = document.createElement('div');
+                item.className = 'performer-item';
+                item.innerHTML = `
+                    <div class="performer-rank">${index + 1}</div>
+                    <div class="performer-info">
+                        <div class="performer-name">${player.Name}</div>
+                        <div class="performer-stat">타율 ${parseFloat(player.AVG || 0).toFixed(3)}</div>
+                    </div>
+                    <div class="performer-value">${player['wRC+'] || '-'}</div>
+                `;
+                topBattersDiv.appendChild(item);
+            });
+            
+            // 투수 Top 5
+            const pitchers = playersData.filter(player => player.ERA && parseFloat(player.IP || 0) > 0);
+            pitchers.sort((a, b) => parseFloat(b['ERA+'] || 0) - parseFloat(a['ERA+'] || 0));
+            
+            const topPitchersDiv = document.getElementById('topPitchers');
+            topPitchersDiv.innerHTML = '';
+            
+            pitchers.slice(0, 5).forEach((pitcher, index) => {
+                const item = document.createElement('div');
+                item.className = 'performer-item';
+                item.innerHTML = `
+                    <div class="performer-rank">${index + 1}</div>
+                    <div class="performer-info">
+                        <div class="performer-name">${pitcher.Name}</div>
+                        <div class="performer-stat">ERA ${parseFloat(pitcher.ERA || 0).toFixed(2)}</div>
+                    </div>
+                    <div class="performer-value">${pitcher['ERA+'] || '-'}</div>
+                `;
+                topPitchersDiv.appendChild(item);
+            });
+        }
+        
+        // 탭 전환
+        function showTab(tabName) {
+            // 모든 탭 숨기기
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 모든 네비게이션 비활성화
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                nav.classList.remove('active');
+            });
+            
+            // 선택된 탭 보이기
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // 타자/투수 전환
+        function showBatters() {
+            document.getElementById('battersTable').style.display = 'block';
+            document.getElementById('pitchersTable').style.display = 'none';
+            document.getElementById('battersBtn').classList.add('active');
+            document.getElementById('pitchersBtn').classList.remove('active');
+        }
+        
+        function showPitchers() {
+            document.getElementById('battersTable').style.display = 'none';
+            document.getElementById('pitchersTable').style.display = 'block';
+            document.getElementById('battersBtn').classList.remove('active');
+            document.getElementById('pitchersBtn').classList.add('active');
+            displayPitchers();
+        }
+        
+        // 페이지 로드 시 데이터 불러오기
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+        });
+    </script>
+</body>
+</html>
