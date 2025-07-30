@@ -2379,55 +2379,84 @@
                     html += '<div class="calendar-day empty"></div>';
                 }
                 
-                // 날짜별 셀 생성
-                monthData.forEach((dayData, index) => {
-                    const isNewWeek = index === 0 || monthData[index - 1].week !== dayData.week;
-                    if (isNewWeek && index > 0) {
-                        // 주가 바뀌면 빈 셀로 채우기
-                        const currentDayIndex = dayNames.indexOf(monthData[index - 1].day);
-                        for (let i = currentDayIndex + 1; i < 7; i++) {
-                            html += '<div class="calendar-day empty"></div>';
+                // 해당 월의 모든 날짜를 생성 (1일부터 마지막 날까지)
+                const daysInMonth = month == 7 ? 31 : 31; // 7월은 31일, 8월도 31일
+                const monthGames = {};
+                
+                // CSV 데이터를 날짜별로 정리
+                monthData.forEach(dayData => {
+                    monthGames[dayData.date] = dayData;
+                });
+                
+                // 1일부터 마지막 날까지 모든 날짜 생성
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayData = monthGames[day];
+                    
+                    // 주가 바뀌는지 확인
+                    if (day > 1) {
+                        const prevDay = day - 1;
+                        const prevDayData = monthGames[prevDay];
+                        if (prevDayData) {
+                            const prevDayIndex = dayNames.indexOf(prevDayData.day);
+                            const currentDayIndex = dayNames.indexOf(dayData ? dayData.day : '');
+                            
+                            // 주가 바뀌면 빈 셀로 채우기
+                            if (prevDayIndex !== -1) {
+                                for (let i = prevDayIndex + 1; i < 7; i++) {
+                                    html += '<div class="calendar-day empty"></div>';
+                                }
+                            }
                         }
                     }
                     
-                    html += '<div class="calendar-day">';
-                    html += `<div class="calendar-date">${dayData.date}</div>`;
-                    
-                    if (dayData.games.length > 0) {
-                        html += '<div class="calendar-games">';
-                        dayData.games.forEach(game => {
-                            html += `<div class="game-item">`;
-                            
-                            // 팀명과 점수 표시
-                            if (game.homeScore && game.awayScore) {
-                                // 경기 결과가 있는 경우
-                                const homeWon = parseInt(game.homeScore) > parseInt(game.awayScore);
-                                html += `<div class="game-teams">`;
-                                html += `<span class="team ${homeWon ? 'loser' : 'winner'}">${game.away} ${game.awayScore}</span>`;
-                                html += `<span class="vs">vs</span>`;
-                                html += `<span class="team ${homeWon ? 'winner' : 'loser'}">${game.home} ${game.homeScore}</span>`;
+                    if (dayData) {
+                        // 경기가 있는 날
+                        html += '<div class="calendar-day">';
+                        html += `<div class="calendar-date">${dayData.date}</div>`;
+                        
+                        if (dayData.games.length > 0) {
+                            html += '<div class="calendar-games">';
+                            dayData.games.forEach(game => {
+                                html += `<div class="game-item">`;
+                                
+                                // 팀명과 점수 표시
+                                if (game.homeScore && game.awayScore) {
+                                    // 경기 결과가 있는 경우
+                                    const homeWon = parseInt(game.homeScore) > parseInt(game.awayScore);
+                                    html += `<div class="game-teams">`;
+                                    html += `<span class="team ${homeWon ? 'loser' : 'winner'}">${game.away} ${game.awayScore}</span>`;
+                                    html += `<span class="vs">vs</span>`;
+                                    html += `<span class="team ${homeWon ? 'winner' : 'loser'}">${game.home} ${game.homeScore}</span>`;
+                                    html += `</div>`;
+                                } else {
+                                    // 경기 예정인 경우
+                                    html += `<div class="game-teams">${game.away} vs ${game.home}</div>`;
+                                }
+                                
+                                if (game.time) {
+                                    html += `<div class="game-time">${game.time}</div>`;
+                                }
                                 html += `</div>`;
-                            } else {
-                                // 경기 예정인 경우
-                                html += `<div class="game-teams">${game.away} vs ${game.home}</div>`;
-                            }
-                            
-                            if (game.time) {
-                                html += `<div class="game-time">${game.time}</div>`;
-                            }
-                            html += `</div>`;
-                        });
+                            });
+                            html += '</div>';
+                        }
+                        
+                        html += '</div>';
+                    } else {
+                        // 경기가 없는 날
+                        html += '<div class="calendar-day">';
+                        html += `<div class="calendar-date">${day}</div>`;
                         html += '</div>';
                     }
-                    
-                    html += '</div>';
-                });
+                }
                 
                 // 마지막 주의 빈 셀들
-                const lastDay = monthData[monthData.length - 1];
-                const lastDayIndex = dayNames.indexOf(lastDay.day);
-                for (let i = lastDayIndex + 1; i < 7; i++) {
-                    html += '<div class="calendar-day empty"></div>';
+                const lastDayData = monthGames[daysInMonth];
+                if (lastDayData) {
+                    const lastDayIndex = dayNames.indexOf(lastDayData.day);
+                    for (let i = lastDayIndex + 1; i < 7; i++) {
+                        html += '<div class="calendar-day empty"></div>';
+                    }
                 }
                 
                 html += '</div>'; // calendar-body
