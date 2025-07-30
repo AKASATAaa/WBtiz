@@ -881,25 +881,25 @@
             <div class="stats-section">
                 <div class="section-title">팀 정보</div>
                 <div class="teams-grid">
-                    <div class="team-card" onclick="showTeamInfo('AVENGERS')">
+                    <div class="team-card" onclick="showTeamInfo('Nyanko AVENGERS')">
                         <div class="team-logo">
-                            <img src="./image/AVENGERS.png" alt="AVENGERS" />
+                            <img src="./image/AVENGERS.png" alt="Nyanko AVENGERS" />
                         </div>
-                        <div class="team-name">AVENGERS</div>
+                        <div class="team-name">Nyanko AVENGERS</div>
                     </div>
                     
-                    <div class="team-card" onclick="showTeamInfo('BUBBLESTARS')">
+                    <div class="team-card" onclick="showTeamInfo('BUBBLE STARS')">
                         <div class="team-logo">
                             <img src="./image/BUBBLESTARS.png" alt="BUBBLE STARS" />
                         </div>
                         <div class="team-name">BUBBLE STARS</div>
                     </div>
                     
-                    <div class="team-card" onclick="showTeamInfo('FIGHTINGFOLKS')">
+                    <div class="team-card" onclick="showTeamInfo('Ishikawa Fighting Folks')">
                         <div class="team-logo">
-                            <img src="./image/FIGHTINGFOLKS.jpg" alt="FIGHTING FOLKS" />
+                            <img src="./image/FIGHTINGFOLKS.jpg" alt="Ishikawa Fighting Folks" />
                         </div>
-                        <div class="team-name">FIGHTING FOLKS</div>
+                        <div class="team-name">Ishikawa Fighting Folks</div>
                     </div>
                     
                     <div class="team-card" onclick="showTeamInfo('LEROLEROS')">
@@ -909,18 +909,18 @@
                         <div class="team-name">LEROLEROS</div>
                     </div>
                     
-                    <div class="team-card" onclick="showTeamInfo('SPRITZ')">
+                    <div class="team-card" onclick="showTeamInfo('MoonShot Spirits')">
                         <div class="team-logo">
-                            <img src="./image/SPRITZ.png" alt="SPRITZ" />
+                            <img src="./image/SPRITZ.png" alt="MoonShot Spirits" />
                         </div>
-                        <div class="team-name">SPRITZ</div>
+                        <div class="team-name">MoonShot Spirits</div>
                     </div>
                     
-                    <div class="team-card" onclick="showTeamInfo('TSHIRTS')">
+                    <div class="team-card" onclick="showTeamInfo('FLORIAN T-SHIRTS')">
                         <div class="team-logo">
-                            <img src="./image/TSHIRTS.png" alt="T-SHIRTS" />
+                            <img src="./image/TSHIRTS.png" alt="FLORIAN T-SHIRTS" />
                         </div>
-                        <div class="team-name">T-SHIRTS</div>
+                        <div class="team-name">FLORIAN T-SHIRTS</div>
                     </div>
                 </div>
             </div>
@@ -1748,14 +1748,14 @@
             if (!teamId) return '';
             const texts = translations[currentLanguage];
             
-            // 팀 ID를 올바른 팀명으로 매핑
+            // 팀 ID를 올바른 팀명으로 매핑 (teams.csv 기준)
             const teamMapping = {
                 'LEROLEROS': 'LEROLEROS',
-                'BUBBLESTARS': 'BUBBLE STARS',
-                'AVENGERS': 'Nyanko AVENGERS',
-                'FIGHTINGFOLKS': 'Ishikawa Fighting Folks',
-                'SPRITZ': 'MoonShot Spirits',
-                'TSHIRTS': 'FLORIAN T-SHIRTS',
+                'BUBBLE STARS': 'BUBBLE STARS',
+                'MoonShot Spirits': 'MoonShot Spirits',
+                'FLORIAN T-SHIRTS': 'FLORIAN T-SHIRTS',
+                'Ishikawa Fighting Folks': 'Ishikawa Fighting Folks',
+                'Nyanko AVENGERS': 'Nyanko AVENGERS',
                 'KR': texts.korea,
                 'JP': texts.japan
             };
@@ -2162,28 +2162,15 @@
         function showTeamInfo(teamName) {
             console.log(`${teamName} 팀 정보를 표시합니다.`);
             
-            // 팀명을 팀 ID로 변환
-            const teamIdMapping = {
-                'LEROLEROS': 'LEROLEROS',
-                'BUBBLE STARS': 'BUBBLESTARS',
-                'Nyanko AVENGERS': 'AVENGERS',
-                'Ishikawa Fighting Folks': 'FIGHTINGFOLKS',
-                'MoonShot Spirits': 'SPRITZ',
-                'FLORIAN T-SHIRTS': 'TSHIRTS'
-            };
-            
-            const teamId = teamIdMapping[teamName] || teamName;
-            
-            // 팀별 데이터 수집 - 더 유연한 매칭
+            // 팀별 데이터 수집 - teams.csv의 실제 팀명으로 매칭
             const teamPlayers = playersData.filter(player => {
                 const playerTeam = getTeamName(player.Team);
-                const directMatch = player.Team === teamId;
+                const directMatch = player.Team === teamName;
                 const nameMatch = playerTeam === teamName;
-                const teamIdMatch = player.Team === teamId;
                 
-                console.log(`선수: ${player.Name}, 팀: ${player.Team}, 변환된 팀: ${playerTeam}, 매칭: ${directMatch || nameMatch || teamIdMatch}`);
+                console.log(`선수: ${player.Name}, 팀: ${player.Team}, 변환된 팀: ${playerTeam}, 매칭: ${directMatch || nameMatch}`);
                 
-                return directMatch || nameMatch || teamIdMatch;
+                return directMatch || nameMatch;
             });
             
             console.log(`${teamName} 팀 선수 수:`, teamPlayers.length);
@@ -2217,9 +2204,10 @@
             // 팀 정보 표시
             let html = '<div class="stats-section">';
             
-            // 팀 이미지와 이름
+            // 팀 이미지와 이름 (이미지 파일명은 짧은 팀명 사용)
+            const imageName = teamName.replace(/\s+/g, ''); // 공백 제거
             html += '<div style="text-align: center; margin-bottom: 30px;">';
-            html += `<img src="./image/${teamName}.png" alt="${teamName}" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 15px;">`;
+            html += `<img src="./image/${imageName}.png" alt="${teamName}" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 15px;">`;
             html += `<h2 style="color: #e91e63; font-size: 1.5em;">${teamName}</h2>`;
             html += '</div>';
             
