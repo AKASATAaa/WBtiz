@@ -541,19 +541,24 @@
         .game-teams {
             font-weight: bold;
             margin-bottom: 2px;
+            text-align: center;
         }
         
         .game-time {
             font-size: 0.7em;
             color: #666;
             font-weight: normal;
+            text-align: center;
+            margin-top: 2px;
         }
         
         .team {
-            display: inline-block;
+            display: block;
             padding: 2px 4px;
             border-radius: 3px;
-            margin: 0 2px;
+            margin: 1px 0;
+            text-align: center;
+            font-size: 0.8em;
         }
         
         .team.winner {
@@ -567,9 +572,11 @@
         }
         
         .vs {
-            margin: 0 4px;
+            margin: 2px 0;
             color: #666;
             font-weight: normal;
+            text-align: center;
+            font-size: 0.7em;
         }
         
         .calendar-day.empty .calendar-date {
@@ -2413,13 +2420,17 @@
                                     // 경기 결과가 있는 경우
                                     const homeWon = parseInt(game.homeScore) > parseInt(game.awayScore);
                                     html += `<div class="game-teams">`;
-                                    html += `<span class="team ${homeWon ? 'loser' : 'winner'}">${game.away} ${game.awayScore}</span>`;
-                                    html += `<span class="vs">vs</span>`;
-                                    html += `<span class="team ${homeWon ? 'winner' : 'loser'}">${game.home} ${game.homeScore}</span>`;
+                                    html += `<div class="team ${homeWon ? 'loser' : 'winner'}">${game.away} ${game.awayScore}</div>`;
+                                    html += `<div class="vs">vs</div>`;
+                                    html += `<div class="team ${homeWon ? 'winner' : 'loser'}">${game.home} ${game.homeScore}</div>`;
                                     html += `</div>`;
                                 } else {
                                     // 경기 예정인 경우
-                                    html += `<div class="game-teams">${game.away} vs ${game.home}</div>`;
+                                    html += `<div class="game-teams">`;
+                                    html += `<div class="team">${game.away}</div>`;
+                                    html += `<div class="vs">vs</div>`;
+                                    html += `<div class="team">${game.home}</div>`;
+                                    html += `</div>`;
                                 }
                                 
                                 if (game.time) {
