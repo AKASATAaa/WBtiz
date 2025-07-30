@@ -1434,11 +1434,16 @@
                 }
                 
                 const teamCsvText = await teamResponse.text();
+                console.log('팀 CSV 파일 크기:', teamCsvText.length, '문자');
+                console.log('팀 CSV 파일 샘플:', teamCsvText.substring(0, 200));
                 
                 Papa.parse(teamCsvText, {
                     header: false,
                     skipEmptyLines: true,
                     complete: function(results) {
+                        console.log('팀 CSV 파싱 완료!');
+                        console.log('팀 데이터 행 수:', results.data.length);
+                        
                         const playerTeamMap = new Map();
                         const teamSet = new Set();
                         
@@ -1463,6 +1468,9 @@
                             }
                         });
                         
+                        console.log('팀 매핑 결과:', playerTeamMap.size, '개 선수');
+                        console.log('팀 목록:', Array.from(teamSet));
+                        
                         // 팀 정보를 플레이어 데이터에 적용
                         playersData.forEach(player => {
                             if (player.Name && playerTeamMap.has(player.Name)) {
@@ -1483,6 +1491,7 @@
                             });
                         });
                         
+                        console.log('최종 팀 데이터:', teamsData);
                         initializeData();
                     },
                     error: function(error) {
