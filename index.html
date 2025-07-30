@@ -299,11 +299,11 @@
     
     <div class="nav">
         <div class="nav-container">
-            <div class="nav-item active" onclick="showTab('records')" id="navRecords">기록실</div>
-            <div class="nav-item" onclick="showTab('teams')" id="navTeams">팀 정보</div>
-            <div class="nav-item" onclick="showTab('players')" id="navPlayers">선수정보</div>
-            <div class="nav-item" onclick="showTab('schedule')" id="navSchedule">경기 일정</div>
-            <div class="nav-item" onclick="showTab('prediction')" id="navPrediction">승부 예측</div>
+            <div class="nav-item active" onclick="showTab('records', event)" id="navRecords">기록실</div>
+            <div class="nav-item" onclick="showTab('teams', event)" id="navTeams">팀 정보</div>
+            <div class="nav-item" onclick="showTab('players', event)" id="navPlayers">선수정보</div>
+            <div class="nav-item" onclick="showTab('schedule', event)" id="navSchedule">경기 일정</div>
+            <div class="nav-item" onclick="showTab('prediction', event)" id="navPrediction">승부 예측</div>
         </div>
     </div>
     
@@ -854,15 +854,15 @@
             });
             
             // 섹션 타이틀들
-            const sectionTitles = {
+            const sectionTitleElements = {
                 'pitchingSectionTitle': texts.pitchingSection,
                 'careerBattingSectionTitle': texts.battingRecords,
                 'careerPitchingSectionTitle': texts.pitchingRecords
             };
             
-            Object.keys(sectionTitles).forEach(id => {
+            Object.keys(sectionTitleElements).forEach(id => {
                 const element = document.getElementById(id);
-                if (element) element.textContent = sectionTitles[id];
+                if (element) element.textContent = sectionTitleElements[id];
             });
         }
         
@@ -1010,7 +1010,7 @@
         }
         
         // 탭 전환
-        function showTab(tabName) {
+        function showTab(tabName, event) {
             const tabs = ['records', 'teams', 'players', 'schedule', 'prediction'];
             tabs.forEach(id => {
                 const element = document.getElementById(id);
@@ -1023,7 +1023,11 @@
             
             const selectedTab = document.getElementById(tabName);
             if (selectedTab) selectedTab.classList.add('active');
-            event.target.classList.add('active');
+            
+            // 이벤트 객체가 있으면 해당 요소에 active 클래스 추가
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
         }
         
         // 타자/투수 전환
@@ -1081,20 +1085,25 @@
         // CSV 파일 로드 및 파싱
         async function loadData() {
             console.log('데이터 로드 시작...');
+            updateLoadingStatus('데이터를 불러오는 중...');
+            
             console.log('현재 URL:', window.location.href);
             console.log('현재 Origin:', window.location.origin);
             
             try {
                 // GitHub Pages에서 사용할 파일 경로들 (순서대로 시도)
                 const possibleFiles = [
-                    'player.csv',
-                    'players.csv',
                     './player.csv',
                     './players.csv',
-                    'data/player.csv',
+                    'player.csv',
+                    'players.csv',
                     './data/player.csv',
+                    './data/players.csv',
                     'Player statistics  player.csv',
-                    './Player statistics  player.csv'
+                    './Player statistics  player.csv',
+                    // GitHub Raw 파일 직접 접근 (사용자가 설정한 경우)
+                    'https://raw.githubusercontent.com/[사용자명]/[저장소명]/main/player.csv',
+                    'https://raw.githubusercontent.com/[사용자명]/[저장소명]/master/player.csv'
                 ];
                 
                 let playerResponse = null;
@@ -1135,6 +1144,7 @@
                     console.error('모든 CSV 파일 경로 시도 실패');
                     if (lastError) console.error('마지막 오류:', lastError);
                     console.log('🔄 데모 데이터로 전환합니다.');
+                    updateLoadingStatus('CSV 파일을 찾을 수 없습니다. 데모 데이터를 사용합니다.', true);
                     loadDemoData();
                     return;
                 }
@@ -1206,12 +1216,12 @@
             
             try {
                 const possibleTeamFiles = [
-                    'teams.csv',
-                    'team.csv',
                     './teams.csv',
                     './team.csv',
-                    'data/teams.csv',
+                    'teams.csv',
+                    'team.csv',
                     './data/teams.csv',
+                    './data/team.csv',
                     'Teams.csv'
                 ];
                 
@@ -1864,6 +1874,7 @@
         // 데모 데이터 (향상된 버전)
         function loadDemoData() {
             console.log('🎭 데모 데이터 로드 시작...');
+            updateLoadingStatus('데모 데이터를 로드하는 중...');
             
             playersData = [
                 // 타자들
@@ -1898,13 +1909,41 @@
             console.log('- 타자 수:', playersData.filter(p => p.AB && parseFloat(p.AB) > 0).length);
             console.log('- 투수 수:', playersData.filter(p => p.ERA && parseFloat(p.IP || 0) > 0).length);
             
+            updateLoadingStatus('데모 데이터 로드 완료');
             initializeData();
         }
         
         // 페이지 로드 시 데이터 불러오기
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 야구 기록실 페이지 로드됨');
+            console.log('📊 데이터 로딩을 시작합니다...');
+            console.log('🔍 문제가 있다면 개발자 도구(F12)의 콘솔을 확인해주세요.');
+            
             loadData();
         });
+        
+        // 데이터 로딩 상태 표시
+        function updateLoadingStatus(message, isError = false) {
+            const loadingElements = [
+                'battersLoading', 'pitchersLoading', 'careerBattersLoading', 
+                'careerPitchersLoading', 'topBattersLoading', 'topPitchersLoading',
+                'careerTopBattersLoading', 'careerTopPitchersLoading'
+            ];
+            
+            loadingElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = message;
+                    if (isError) {
+                        element.style.color = '#e91e63';
+                        element.style.fontWeight = 'bold';
+                    } else {
+                        element.style.color = '#666';
+                        element.style.fontWeight = 'normal';
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
