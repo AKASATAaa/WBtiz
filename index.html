@@ -2357,13 +2357,13 @@
                 
                 // 요일 헤더
                 html += '<div class="calendar-header">';
+                html += '<div class="calendar-day-header">일</div>';
                 html += '<div class="calendar-day-header">월</div>';
                 html += '<div class="calendar-day-header">화</div>';
                 html += '<div class="calendar-day-header">수</div>';
                 html += '<div class="calendar-day-header">목</div>';
                 html += '<div class="calendar-day-header">금</div>';
                 html += '<div class="calendar-day-header">토</div>';
-                html += '<div class="calendar-day-header">일</div>';
                 html += '</div>';
                 
                 // 달력 바디
@@ -2381,8 +2381,10 @@
                 
                 // 7월 13일은 일요일이므로 첫 주의 빈 셀들 추가
                 if (month == 7) {
-                    // 7월 13일(일요일) 이전의 빈 셀들
-                    for (let i = 0; i < 6; i++) {
+                    // 7월 13일(일요일) 이전의 빈 셀들 - 없음 (일요일이 첫날이므로)
+                } else if (month == 8) {
+                    // 8월 1일은 금요일이므로 첫 주의 빈 셀들 추가 (일,월,화,수,목)
+                    for (let i = 0; i < 5; i++) {
                         html += '<div class="calendar-day empty"></div>';
                     }
                 }
