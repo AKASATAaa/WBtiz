@@ -284,6 +284,34 @@
                 padding: 8px 4px;
             }
         }
+
+        .stats-table th:hover {
+            background: linear-gradient(135deg, #f48fb1, #e91e63);
+            transform: scale(1.02);
+        }
+        
+        .stats-table th.sortable {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .stats-table th.sortable::after {
+            content: '↕';
+            position: absolute;
+            right: 8px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8em;
+        }
+        
+        .stats-table th.sortable.asc::after {
+            content: '↑';
+            color: white;
+        }
+        
+        .stats-table th.sortable.desc::after {
+            content: '↓';
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -345,16 +373,16 @@
                                 <thead>
                                     <tr>
                                         <th>순위</th>
-                                        <th onclick="sortTable('batters', 'Name')" style="cursor: pointer;">선수명</th>
-                                        <th onclick="sortTable('batters', 'Team')" style="cursor: pointer;">팀</th>
-                                        <th onclick="sortTable('batters', 'AB')" style="cursor: pointer;">타수</th>
-                                        <th onclick="sortTable('batters', 'H')" style="cursor: pointer;">안타</th>
-                                        <th onclick="sortTable('batters', 'HR')" style="cursor: pointer;">홈런</th>
-                                        <th onclick="sortTable('batters', 'SB')" style="cursor: pointer;">도루</th>
-                                        <th onclick="sortTable('batters', 'AVG')" style="cursor: pointer;">타율</th>
-                                        <th onclick="sortTable('batters', 'OBP')" style="cursor: pointer;">출루율</th>
-                                        <th onclick="sortTable('batters', 'SLG')" style="cursor: pointer;">장타율</th>
-                                        <th onclick="sortTable('batters', 'wRC+')" style="cursor: pointer;">wRC+</th>
+                                        <th onclick="sortTable('batters', 'Name')" class="sortable" style="cursor: pointer;">선수명</th>
+                                        <th onclick="sortTable('batters', 'Team')" class="sortable" style="cursor: pointer;">팀</th>
+                                        <th onclick="sortTable('batters', 'AB')" class="sortable" style="cursor: pointer;">타수</th>
+                                        <th onclick="sortTable('batters', 'H')" class="sortable" style="cursor: pointer;">안타</th>
+                                        <th onclick="sortTable('batters', 'HR')" class="sortable" style="cursor: pointer;">홈런</th>
+                                        <th onclick="sortTable('batters', 'SB')" class="sortable" style="cursor: pointer;">도루</th>
+                                        <th onclick="sortTable('batters', 'AVG')" class="sortable" style="cursor: pointer;">타율</th>
+                                        <th onclick="sortTable('batters', 'OBP')" class="sortable" style="cursor: pointer;">출루율</th>
+                                        <th onclick="sortTable('batters', 'SLG')" class="sortable" style="cursor: pointer;">장타율</th>
+                                        <th onclick="sortTable('batters', 'wRC+')" class="sortable" style="cursor: pointer;">wRC+</th>
                                     </tr>
                                 </thead>
                                 <tbody id="battersBody">
@@ -370,13 +398,13 @@
                                 <thead>
                                     <tr>
                                         <th>순위</th>
-                                        <th onclick="sortTable('pitchers', 'Name')" style="cursor: pointer;">선수명</th>
-                                        <th onclick="sortTable('pitchers', 'Team')" style="cursor: pointer;">팀</th>
-                                        <th onclick="sortTable('pitchers', 'ERA')" style="cursor: pointer;">평균자책점</th>
-                                        <th onclick="sortTable('pitchers', 'IP')" style="cursor: pointer;">이닝</th>
-                                        <th onclick="sortTable('pitchers', 'K')" style="cursor: pointer;">탈삼진</th>
-                                        <th onclick="sortTable('pitchers', 'WHIP')" style="cursor: pointer;">WHIP</th>
-                                        <th onclick="sortTable('pitchers', 'ERA+')" style="cursor: pointer;">ERA+</th>
+                                        <th onclick="sortTable('pitchers', 'Name')" class="sortable" style="cursor: pointer;">선수명</th>
+                                        <th onclick="sortTable('pitchers', 'Team')" class="sortable" style="cursor: pointer;">팀</th>
+                                        <th onclick="sortTable('pitchers', 'ERA')" class="sortable" style="cursor: pointer;">평균자책점</th>
+                                        <th onclick="sortTable('pitchers', 'IP')" class="sortable" style="cursor: pointer;">이닝</th>
+                                        <th onclick="sortTable('pitchers', 'K')" class="sortable" style="cursor: pointer;">탈삼진</th>
+                                        <th onclick="sortTable('pitchers', 'WHIP')" class="sortable" style="cursor: pointer;">WHIP</th>
+                                        <th onclick="sortTable('pitchers', 'ERA+')" class="sortable" style="cursor: pointer;">ERA+</th>
                                     </tr>
                                 </thead>
                                 <tbody id="pitchersBody">
@@ -816,6 +844,53 @@
             if (battersBtn) battersBtn.classList.remove('active');
             if (pitchersBtn) pitchersBtn.classList.add('active');
             displayPitchers();
+        }
+        
+        function sortTable(tableType, column) {
+            // 기존 정렬 표시 제거
+            document.querySelectorAll('.sortable').forEach(th => {
+                th.classList.remove('asc', 'desc');
+            });
+            
+            if (currentSortColumn === column) {
+                currentSortDirection = currentSortDirection === 'desc' ? 'asc' : 'desc';
+            } else {
+                currentSortColumn = column;
+                currentSortDirection = 'desc';
+            }
+            
+            // 현재 정렬된 컬럼에 방향 표시
+            const clickedHeader = event.target;
+            if (clickedHeader.classList.contains('sortable')) {
+                clickedHeader.classList.add(currentSortDirection);
+            }
+            
+            const data = tableType === 'batters' ? filteredBatters : filteredPitchers;
+            
+            data.sort((a, b) => {
+                let valueA = a[column];
+                let valueB = b[column];
+                
+                if (!isNaN(parseFloat(valueA)) && !isNaN(parseFloat(valueB))) {
+                    valueA = parseFloat(valueA) || 0;
+                    valueB = parseFloat(valueB) || 0;
+                } else {
+                    valueA = (valueA || '').toString().toLowerCase();
+                    valueB = (valueB || '').toString().toLowerCase();
+                }
+                
+                if (currentSortDirection === 'desc') {
+                    return valueB > valueA ? 1 : valueB < valueA ? -1 : 0;
+                } else {
+                    return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+                }
+            });
+            
+            if (tableType === 'batters') {
+                displayBatters();
+            } else {
+                displayPitchers();
+            }
         }
         
         // 나머지 함수들은 body 끝 부분에서 정의
@@ -1379,6 +1454,67 @@
                     tbody.appendChild(row);
                 });
             }
+            
+            // 통산 기록 리더 표시
+            const topBattersDiv = document.getElementById('careerTopBatters');
+            if (topBattersDiv) {
+                topBattersDiv.innerHTML = '';
+                
+                batters.slice(0, 5).forEach((player, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'performer-item';
+                    item.innerHTML = `
+                        <div class="performer-rank">${index + 1}</div>
+                        <div class="performer-info">
+                            <div class="performer-name">${player.Name || ''}</div>
+                            <div class="performer-stat">${getTeamName(player.Team)} | ${texts.hits} ${player.H || 0}개</div>
+                        </div>
+                        <div class="performer-value">${parseFloat(player.AVG || 0).toFixed(3)}</div>
+                    `;
+                    topBattersDiv.appendChild(item);
+                });
+            }
+            
+            const pitchers = playersData.filter(player => player.ERA && parseFloat(player.IP || 0) > 0);
+            pitchers.sort((a, b) => parseFloat(a.ERA || 10) - parseFloat(b.ERA || 10));
+            
+            const pitchersBody = document.getElementById('careerPitchersBody');
+            if (pitchersBody) {
+                pitchersBody.innerHTML = '';
+                
+                pitchers.forEach((pitcher, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="rank">${index + 1}</td>
+                        <td class="player-name">${pitcher.Name || ''}</td>
+                        <td>${getTeamName(pitcher.Team)}</td>
+                        <td>${pitcher.IP || '-'}</td>
+                        <td>${pitcher.K || '-'}</td>
+                        <td><strong>${parseFloat(pitcher.ERA || 0).toFixed(2)}</strong></td>
+                        <td>${parseFloat(pitcher.WHIP || 0).toFixed(2)}</td>
+                    `;
+                    pitchersBody.appendChild(row);
+                });
+            }
+            
+            const topPitchersDiv = document.getElementById('careerTopPitchers');
+            if (topPitchersDiv) {
+                topPitchersDiv.innerHTML = '';
+                
+                pitchers.slice(0, 5).forEach((pitcher, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'performer-item';
+                    item.innerHTML = `
+                        <div class="performer-rank">${index + 1}</div>
+                        <div class="performer-info">
+                            <div class="performer-name">${pitcher.Name || ''}</div>
+                            <div class="performer-stat">${getTeamName(pitcher.Team)} | ${texts.strikeouts} ${pitcher.K || 0}개</div>
+                        </div>
+                        <div class="performer-value">${parseFloat(pitcher.ERA || 0).toFixed(2)}</div>
+                    `;
+                    topPitchersDiv.appendChild(item);
+                });
+            }
         }
         
         function displayCategoryLeaders() {
@@ -1400,6 +1536,35 @@
                     `;
                 }
                 
+                // 타점왕 (임시로 홈런*3 + 안타로 계산)
+                const rbiLeader = batters.reduce((max, player) => {
+                    const playerRBI = (parseInt(player.HR || 0) * 3) + parseInt(player.H || 0);
+                    const maxRBI = (parseInt(max.HR || 0) * 3) + parseInt(max.H || 0);
+                    return playerRBI > maxRBI ? player : max;
+                });
+                const rbiCount = (parseInt(rbiLeader.HR || 0) * 3) + parseInt(rbiLeader.H || 0);
+                const rbiKingDiv = document.getElementById('rbiKing');
+                if (rbiKingDiv) {
+                    rbiKingDiv.innerHTML = `
+                        <strong>${rbiLeader.Name || ''}</strong><br>
+                        <small>${getTeamName(rbiLeader.Team)}</small><br>
+                        <span style="font-size: 1.2em; color: #e91e63;">약 ${rbiCount}타점</span>
+                    `;
+                }
+                
+                // 도루왕
+                const stealLeader = batters.reduce((max, player) => 
+                    parseInt(player.SB || 0) > parseInt(max.SB || 0) ? player : max
+                );
+                const stealKingDiv = document.getElementById('stealKing');
+                if (stealKingDiv) {
+                    stealKingDiv.innerHTML = `
+                        <strong>${stealLeader.Name || ''}</strong><br>
+                        <small>${getTeamName(stealLeader.Team)}</small><br>
+                        <span style="font-size: 1.2em; color: #e91e63;">${stealLeader.SB || 0}개</span>
+                    `;
+                }
+                
                 // 타율왕
                 const avgLeader = batters.reduce((max, player) => 
                     parseFloat(player.AVG || 0) > parseFloat(max.AVG || 0) ? player : max
@@ -1410,6 +1575,22 @@
                         <strong>${avgLeader.Name || ''}</strong><br>
                         <small>${getTeamName(avgLeader.Team)}</small><br>
                         <span style="font-size: 1.2em; color: #e91e63;">${parseFloat(avgLeader.AVG || 0).toFixed(3)}</span>
+                    `;
+                }
+                
+                // 최고 OPS
+                const opsLeader = batters.reduce((max, player) => {
+                    const playerOPS = parseFloat(player.OBP || 0) + parseFloat(player.SLG || 0);
+                    const maxOPS = parseFloat(max.OBP || 0) + parseFloat(max.SLG || 0);
+                    return playerOPS > maxOPS ? player : max;
+                });
+                const opsValue = parseFloat(opsLeader.OBP || 0) + parseFloat(opsLeader.SLG || 0);
+                const opsKingDiv = document.getElementById('opsKing');
+                if (opsKingDiv) {
+                    opsKingDiv.innerHTML = `
+                        <strong>${opsLeader.Name || ''}</strong><br>
+                        <small>${getTeamName(opsLeader.Team)}</small><br>
+                        <span style="font-size: 1.2em; color: #e91e63;">${opsValue.toFixed(3)}</span>
                     `;
                 }
             }
@@ -1425,6 +1606,58 @@
                         <strong>${eraLeader.Name || ''}</strong><br>
                         <small>${getTeamName(eraLeader.Team)}</small><br>
                         <span style="font-size: 1.2em; color: #e91e63;">${parseFloat(eraLeader.ERA || 0).toFixed(2)}</span>
+                    `;
+                }
+                
+                // 탈삼진왕
+                const strikeoutLeader = pitchers.reduce((max, player) => 
+                    parseInt(player.K || 0) > parseInt(max.K || 0) ? player : max
+                );
+                const strikeoutKingDiv = document.getElementById('strikeoutKing');
+                if (strikeoutKingDiv) {
+                    strikeoutKingDiv.innerHTML = `
+                        <strong>${strikeoutLeader.Name || ''}</strong><br>
+                        <small>${getTeamName(strikeoutLeader.Team)}</small><br>
+                        <span style="font-size: 1.2em; color: #e91e63;">${strikeoutLeader.K || 0}개</span>
+                    `;
+                }
+                
+                // 최다 이닝
+                const inningLeader = pitchers.reduce((max, player) => 
+                    parseFloat(player.IP || 0) > parseFloat(max.IP || 0) ? player : max
+                );
+                const inningKingDiv = document.getElementById('inningKing');
+                if (inningKingDiv) {
+                    inningKingDiv.innerHTML = `
+                        <strong>${inningLeader.Name || ''}</strong><br>
+                        <small>${getTeamName(inningLeader.Team)}</small><br>
+                        <span style="font-size: 1.2em; color: #e91e63;">${inningLeader.IP || 0}이닝</span>
+                    `;
+                }
+                
+                // 최고 WHIP
+                const whipLeader = pitchers.reduce((min, player) => 
+                    parseFloat(player.WHIP || 10) < parseFloat(min.WHIP || 10) ? player : min
+                );
+                const whipKingDiv = document.getElementById('whipKing');
+                if (whipKingDiv) {
+                    whipKingDiv.innerHTML = `
+                        <strong>${whipLeader.Name || ''}</strong><br>
+                        <small>${getTeamName(whipLeader.Team)}</small><br>
+                        <span style="font-size: 1.2em; color: #e91e63;">${parseFloat(whipLeader.WHIP || 0).toFixed(2)}</span>
+                    `;
+                }
+                
+                // 최고 ERA+
+                const eraPlusLeader = pitchers.reduce((max, player) => 
+                    parseFloat(player['ERA+'] || 0) > parseFloat(max['ERA+'] || 0) ? player : max
+                );
+                const eraPlusKingDiv = document.getElementById('eraPlusKing');
+                if (eraPlusKingDiv) {
+                    eraPlusKingDiv.innerHTML = `
+                        <strong>${eraPlusLeader.Name || ''}</strong><br>
+                        <small>${getTeamName(eraPlusLeader.Team)}</small><br>
+                        <span style="font-size: 1.2em; color: #e91e63;">${eraPlusLeader['ERA+'] || 0}</span>
                     `;
                 }
             }
@@ -1456,6 +1689,30 @@
             console.log('야구 기록실 페이지 로드됨');
             loadData();
         });
+        
+        function showCareerBatters() {
+            const battersTable = document.getElementById('careerBattersTable');
+            const pitchersTable = document.getElementById('careerPitchersTable');
+            const battersBtn = document.getElementById('careerBattersBtn');
+            const pitchersBtn = document.getElementById('careerPitchersBtn');
+            
+            if (battersTable) battersTable.style.display = 'block';
+            if (pitchersTable) pitchersTable.style.display = 'none';
+            if (battersBtn) battersBtn.classList.add('active');
+            if (pitchersBtn) pitchersBtn.classList.remove('active');
+        }
+        
+        function showCareerPitchers() {
+            const battersTable = document.getElementById('careerBattersTable');
+            const pitchersTable = document.getElementById('careerPitchersTable');
+            const battersBtn = document.getElementById('careerBattersBtn');
+            const pitchersBtn = document.getElementById('careerPitchersBtn');
+            
+            if (battersTable) battersTable.style.display = 'none';
+            if (pitchersTable) pitchersTable.style.display = 'block';
+            if (battersBtn) battersBtn.classList.remove('active');
+            if (pitchersBtn) pitchersBtn.classList.add('active');
+        }
     </script>
 </body>
 </html>
