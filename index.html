@@ -2179,40 +2179,95 @@
             let html = '<div class="stats-section">';
             html += '<div class="section-title">경기 일정</div>';
             html += '<div style="overflow-x: auto;">';
-            html += '<table class="stats-table" style="min-width: 800px;">';
+            html += '<table class="stats-table" style="min-width: 1000px; font-size: 0.85em;">';
             html += '<thead><tr>';
-            html += '<th>월</th>';
-            html += '<th>주차</th>';
-            html += '<th>일</th>';
-            html += '<th>요일</th>';
-            html += '<th>냥코 어벤저스</th>';
-            html += '<th>이시카와 파이팅 호크스</th>';
-            html += '<th>버블 스타즈</th>';
-            html += '<th>플로리안 티셔츠</th>';
-            html += '<th>레로레로스</th>';
-            html += '<th>문샷 스피릿츠</th>';
+            html += '<th style="min-width: 50px;">월</th>';
+            html += '<th style="min-width: 100px;">주차</th>';
+            html += '<th style="min-width: 50px;">일</th>';
+            html += '<th style="min-width: 80px;">요일</th>';
+            html += '<th style="min-width: 200px;">냥코 어벤저스</th>';
+            html += '<th style="min-width: 200px;">이시카와 파이팅 호크스</th>';
+            html += '<th style="min-width: 200px;">버블 스타즈</th>';
+            html += '<th style="min-width: 200px;">플로리안 티셔츠</th>';
+            html += '<th style="min-width: 200px;">레로레로스</th>';
+            html += '<th style="min-width: 200px;">문샷 스피릿츠</th>';
             html += '</tr></thead>';
             html += '<tbody>';
             
+            let currentMonth = '';
+            let currentWeek = '';
+            
             data.forEach(row => {
-                if (row['월\n(Month)'] && row['월\n(Month)'].trim() !== '') {
+                const month = row['월\n(Month)'] || '';
+                const week = row['주차\n(Week)'] || '';
+                const date = row['일\n(Date)'] || '';
+                const day = row['요일\n(Day)'] || '';
+                
+                if (month && month.trim() !== '') {
+                    // 월이 바뀌면 구분선 추가
+                    if (currentMonth !== month) {
+                        html += `<tr style="background-color: #f8f9fa; font-weight: bold;">`;
+                        html += `<td colspan="10" style="text-align: center; padding: 15px; color: #e91e63; font-size: 1.1em;">`;
+                        html += `${month}월`;
+                        html += '</td></tr>';
+                        currentMonth = month;
+                        currentWeek = '';
+                    }
+                    
+                    // 주차가 바뀌면 구분선 추가
+                    if (currentWeek !== week && week) {
+                        html += `<tr style="background-color: #f0f0f0;">`;
+                        html += `<td colspan="10" style="text-align: center; padding: 8px; color: #666; font-weight: 600;">`;
+                        html += week;
+                        html += '</td></tr>';
+                        currentWeek = week;
+                    }
+                    
+                    // 경기 일정 행
                     html += '<tr>';
-                    html += `<td>${row['월\n(Month)'] || ''}</td>`;
-                    html += `<td>${row['주차\n(Week)'] || ''}</td>`;
-                    html += `<td>${row['일\n(Date)'] || ''}</td>`;
-                    html += `<td>${row['요일\n(Day)'] || ''}</td>`;
-                    html += `<td>${row['냥코 어벤저스\n(Nyanko Avengers)\n주장 : ゆっち一'] || ''}</td>`;
-                    html += `<td>${row['이시카와 파이팅 호크스\n(Ishikawa Fighting Folks)\n주장 : 甲斐野柊太'] || ''}</td>`;
-                    html += `<td>${row['버블 스타즈\n(Bubble Starts)\n주장 : 장덕춘_'] || ''}</td>`;
-                    html += `<td>${row['플로리안 티셔츠\n(FLORIAN T-SHIRTS)\n주장 : Floră'] || ''}</td>`;
-                    html += `<td>${row['레로레로스\n(LEROLEROS)\n주장 : ke ro'] || ''}</td>`;
-                    html += `<td>${row['문샷 스피릿츠\n(MoonShot Spirits)\n주장 : HANA_ARASHI'] || ''}</td>`;
+                    html += `<td style="text-align: center;">${month}</td>`;
+                    html += `<td style="text-align: center;">${week}</td>`;
+                    html += `<td style="text-align: center;">${date}</td>`;
+                    html += `<td style="text-align: center;">${day}</td>`;
+                    
+                    // 각 팀별 경기 정보
+                    const teams = [
+                        row['냥코 어벤저스\n(Nyanko Avengers)\n주장 : ゆっち一'] || '',
+                        row['이시카와 파이팅 호크스\n(Ishikawa Fighting Folks)\n주장 : 甲斐野柊太'] || '',
+                        row['버블 스타즈\n(Bubble Starts)\n주장 : 장덕춘_'] || '',
+                        row['플로리안 티셔츠\n(FLORIAN T-SHIRTS)\n주장 : Floră'] || '',
+                        row['레로레로스\n(LEROLEROS)\n주장 : ke ro'] || '',
+                        row['문샷 스피릿츠\n(MoonShot Spirits)\n주장 : HANA_ARASHI'] || ''
+                    ];
+                    
+                    teams.forEach(teamSchedule => {
+                        if (teamSchedule.trim() !== '') {
+                            html += `<td style="background-color: #e3f2fd; font-weight: 600; color: #1976d2;">${teamSchedule}</td>`;
+                        } else {
+                            html += '<td></td>';
+                        }
+                    });
+                    
                     html += '</tr>';
                 }
             });
             
             html += '</tbody></table>';
+            html += '</div>';
+            
+            // 팀 정보 요약 추가
+            html += '<div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">';
+            html += '<h3 style="color: #e91e63; margin-bottom: 15px;">팀 정보</h3>';
+            html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">';
+            html += '<div><strong>냥코 어벤저스</strong> (Nyanko Avengers)<br><small>주장: ゆっち一</small></div>';
+            html += '<div><strong>이시카와 파이팅 호크스</strong> (Ishikawa Fighting Folks)<br><small>주장: 甲斐野柊太</small></div>';
+            html += '<div><strong>버블 스타즈</strong> (Bubble Starts)<br><small>주장: 장덕춘_</small></div>';
+            html += '<div><strong>플로리안 티셔츠</strong> (FLORIAN T-SHIRTS)<br><small>주장: Floră</small></div>';
+            html += '<div><strong>레로레로스</strong> (LEROLEROS)<br><small>주장: ke ro</small></div>';
+            html += '<div><strong>문샷 스피릿츠</strong> (MoonShot Spirits)<br><small>주장: HANA_ARASHI</small></div>';
             html += '</div></div>';
+            
+            html += '</div>';
             
             container.innerHTML = html;
         }
