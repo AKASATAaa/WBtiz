@@ -1118,7 +1118,7 @@
                     valueB = (valueB || '').toString().toLowerCase();
                 }
                 
-                if (currentSortDirection === 'desc') {
+                if (currentSortDirection === 'desc') { 
                     return valueB > valueA ? 1 : valueB < valueA ? -1 : 0;
                 } else {
                     return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
