@@ -2151,8 +2151,156 @@
         
         function showTeamInfo(teamName) {
             console.log(`${teamName} 팀 정보를 표시합니다.`);
-            // 여기에 팀 정보 표시 로직을 추가할 수 있습니다
-            alert(`${teamName} 팀 정보 페이지로 이동합니다.`);
+            
+            // 팀별 데이터 수집
+            const teamPlayers = playersData.filter(player => {
+                const playerTeam = getTeamName(player.Team);
+                return playerTeam === teamName || player.Team === teamName;
+            });
+            
+            // 타자와 투수 분리
+            const batters = teamPlayers.filter(player => player.AB && parseFloat(player.AB) > 0);
+            const pitchers = teamPlayers.filter(player => player.ERA && parseFloat(player.IP || 0) > 0);
+            
+            // 특별 기록에서 해당 팀 선수 찾기
+            let specialRecords = [];
+            if (window.specialRecordsData) {
+                specialRecords = window.specialRecordsData.filter(record => {
+                    const playerName = record['닉네임'] || '';
+                    return teamPlayers.some(player => player.Name === playerName);
+                });
+            }
+            
+            // 팀 정보 표시
+            let html = '<div class="stats-section">';
+            
+            // 팀 이미지와 이름
+            html += '<div style="text-align: center; margin-bottom: 30px;">';
+            html += `<img src="./image/${teamName}.png" alt="${teamName}" style="width: 150px; height: 150px; object-fit: contain; margin-bottom: 15px;">`;
+            html += `<h2 style="color: #e91e63; font-size: 2em;">${teamName}</h2>`;
+            html += '</div>';
+            
+            // 특별 기록
+            if (specialRecords.length > 0) {
+                html += '<div style="margin-bottom: 30px;">';
+                html += '<h3 style="color: #e91e63; margin-bottom: 15px; border-bottom: 2px solid #e91e63; padding-bottom: 5px;">특별 기록</h3>';
+                specialRecords.forEach(record => {
+                    html += '<div class="special-record" style="margin-bottom: 10px;">';
+                    html += `<div class="record-title">${record['기록 명'] || ''}</div>`;
+                    html += `<div class="record-details">`;
+                    if (record['일자']) html += `<div class="record-date">${record['일자']}</div>`;
+                    if (record['닉네임']) html += `<div class="record-player">${record['닉네임']}</div>`;
+                    if (record['비고']) html += `<div class="record-note">${record['비고']}</div>`;
+                    html += '</div></div>';
+                });
+                html += '</div>';
+            }
+            
+            // 타자 기록
+            if (batters.length > 0) {
+                html += '<div style="margin-bottom: 30px;">';
+                html += '<h3 style="color: #e91e63; margin-bottom: 15px; border-bottom: 2px solid #e91e63; padding-bottom: 5px;">타자 기록</h3>';
+                html += '<div style="overflow-x: auto;">';
+                html += '<table class="stats-table">';
+                html += '<thead><tr>';
+                html += '<th>순위</th>';
+                html += '<th>선수명</th>';
+                html += '<th>타수</th>';
+                html += '<th>안타</th>';
+                html += '<th>홈런</th>';
+                html += '<th>도루</th>';
+                html += '<th>타율</th>';
+                html += '<th>출루율</th>';
+                html += '<th>장타율</th>';
+                html += '<th>wRC+</th>';
+                html += '</tr></thead>';
+                html += '<tbody>';
+                
+                batters.forEach((player, index) => {
+                    html += '<tr>';
+                    html += `<td class="rank">${index + 1}</td>`;
+                    html += `<td class="player-name">${player.Name || ''}</td>`;
+                    html += `<td>${player.AB || '-'}</td>`;
+                    html += `<td>${player.H || '-'}</td>`;
+                    html += `<td>${player.HR || '-'}</td>`;
+                    html += `<td>${player.SB || '-'}</td>`;
+                    html += `<td><strong>${parseFloat(player.AVG || 0).toFixed(3)}</strong></td>`;
+                    html += `<td>${parseFloat(player.OBP || 0).toFixed(3)}</td>`;
+                    html += `<td>${parseFloat(player.SLG || 0).toFixed(3)}</td>`;
+                    html += `<td>${player['wRC+'] || '-'}</td>`;
+                    html += '</tr>';
+                });
+                
+                html += '</tbody></table>';
+                html += '</div></div>';
+            }
+            
+            // 투수 기록
+            if (pitchers.length > 0) {
+                html += '<div style="margin-bottom: 30px;">';
+                html += '<h3 style="color: #e91e63; margin-bottom: 15px; border-bottom: 2px solid #e91e63; padding-bottom: 5px;">투수 기록</h3>';
+                html += '<div style="overflow-x: auto;">';
+                html += '<table class="stats-table">';
+                html += '<thead><tr>';
+                html += '<th>순위</th>';
+                html += '<th>선수명</th>';
+                html += '<th>이닝</th>';
+                html += '<th>탈삼진</th>';
+                html += '<th>평균자책점</th>';
+                html += '<th>WHIP</th>';
+                html += '<th>ERA+</th>';
+                html += '</tr></thead>';
+                html += '<tbody>';
+                
+                pitchers.forEach((player, index) => {
+                    html += '<tr>';
+                    html += `<td class="rank">${index + 1}</td>`;
+                    html += `<td class="player-name">${player.Name || ''}</td>`;
+                    html += `<td>${player.IP || '-'}</td>`;
+                    html += `<td>${player.K || '-'}</td>`;
+                    html += `<td><strong>${parseFloat(player.ERA || 0).toFixed(2)}</strong></td>`;
+                    html += `<td>${parseFloat(player.WHIP || 0).toFixed(2)}</td>`;
+                    html += `<td>${player['ERA+'] || '-'}</td>`;
+                    html += '</tr>';
+                });
+                
+                html += '</tbody></table>';
+                html += '</div></div>';
+            }
+            
+            html += '</div>';
+            
+            // 팀 정보를 표시할 컨테이너 생성 또는 업데이트
+            let teamInfoContainer = document.getElementById('teamInfoContainer');
+            if (!teamInfoContainer) {
+                teamInfoContainer = document.createElement('div');
+                teamInfoContainer.id = 'teamInfoContainer';
+                teamInfoContainer.style.position = 'fixed';
+                teamInfoContainer.style.top = '0';
+                teamInfoContainer.style.left = '0';
+                teamInfoContainer.style.width = '100%';
+                teamInfoContainer.style.height = '100%';
+                teamInfoContainer.style.backgroundColor = 'rgba(0,0,0,0.8)';
+                teamInfoContainer.style.zIndex = '1000';
+                teamInfoContainer.style.overflow = 'auto';
+                teamInfoContainer.style.padding = '20px';
+                document.body.appendChild(teamInfoContainer);
+            }
+            
+            // 닫기 버튼 추가
+            html += '<div style="text-align: center; margin-top: 30px;">';
+            html += '<button onclick="closeTeamInfo()" style="padding: 10px 20px; background: #e91e63; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em;">닫기</button>';
+            html += '</div>';
+            
+            teamInfoContainer.innerHTML = html;
+            teamInfoContainer.style.display = 'block';
+        }
+        
+        function closeTeamInfo() {
+            const teamInfoContainer = document.getElementById('teamInfoContainer');
+            if (teamInfoContainer) {
+                teamInfoContainer.style.display = 'none';
+            }
         }
         
         // 썸머리그 특별 기록 관련 함수들
@@ -2176,18 +2324,22 @@
                         console.log('데이터 행 수:', results.data.length);
                         
                         if (results.data && results.data.length > 0) {
+                            window.specialRecordsData = results.data;
                             displaySpecialRecords(results.data);
                         } else {
+                            window.specialRecordsData = [];
                             displaySpecialRecords([]);
                         }
                     },
                     error: function(error) {
                         console.error('특별 기록 CSV 파싱 오류:', error);
+                        window.specialRecordsData = [];
                         displaySpecialRecords([]);
                     }
                 });
             } catch (error) {
                 console.error('특별 기록 데이터 로드 오류:', error.message);
+                window.specialRecordsData = [];
                 displaySpecialRecords([]);
             }
         }
