@@ -538,6 +538,40 @@
             line-height: 1.2;
         }
         
+        .game-teams {
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        
+        .game-time {
+            font-size: 0.7em;
+            color: #666;
+            font-weight: normal;
+        }
+        
+        .team {
+            display: inline-block;
+            padding: 2px 4px;
+            border-radius: 3px;
+            margin: 0 2px;
+        }
+        
+        .team.winner {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .team.loser {
+            background: #f44336;
+            color: white;
+        }
+        
+        .vs {
+            margin: 0 4px;
+            color: #666;
+            font-weight: normal;
+        }
+        
         .calendar-day.empty .calendar-date {
             color: #ccc;
         }
@@ -2221,9 +2255,9 @@
             console.log('스케줄 데이터 로드 시작...');
             
             try {
-                const response = await fetch('./schedule.csv');
+                const response = await fetch('./schedule_new_format.csv');
                 if (!response.ok) {
-                    throw new Error('schedule.csv 파일을 찾을 수 없습니다.');
+                    throw new Error('schedule_new_format.csv 파일을 찾을 수 없습니다.');
                 }
                 
                 const csvText = await response.text();
@@ -2267,39 +2301,54 @@
             // 월별로 데이터 그룹화
             const monthlyData = {};
             data.forEach(row => {
-                const month = row['월\n(Month)'] || '';
-                const week = row['주차\n(Week)'] || '';
-                const date = parseInt(row['일\n(Date)']) || 0;
-                const day = row['요일\n(Day)'] || '';
+                const month = row['Month'] || '';
+                const week = row['Week'] || '';
+                const date = parseInt(row['Date']) || 0;
+                const day = row['Day'] || '';
+                const homeTeam = row['HomeTeam'] || '';
+                const awayTeam = row['AwayTeam'] || '';
+                const time = row['Time'] || '';
+                const location = row['Location'] || '';
                 
                 if (month && month.trim() !== '' && date > 0) {
                     if (!monthlyData[month]) {
                         monthlyData[month] = [];
                     }
                     
-                    // 경기 정보 수집
-                    const games = [];
-                    const teams = [
-                        { name: '냥코 어벤저스', data: row['냥코 어벤저스\n(Nyanko Avengers)\n주장 : ゆっち一'] || '' },
-                        { name: '이시카와 파이팅 호크스', data: row['이시카와 파이팅 호크스\n(Ishikawa Fighting Folks)\n주장 : 甲斐野柊太'] || '' },
-                        { name: '버블 스타즈', data: row['버블 스타즈\n(Bubble Starts)\n주장 : 장덕춘_'] || '' },
-                        { name: '플로리안 티셔츠', data: row['플로리안 티셔츠\n(FLORIAN T-SHIRTS)\n주장 : Floră'] || '' },
-                        { name: '레로레로스', data: row['레로레로스\n(LEROLEROS)\n주장 : ke ro'] || '' },
-                        { name: '문샷 스피릿츠', data: row['문샷 스피릿츠\n(MoonShot Spirits)\n주장 : HANA_ARASHI'] || '' }
-                    ];
+                    // 해당 날짜의 기존 데이터 찾기
+                    let existingDay = monthlyData[month].find(d => d.date === date);
+                    if (!existingDay) {
+                        existingDay = {
+                            date: date,
+                            day: day,
+                            week: week,
+                            games: []
+                        };
+                        monthlyData[month].push(existingDay);
+                    }
                     
-                    teams.forEach(team => {
-                        if (team.data.trim() !== '') {
-                            games.push(team.data);
+                    // 경기 정보 추가
+                    if (homeTeam && awayTeam) {
+                        // 점수 정보 파싱
+                        let homeScore = '';
+                        let awayScore = '';
+                        
+                        if (location && location.includes(',')) {
+                            const scores = location.split(',');
+                            if (scores.length >= 2) {
+                                homeScore = scores[0].trim();
+                                awayScore = scores[1].trim();
+                            }
                         }
-                    });
-                    
-                    monthlyData[month].push({
-                        date: date,
-                        day: day,
-                        week: week,
-                        games: games
-                    });
+                        
+                        existingDay.games.push({
+                            home: homeTeam,
+                            away: awayTeam,
+                            time: time,
+                            homeScore: homeScore,
+                            awayScore: awayScore
+                        });
+                    }
                 }
             });
             
@@ -2334,7 +2383,7 @@
                 // 해당 월의 첫 번째 날의 요일을 찾아서 빈 셀 추가
                 const firstDay = monthData[0];
                 const dayNames = ['월', '화', '수', '목', '금', '토', '일'];
-                const firstDayIndex = dayNames.indexOf(firstDay.day.replace(/\([^)]*\)/g, '').trim());
+                const firstDayIndex = dayNames.indexOf(firstDay.day);
                 
                 // 첫 주의 빈 셀들
                 for (let i = 0; i < firstDayIndex; i++) {
@@ -2342,12 +2391,11 @@
                 }
                 
                 // 날짜별 셀 생성
-                let currentWeek = 0;
                 monthData.forEach((dayData, index) => {
                     const isNewWeek = index === 0 || monthData[index - 1].week !== dayData.week;
                     if (isNewWeek && index > 0) {
                         // 주가 바뀌면 빈 셀로 채우기
-                        const currentDayIndex = dayNames.indexOf(monthData[index - 1].day.replace(/\([^)]*\)/g, '').trim());
+                        const currentDayIndex = dayNames.indexOf(monthData[index - 1].day);
                         for (let i = currentDayIndex + 1; i < 7; i++) {
                             html += '<div class="calendar-day empty"></div>';
                         }
@@ -2359,7 +2407,26 @@
                     if (dayData.games.length > 0) {
                         html += '<div class="calendar-games">';
                         dayData.games.forEach(game => {
-                            html += `<div class="game-item">${game}</div>`;
+                            html += `<div class="game-item">`;
+                            
+                            // 팀명과 점수 표시
+                            if (game.homeScore && game.awayScore) {
+                                // 경기 결과가 있는 경우
+                                const homeWon = parseInt(game.homeScore) > parseInt(game.awayScore);
+                                html += `<div class="game-teams">`;
+                                html += `<span class="team ${homeWon ? 'winner' : 'loser'}">${game.away} ${game.awayScore}</span>`;
+                                html += `<span class="vs">vs</span>`;
+                                html += `<span class="team ${homeWon ? 'winner' : 'loser'}">${game.home} ${game.homeScore}</span>`;
+                                html += `</div>`;
+                            } else {
+                                // 경기 예정인 경우
+                                html += `<div class="game-teams">${game.away} vs ${game.home}</div>`;
+                            }
+                            
+                            if (game.time) {
+                                html += `<div class="game-time">${game.time}</div>`;
+                            }
+                            html += `</div>`;
                         });
                         html += '</div>';
                     }
@@ -2369,7 +2436,7 @@
                 
                 // 마지막 주의 빈 셀들
                 const lastDay = monthData[monthData.length - 1];
-                const lastDayIndex = dayNames.indexOf(lastDay.day.replace(/\([^)]*\)/g, '').trim());
+                const lastDayIndex = dayNames.indexOf(lastDay.day);
                 for (let i = lastDayIndex + 1; i < 7; i++) {
                     html += '<div class="calendar-day empty"></div>';
                 }
