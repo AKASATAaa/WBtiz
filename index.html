@@ -815,7 +815,9 @@
         <div id="schedule" class="tab-content">
             <div class="stats-section">
                 <div class="section-title">경기 일정</div>
-                <p>경기 일정 페이지 준비 중...</p>
+                <div id="schedule">
+                    <div class="loading">스케줄 데이터가 없습니다.</div>
+                </div>
             </div>
         </div>
         
@@ -1020,6 +1022,11 @@
             // 특별 기록 탭이 선택되면 데이터 로드
             if (tabName === 'special') {
                 loadSpecialData();
+            }
+            
+            // 스케줄 탭이 선택되면 데이터 로드
+            if (tabName === 'schedule') {
+                loadScheduleData();
             }
         }
         
@@ -2117,6 +2124,95 @@
                 
                 html += `</div>`;
             });
+            
+            container.innerHTML = html;
+        }
+        
+        // 스케줄 데이터 로드 함수
+        async function loadScheduleData() {
+            console.log('스케줄 데이터 로드 시작...');
+            
+            try {
+                const response = await fetch('./schedule.csv');
+                if (!response.ok) {
+                    throw new Error('schedule.csv 파일을 찾을 수 없습니다.');
+                }
+                
+                const csvText = await response.text();
+                console.log('스케줄 CSV 파일 크기:', csvText.length, '문자');
+                
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        console.log('스케줄 파싱 완료!');
+                        console.log('데이터 행 수:', results.data.length);
+                        
+                        if (results.data && results.data.length > 0) {
+                            displayScheduleData(results.data);
+                        } else {
+                            displayScheduleData([]);
+                        }
+                    },
+                    error: function(error) {
+                        console.error('스케줄 CSV 파싱 오류:', error);
+                        displayScheduleData([]);
+                    }
+                });
+            } catch (error) {
+                console.error('스케줄 데이터 로드 오류:', error.message);
+                displayScheduleData([]);
+            }
+        }
+        
+        function displayScheduleData(data) {
+            const container = document.getElementById('schedule');
+            if (!container) return;
+            
+            const texts = translations[currentLanguage];
+            
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="stats-section"><div class="section-title">경기 일정</div><div class="loading">스케줄 데이터가 없습니다.</div></div>';
+                return;
+            }
+            
+            let html = '<div class="stats-section">';
+            html += '<div class="section-title">경기 일정</div>';
+            html += '<div style="overflow-x: auto;">';
+            html += '<table class="stats-table" style="min-width: 800px;">';
+            html += '<thead><tr>';
+            html += '<th>월</th>';
+            html += '<th>주차</th>';
+            html += '<th>일</th>';
+            html += '<th>요일</th>';
+            html += '<th>냥코 어벤저스</th>';
+            html += '<th>이시카와 파이팅 호크스</th>';
+            html += '<th>버블 스타즈</th>';
+            html += '<th>플로리안 티셔츠</th>';
+            html += '<th>레로레로스</th>';
+            html += '<th>문샷 스피릿츠</th>';
+            html += '</tr></thead>';
+            html += '<tbody>';
+            
+            data.forEach(row => {
+                if (row['월\n(Month)'] && row['월\n(Month)'].trim() !== '') {
+                    html += '<tr>';
+                    html += `<td>${row['월\n(Month)'] || ''}</td>`;
+                    html += `<td>${row['주차\n(Week)'] || ''}</td>`;
+                    html += `<td>${row['일\n(Date)'] || ''}</td>`;
+                    html += `<td>${row['요일\n(Day)'] || ''}</td>`;
+                    html += `<td>${row['냥코 어벤저스\n(Nyanko Avengers)\n주장 : ゆっち一'] || ''}</td>`;
+                    html += `<td>${row['이시카와 파이팅 호크스\n(Ishikawa Fighting Folks)\n주장 : 甲斐野柊太'] || ''}</td>`;
+                    html += `<td>${row['버블 스타즈\n(Bubble Starts)\n주장 : 장덕춘_'] || ''}</td>`;
+                    html += `<td>${row['플로리안 티셔츠\n(FLORIAN T-SHIRTS)\n주장 : Floră'] || ''}</td>`;
+                    html += `<td>${row['레로레로스\n(LEROLEROS)\n주장 : ke ro'] || ''}</td>`;
+                    html += `<td>${row['문샷 스피릿츠\n(MoonShot Spirits)\n주장 : HANA_ARASHI'] || ''}</td>`;
+                    html += '</tr>';
+                }
+            });
+            
+            html += '</tbody></table>';
+            html += '</div></div>';
             
             container.innerHTML = html;
         }
