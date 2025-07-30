@@ -315,47 +315,49 @@
         
         /* 팀 정보 스타일 */
         .teams-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
             margin-top: 30px;
+            flex-wrap: wrap;
         }
         
         .team-card {
             background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
             border: 3px solid transparent;
+            min-width: 120px;
         }
         
         .team-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
             border-color: #e91e63;
         }
         
         .team-logo {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         
         .team-logo img {
-            width: 120px;
-            height: 120px;
+            width: 60px;
+            height: 60px;
             object-fit: contain;
-            border-radius: 15px;
+            border-radius: 10px;
             background: #f8f9fa;
-            padding: 10px;
+            padding: 5px;
         }
         
         .team-name {
-            font-size: 1.5em;
+            font-size: 0.9em;
             font-weight: bold;
             color: #333;
-            margin-top: 15px;
+            margin-top: 8px;
         }
         
         /* 팀별 색상 테마 */
@@ -1746,11 +1748,19 @@
             if (!teamId) return '';
             const texts = translations[currentLanguage];
             
-            if (teamId === "KR") return texts.korea;
-            if (teamId === "JP") return texts.japan;
+            // 팀 ID를 올바른 팀명으로 매핑
+            const teamMapping = {
+                'LEROLEROS': 'LEROLEROS',
+                'BUBBLESTARS': 'BUBBLE STARS',
+                'AVENGERS': 'Nyanko AVENGERS',
+                'FIGHTINGFOLKS': 'Ishikawa Fighting Folks',
+                'SPRITZ': 'MoonShot Spirits',
+                'TSHIRTS': 'FLORIAN T-SHIRTS',
+                'KR': texts.korea,
+                'JP': texts.japan
+            };
             
-            const teamInfo = teamsData.find(team => team.ID === teamId);
-            return teamInfo ? teamInfo.Name : teamId;
+            return teamMapping[teamId] || teamId;
         }
         
         function displayBatters() {
@@ -2152,15 +2162,39 @@
         function showTeamInfo(teamName) {
             console.log(`${teamName} 팀 정보를 표시합니다.`);
             
-            // 팀별 데이터 수집
+            // 팀명을 팀 ID로 변환
+            const teamIdMapping = {
+                'LEROLEROS': 'LEROLEROS',
+                'BUBBLE STARS': 'BUBBLESTARS',
+                'Nyanko AVENGERS': 'AVENGERS',
+                'Ishikawa Fighting Folks': 'FIGHTINGFOLKS',
+                'MoonShot Spirits': 'SPRITZ',
+                'FLORIAN T-SHIRTS': 'TSHIRTS'
+            };
+            
+            const teamId = teamIdMapping[teamName] || teamName;
+            
+            // 팀별 데이터 수집 - 더 유연한 매칭
             const teamPlayers = playersData.filter(player => {
                 const playerTeam = getTeamName(player.Team);
-                return playerTeam === teamName || player.Team === teamName;
+                const directMatch = player.Team === teamId;
+                const nameMatch = playerTeam === teamName;
+                const teamIdMatch = player.Team === teamId;
+                
+                console.log(`선수: ${player.Name}, 팀: ${player.Team}, 변환된 팀: ${playerTeam}, 매칭: ${directMatch || nameMatch || teamIdMatch}`);
+                
+                return directMatch || nameMatch || teamIdMatch;
             });
+            
+            console.log(`${teamName} 팀 선수 수:`, teamPlayers.length);
+            console.log('팀 선수들:', teamPlayers.map(p => p.Name));
             
             // 타자와 투수 분리
             const batters = teamPlayers.filter(player => player.AB && parseFloat(player.AB) > 0);
             const pitchers = teamPlayers.filter(player => player.ERA && parseFloat(player.IP || 0) > 0);
+            
+            console.log('타자 수:', batters.length);
+            console.log('투수 수:', pitchers.length);
             
             // 특별 기록에서 해당 팀 선수 찾기
             let specialRecords = [];
@@ -2171,13 +2205,22 @@
                 });
             }
             
+            // 팀 정보를 표시할 컨테이너 찾기
+            let teamInfoContainer = document.getElementById('teamInfoContainer');
+            if (!teamInfoContainer) {
+                teamInfoContainer = document.createElement('div');
+                teamInfoContainer.id = 'teamInfoContainer';
+                teamInfoContainer.style.marginTop = '30px';
+                document.querySelector('#teams .stats-section').appendChild(teamInfoContainer);
+            }
+            
             // 팀 정보 표시
             let html = '<div class="stats-section">';
             
             // 팀 이미지와 이름
             html += '<div style="text-align: center; margin-bottom: 30px;">';
-            html += `<img src="./image/${teamName}.png" alt="${teamName}" style="width: 150px; height: 150px; object-fit: contain; margin-bottom: 15px;">`;
-            html += `<h2 style="color: #e91e63; font-size: 2em;">${teamName}</h2>`;
+            html += `<img src="./image/${teamName}.png" alt="${teamName}" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 15px;">`;
+            html += `<h2 style="color: #e91e63; font-size: 1.5em;">${teamName}</h2>`;
             html += '</div>';
             
             // 특별 기록
@@ -2268,39 +2311,17 @@
                 html += '</div></div>';
             }
             
-            html += '</div>';
-            
-            // 팀 정보를 표시할 컨테이너 생성 또는 업데이트
-            let teamInfoContainer = document.getElementById('teamInfoContainer');
-            if (!teamInfoContainer) {
-                teamInfoContainer = document.createElement('div');
-                teamInfoContainer.id = 'teamInfoContainer';
-                teamInfoContainer.style.position = 'fixed';
-                teamInfoContainer.style.top = '0';
-                teamInfoContainer.style.left = '0';
-                teamInfoContainer.style.width = '100%';
-                teamInfoContainer.style.height = '100%';
-                teamInfoContainer.style.backgroundColor = 'rgba(0,0,0,0.8)';
-                teamInfoContainer.style.zIndex = '1000';
-                teamInfoContainer.style.overflow = 'auto';
-                teamInfoContainer.style.padding = '20px';
-                document.body.appendChild(teamInfoContainer);
+            // 선수가 없는 경우
+            if (teamPlayers.length === 0) {
+                html += '<div style="text-align: center; padding: 30px; color: #666;">';
+                html += `<p>${teamName} 팀의 선수 정보가 없습니다.</p>`;
+                html += '</div>';
             }
             
-            // 닫기 버튼 추가
-            html += '<div style="text-align: center; margin-top: 30px;">';
-            html += '<button onclick="closeTeamInfo()" style="padding: 10px 20px; background: #e91e63; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em;">닫기</button>';
             html += '</div>';
             
             teamInfoContainer.innerHTML = html;
             teamInfoContainer.style.display = 'block';
-        }
-        
-        function closeTeamInfo() {
-            const teamInfoContainer = document.getElementById('teamInfoContainer');
-            if (teamInfoContainer) {
-                teamInfoContainer.style.display = 'none';
-            }
         }
         
         // 썸머리그 특별 기록 관련 함수들
