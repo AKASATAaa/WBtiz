@@ -1344,6 +1344,44 @@
             });
         }
         
+        function updateTabContents() {
+            const texts = translations[currentLanguage];
+            
+            // 선수정보 탭
+            const playersTab = document.getElementById('players');
+            if (playersTab) {
+                const playersTitle = playersTab.querySelector('.section-title');
+                if (playersTitle) playersTitle.textContent = texts.playerInfo;
+                const playersContent = playersTab.querySelector('p');
+                if (playersContent) playersContent.textContent = texts.preparing;
+            }
+            
+            // 경기 일정 탭
+            const scheduleTab = document.getElementById('schedule');
+            if (scheduleTab) {
+                const scheduleTitle = scheduleTab.querySelector('.section-title');
+                if (scheduleTitle) scheduleTitle.textContent = texts.gameSchedule;
+                const scheduleContent = scheduleTab.querySelector('p');
+                if (scheduleContent) scheduleContent.textContent = texts.preparing;
+            }
+            
+            // 승부 예측 탭
+            const predictionTab = document.getElementById('prediction');
+            if (predictionTab) {
+                const predictionTitle = predictionTab.querySelector('.section-title');
+                if (predictionTitle) predictionTitle.textContent = texts.gamePrediction;
+                const predictionContent = predictionTab.querySelector('p');
+                if (predictionContent) predictionContent.textContent = texts.preparing;
+            }
+            
+            // 썸머리그 특별 기록 탭
+            const specialTab = document.getElementById('special');
+            if (specialTab) {
+                const specialTitle = specialTab.querySelector('.section-title');
+                if (specialTitle) specialTitle.textContent = texts.summerSpecial;
+            }
+        }
+        
         // 데이터 로딩 함수들
         async function loadData() {
             console.log('데이터 로드 시작...');
