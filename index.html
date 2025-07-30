@@ -2255,9 +2255,9 @@
             console.log('스케줄 데이터 로드 시작...');
             
             try {
-                const response = await fetch('./schedule_new_format.csv');
+                const response = await fetch('./schedule.csv');
                 if (!response.ok) {
-                    throw new Error('schedule_new_format.csv 파일을 찾을 수 없습니다.');
+                    throw new Error('schedule.csv 파일을 찾을 수 없습니다.');
                 }
                 
                 const csvText = await response.text();
@@ -2308,7 +2308,8 @@
                 const homeTeam = row['HomeTeam'] || '';
                 const awayTeam = row['AwayTeam'] || '';
                 const time = row['Time'] || '';
-                const location = row['Location'] || '';
+                const homeScore = row['HomeScore'] || '';
+                const awayScore = row['AwayScore'] || '';
                 
                 if (month && month.trim() !== '' && date > 0) {
                     if (!monthlyData[month]) {
@@ -2329,18 +2330,6 @@
                     
                     // 경기 정보 추가
                     if (homeTeam && awayTeam) {
-                        // 점수 정보 파싱
-                        let homeScore = '';
-                        let awayScore = '';
-                        
-                        if (location && location.includes(',')) {
-                            const scores = location.split(',');
-                            if (scores.length >= 2) {
-                                homeScore = scores[0].trim();
-                                awayScore = scores[1].trim();
-                            }
-                        }
-                        
                         existingDay.games.push({
                             home: homeTeam,
                             away: awayTeam,
@@ -2414,7 +2403,7 @@
                                 // 경기 결과가 있는 경우
                                 const homeWon = parseInt(game.homeScore) > parseInt(game.awayScore);
                                 html += `<div class="game-teams">`;
-                                html += `<span class="team ${homeWon ? 'winner' : 'loser'}">${game.away} ${game.awayScore}</span>`;
+                                html += `<span class="team ${homeWon ? 'loser' : 'winner'}">${game.away} ${game.awayScore}</span>`;
                                 html += `<span class="vs">vs</span>`;
                                 html += `<span class="team ${homeWon ? 'winner' : 'loser'}">${game.home} ${game.homeScore}</span>`;
                                 html += `</div>`;
