@@ -414,6 +414,67 @@
                 font-size: 1.2em;
             }
         }
+        
+        /* 썸머리그 특별 기록 스타일 */
+        .special-category {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .special-category h3 {
+            color: #e91e63;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #e91e63;
+            padding-bottom: 10px;
+        }
+        
+        .special-record {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #e91e63;
+            transition: all 0.3s ease;
+        }
+        
+        .special-record:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+        
+        .record-title {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        
+        .record-details {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+        
+        .record-date {
+            color: #e91e63;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .record-player {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .record-note {
+            color: #888;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -431,6 +492,7 @@
         <div class="nav-container">
             <div class="nav-item active" onclick="showTab('records', event)" id="navRecords">기록실</div>
             <div class="nav-item" onclick="showTab('teams', event)" id="navTeams">팀 정보</div>
+            <div class="nav-item" onclick="showTab('special', event)" id="navSpecial">썸머리그 특별 기록</div>
             <div class="nav-item" onclick="showTab('players', event)" id="navPlayers">선수정보</div>
             <div class="nav-item" onclick="showTab('schedule', event)" id="navSchedule">경기 일정</div>
             <div class="nav-item" onclick="showTab('prediction', event)" id="navPrediction">승부 예측</div>
@@ -733,6 +795,16 @@
             </div>
         </div>
         
+        <!-- 썸머리그 특별 기록 탭 -->
+        <div id="special" class="tab-content">
+            <div class="stats-section">
+                <div class="section-title">썸머리그 특별 기록</div>
+                <div id="specialRecords">
+                    <div class="loading" id="specialLoading">특별 기록을 불러오는 중...</div>
+                </div>
+            </div>
+        </div>
+        
         <div id="players" class="tab-content">
             <div class="stats-section">
                 <div class="section-title">선수정보</div>
@@ -771,6 +843,7 @@
                 mainTitle: "야구 전적 기록실",
                 navRecords: "기록실",
                 navTeams: "팀 정보",
+                navSpecial: "썸머리그 특별 기록",
                 navPlayers: "선수정보",
                 navSchedule: "경기 일정",
                 navPrediction: "승부 예측",
@@ -827,12 +900,18 @@
                 japan: "일본",
                 teamDetails: "팀 상세 정보",
                 teamStats: "팀 통계",
-                teamPlayers: "팀 선수들"
+                teamPlayers: "팀 선수들",
+                summerSpecial: "썸머리그 특별 기록",
+                loadingSpecial: "특별 기록을 불러오는 중...",
+                pitcherRecords: "투수 기록",
+                batterRecords: "타자 기록",
+                teamRecords: "팀 기록"
             },
             ja: {
                 mainTitle: "野球成績記録室",
                 navRecords: "記録室",
                 navTeams: "チーム情報",
+                navSpecial: "サマーエスペシャル",
                 navPlayers: "選手情報",
                 navSchedule: "試合日程",
                 navPrediction: "勝敗予想",
@@ -889,7 +968,12 @@
                 japan: "日本",
                 teamDetails: "チーム詳細情報",
                 teamStats: "チーム統計",
-                teamPlayers: "チーム選手"
+                teamPlayers: "チーム選手",
+                summerSpecial: "サマーエスペシャル",
+                loadingSpecial: "特別レコードを読み込んでいます...",
+                pitcherRecords: "投手レコード",
+                batterRecords: "打者レコード",
+                teamRecords: "チームレコード"
             }
         };
         
@@ -915,7 +999,7 @@
         }
         
         function showTab(tabName, event) {
-            const tabs = ['records', 'teams', 'players', 'schedule', 'prediction'];
+            const tabs = ['records', 'teams', 'special', 'players', 'schedule', 'prediction'];
             tabs.forEach(id => {
                 const element = document.getElementById(id);
                 if (element) element.classList.remove('active');
@@ -931,6 +1015,11 @@
             // 이벤트 객체가 있으면 해당 요소에 active 클래스 추가
             if (event && event.target) {
                 event.target.classList.add('active');
+            }
+            
+            // 특별 기록 탭이 선택되면 데이터 로드
+            if (tabName === 'special') {
+                loadSpecialData();
             }
         }
         
@@ -1056,7 +1145,7 @@
             if (mainTitle) mainTitle.textContent = texts.mainTitle;
             
             // 네비게이션 메뉴
-            const navItems = ['navRecords', 'navTeams', 'navPlayers', 'navSchedule', 'navPrediction'];
+            const navItems = ['navRecords', 'navTeams', 'navSpecial', 'navPlayers', 'navSchedule', 'navPrediction'];
             navItems.forEach(id => {
                 const element = document.getElementById(id);
                 if (element) element.textContent = texts[id];
@@ -1430,20 +1519,23 @@
             const teamValue = teamFilter ? teamFilter.value : '';
             const nameValue = nameFilter ? nameFilter.value.toLowerCase() : '';
             
+            // 시즌 기록실: 팀이 있는 선수만 필터링
             filteredBatters = playersData.filter(player => {
                 const hasHittingStats = player.AB && parseFloat(player.AB) > 0;
+                const hasTeam = player.Team && player.Team.trim() !== '';
                 const teamMatch = !teamValue || player.Team === teamValue;
                 const nameMatch = !nameValue || player.Name.toLowerCase().includes(nameValue);
                 
-                return hasHittingStats && teamMatch && nameMatch;
+                return hasHittingStats && hasTeam && teamMatch && nameMatch;
             });
             
             filteredPitchers = playersData.filter(player => {
                 const hasPitchingStats = player.ERA && parseFloat(player.IP || 0) > 0;
+                const hasTeam = player.Team && player.Team.trim() !== '';
                 const teamMatch = !teamValue || player.Team === teamValue;
                 const nameMatch = !nameValue || player.Name.toLowerCase().includes(nameValue);
                 
-                return hasPitchingStats && teamMatch && nameMatch;
+                return hasPitchingStats && hasTeam && teamMatch && nameMatch;
             });
             
             const battersTable = document.getElementById('battersTable');
@@ -1878,6 +1970,108 @@
             console.log(`${teamName} 팀 정보를 표시합니다.`);
             // 여기에 팀 정보 표시 로직을 추가할 수 있습니다
             alert(`${teamName} 팀 정보 페이지로 이동합니다.`);
+        }
+        
+        // 썸머리그 특별 기록 관련 함수들
+        async function loadSpecialData() {
+            console.log('특별 기록 데이터 로드 시작...');
+            
+            try {
+                const response = await fetch('./SeasonSpecial.csv');
+                if (!response.ok) {
+                    throw new Error('SeasonSpecial.csv 파일을 찾을 수 없습니다.');
+                }
+                
+                const csvText = await response.text();
+                console.log('특별 기록 CSV 파일 크기:', csvText.length, '문자');
+                
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        console.log('특별 기록 파싱 완료!');
+                        console.log('데이터 행 수:', results.data.length);
+                        
+                        if (results.data && results.data.length > 0) {
+                            displaySpecialRecords(results.data);
+                        } else {
+                            displaySpecialRecords([]);
+                        }
+                    },
+                    error: function(error) {
+                        console.error('특별 기록 CSV 파싱 오류:', error);
+                        displaySpecialRecords([]);
+                    }
+                });
+            } catch (error) {
+                console.error('특별 기록 데이터 로드 오류:', error.message);
+                displaySpecialRecords([]);
+            }
+        }
+        
+        function displaySpecialRecords(data) {
+            const container = document.getElementById('specialRecords');
+            if (!container) return;
+            
+            const texts = translations[currentLanguage];
+            
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="loading">특별 기록이 없습니다.</div>';
+                return;
+            }
+            
+            // 분류별로 데이터 그룹화
+            const categories = {};
+            data.forEach(record => {
+                if (record['분류'] && record['기록 명']) {
+                    const category = record['분류'];
+                    if (!categories[category]) {
+                        categories[category] = [];
+                    }
+                    categories[category].push(record);
+                }
+            });
+            
+            let html = '';
+            
+            Object.keys(categories).forEach(category => {
+                const records = categories[category];
+                
+                html += `<div class="special-category">`;
+                html += `<h3>${category}</h3>`;
+                
+                records.forEach(record => {
+                    const recordName = record['기록 명'] || '';
+                    const date = record['일자'] || '';
+                    const player = record['닉네임'] || '';
+                    const note = record['비고'] || '';
+                    
+                    if (recordName.trim() !== '') {
+                        html += `<div class="special-record">`;
+                        html += `<div class="record-title">${recordName}</div>`;
+                        html += `<div class="record-details">`;
+                        
+                        if (date) {
+                            html += `<div class="record-date">📅 ${date}</div>`;
+                        }
+                        
+                        if (player) {
+                            html += `<div class="record-player">👤 ${player}</div>`;
+                        }
+                        
+                        if (note) {
+                            html += `<div class="record-note">💬 ${note}</div>`;
+                        }
+                        
+                        html += `</div>`;
+                        html += `</div>`;
+                    }
+                });
+                
+                html += `</div>`;
+            });
+            
+            container.innerHTML = html;
         }
     </script>
 </body>
