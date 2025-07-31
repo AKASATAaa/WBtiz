@@ -1846,8 +1846,8 @@
                         console.log('팀 CSV 파싱 완료!');
                         console.log('팀 데이터 행 수:', results.data.length);
                         
-                        const playerTeamMap = new Map();
-                        const teamSet = new Set();
+                        // teamsData를 올바른 구조로 생성
+                        teamsData = [];
                         
                         results.data.forEach(row => {
                             if (row && Array.isArray(row) && row.length >= 3) {
@@ -1857,43 +1857,28 @@
                                 
                                 if (playerName && category && teamName) {
                                     if (category === "Team" && teamName) {
-                                        playerTeamMap.set(playerName, teamName);
-                                        teamSet.add(teamName);
+                                        teamsData.push({
+                                            PlayerName: playerName,
+                                            TeamName: teamName
+                                        });
                                     } else if (category === "KR") {
-                                        playerTeamMap.set(playerName, "KR");
-                                        teamSet.add("KR");
+                                        teamsData.push({
+                                            PlayerName: playerName,
+                                            TeamName: "KR"
+                                        });
                                     } else if (category === "JP") {
-                                        playerTeamMap.set(playerName, "JP");
-                                        teamSet.add("JP");
+                                        teamsData.push({
+                                            PlayerName: playerName,
+                                            TeamName: "JP"
+                                        });
                                     }
                                 }
                             }
                         });
                         
-                        console.log('팀 매핑 결과:', playerTeamMap.size, '개 선수');
-                        console.log('팀 목록:', Array.from(teamSet));
+                        console.log('팀 데이터 생성 완료:', teamsData.length, '개 선수');
+                        console.log('팀 데이터 샘플:', teamsData.slice(0, 5));
                         
-                        // 팀 정보를 플레이어 데이터에 적용
-                        playersData.forEach(player => {
-                            if (player.Name && playerTeamMap.has(player.Name)) {
-                                player.Team = playerTeamMap.get(player.Name);
-                            }
-                        });
-                        
-                        // 팀 데이터 생성
-                        teamsData = [];
-                        teamSet.forEach(teamName => {
-                            let displayName = teamName;
-                            if (teamName === "KR") displayName = "한국";
-                            else if (teamName === "JP") displayName = "일본";
-                            
-                            teamsData.push({
-                                ID: teamName,
-                                Name: displayName
-                            });
-                        });
-                        
-                        console.log('최종 팀 데이터:', teamsData);
                         initializeData();
                     },
                     error: function(error) {
@@ -1910,18 +1895,26 @@
         }
         
         function createDefaultTeamData() {
-            const teams = [...new Set(playersData.map(player => player.Team).filter(team => team))];
+            console.log('기본 팀 데이터 생성');
+            teamsData = [];
             
-            teamsData = teams.map(teamId => {
-                let displayName = teamId;
-                if (teamId === "KR") displayName = "한국";
-                else if (teamId === "JP") displayName = "일본";
-                
-                return {
-                    ID: teamId,
-                    Name: displayName
-                };
+            // playersData에서 팀 정보 추출
+            const teamMap = new Map();
+            playersData.forEach(player => {
+                if (player.Name && player.Team) {
+                    teamMap.set(player.Name, player.Team);
+                }
             });
+            
+            // teamsData 구조로 변환
+            teamMap.forEach((teamName, playerName) => {
+                teamsData.push({
+                    PlayerName: playerName,
+                    TeamName: teamName
+                });
+            });
+            
+            console.log('기본 팀 데이터 생성 완료:', teamsData.length, '개 선수');
         }
         
         // 데이터 초기화
@@ -2989,10 +2982,6 @@
             const container = document.getElementById('battersTable');
             if (!container || seasonHitterData.length === 0) return;
             
-            console.log('시즌 타자 데이터:', seasonHitterData.length, '개');
-            console.log('팀 데이터:', teamsData.length, '개');
-            console.log('팀 데이터 샘플:', teamsData.slice(0, 5));
-            
             const texts = translations[currentLanguage];
             let html = '<table class="stats-table">';
             html += '<thead><tr>';
@@ -3014,8 +3003,6 @@
                     // teams.csv에서 팀명 찾기
                     const teamInfo = teamsData.find(team => team.PlayerName === player.Name);
                     const teamName = teamInfo ? teamInfo.TeamName : '';
-                    
-                    console.log(`선수: ${player.Name}, 팀: ${teamName}`);
                     
                     html += '<tr>';
                     html += `<td>${index + 1}</td>`;
@@ -3079,4 +3066,5 @@
         }
     </script>
 </body>
+</html>
 </html>
