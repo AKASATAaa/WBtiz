@@ -2989,6 +2989,10 @@
             const container = document.getElementById('battersTable');
             if (!container || seasonHitterData.length === 0) return;
             
+            console.log('시즌 타자 데이터:', seasonHitterData.length, '개');
+            console.log('팀 데이터:', teamsData.length, '개');
+            console.log('팀 데이터 샘플:', teamsData.slice(0, 5));
+            
             const texts = translations[currentLanguage];
             let html = '<table class="stats-table">';
             html += '<thead><tr>';
@@ -3010,6 +3014,8 @@
                     // teams.csv에서 팀명 찾기
                     const teamInfo = teamsData.find(team => team.PlayerName === player.Name);
                     const teamName = teamInfo ? teamInfo.TeamName : '';
+                    
+                    console.log(`선수: ${player.Name}, 팀: ${teamName}`);
                     
                     html += '<tr>';
                     html += `<td>${index + 1}</td>`;
