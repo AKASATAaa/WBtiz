@@ -2156,6 +2156,16 @@
             if (pitchersBtn) pitchersBtn.classList.add('active');
         }
         
+        // 팀별 주장 정보
+        const teamCaptains = {
+            'LEROLEROS': 'Chunsik03',
+            'BUBBLE STARS': 'Kr_Luna',
+            'MoonShot Spirits': 'Sabo_10',
+            'FLORIAN T-SHIRTS': 'Floră',
+            'Ishikawa Fighting Folks': '甲斐野柊太',
+            'Nyanko AVENGERS': 'にゃんこ3K'
+        };
+        
         function showTeamInfo(teamName) {
             console.log(`${teamName} 팀 정보를 표시합니다.`);
             
@@ -2206,6 +2216,14 @@
             html += '<div style="text-align: center; margin-bottom: 30px;">';
             html += `<img src="./image/${imageName}.png" alt="${teamName}" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 15px;">`;
             html += `<h2 style="color: #e91e63; font-size: 1.5em;">${teamName}</h2>`;
+            
+            // 주장 정보 추가
+            const captain = teamCaptains[teamName];
+            if (captain) {
+                html += `<div style="margin-top: 10px; color: #666; font-size: 0.9em;">`;
+                html += `<strong>주장:</strong> ${captain}`;
+                html += '</div>';
+            }
             html += '</div>';
             
             // 특별 기록
