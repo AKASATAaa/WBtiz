@@ -940,7 +940,7 @@
             <div class="stats-section">
                 <div class="section-title">경기 일정</div>
                 <div id="schedule">
-                    <div class="loading" id="scheduleLoading">스케줄 데이터가 없습니다.</div>
+                    <div class="loading">스케줄 데이터가 없습니다.</div>
                 </div>
             </div>
         </div>
@@ -963,12 +963,8 @@
         let currentSortDirection = 'desc';
         let currentLanguage = 'ko'; // 기본 언어는 한국어
         
-        // 다국어 텍스트 객체 (전역 변수로 먼저 정의)
-        let translations;
-        
-        // 번역 사전 초기화 함수
-        function initializeTranslations() {
-            translations = {
+        // 다국어 텍스트 객체
+        const translations = {
             ko: {
                 mainTitle: "WBD 기록실",
                 navRecords: "기록실",
@@ -1186,55 +1182,60 @@
                     "이닝": "이닝",
                     "탈삼진": "탈삼진",
                     "WHIP": "WHIP",
-                    "ERA+": "ERA+"
+                    "ERA+": "ERA+",
+                    // 단위 번역
+                    units: {
+                        "개": "개",
+                        "이닝": "이닝",
+                        "타점": "타점",
+                        "타수": "타수",
+                        "안타": "안타",
+                        "홈런": "홈런",
+                        "도루": "도루",
+                        "탈삼진": "탈삼진",
+                        "승리": "승리",
+                        "패배": "패배",
+                        "무승부": "무승부",
+                        "경기": "경기",
+                        "일": "일",
+                        "월": "월",
+                        "화": "화",
+                        "수": "수",
+                        "목": "목",
+                        "금": "금",
+                        "토": "토",
+                        "일요일": "일요일",
+                        "월요일": "월요일",
+                        "화요일": "화요일",
+                        "수요일": "수요일",
+                        "목요일": "목요일",
+                        "금요일": "금요일",
+                        "토요일": "토요일",
+                        "경기 일정": "경기 일정",
+                        "경기 결과": "경기 결과",
+                        "홈팀": "홈팀",
+                        "원정팀": "원정팀",
+                        "VS": "VS",
+                        "승": "승",
+                        "패": "패",
+                        "무": "무",
+                        "시간": "시간",
+                        "장소": "장소",
+                        "경기장": "경기장",
+                        "스코어": "스코어",
+                        "결과": "결과",
+                        "일정 없음": "일정 없음",
+                        "경기 준비 중": "경기 준비 중"
+                    }
                 },
-                // 단위 번역
-                units: {
-                    "개": "개",
-                    "이닝": "이닝",
-                    "타점": "타점",
-                    "타수": "타수",
-                    "안타": "안타",
-                    "홈런": "홈런",
-                    "도루": "도루",
-                    "탈삼진": "탈삼진",
-                    "승리": "승리",
-                    "패배": "패배",
-                    "무승부": "무승부",
-                    "경기": "경기",
-                    "일": "일",
-                    "월": "월",
-                    "화": "화",
-                    "수": "수",
-                    "목": "목",
-                    "금": "금",
-                    "토": "토",
-                    "일요일": "일요일",
-                    "월요일": "월요일",
-                    "화요일": "화요일",
-                    "수요일": "수요일",
-                    "목요일": "목요일",
-                    "금요일": "금요일",
-                    "토요일": "토요일",
-                    "경기 일정": "경기 일정",
-                    "경기 결과": "경기 결과",
-                    "홈팀": "홈팀",
-                    "원정팀": "원정팀",
-                    "VS": "VS",
-                    "승": "승",
-                    "패": "패",
-                    "무": "무",
-                    "시간": "시간",
-                    "장소": "장소",
-                    "경기장": "경기장",
-                    "스코어": "스코어",
-                    "결과": "결과",
-                    "일정 없음": "일정 없음",
-                    "경기 준비 중": "경기 준비 중"
-                }
-            },
-            // 팀명 번역
+                // 팀명 번역
                 teamNames: {
+                    "LEROLEROS": "LEROLEROS",
+                    "BUBBLE STARS": "BUBBLE STARS",
+                    "MoonShot Spirits": "MoonShot Spirits",
+                    "FLORIAN T-SHIRTS": "FLORIAN T-SHIRTS",
+                    "Ishikawa Fighting Folks": "Ishikawa Fighting Folks",
+                    "Nyanko AVENGERS": "Nyanko AVENGERS",
                     "KR": "한국",
                     "JP": "일본"
                 },
@@ -1695,54 +1696,53 @@
                     "이닝": "イニング",
                     "탈삼진": "奪三振",
                     "WHIP": "WHIP",
-                    "ERA+": "ERA+"
+                    "ERA+": "ERA+",
+                    // 단위 번역
+                    units: {
+                        "개": "個",
+                        "이닝": "イニング",
+                        "타점": "打点",
+                        "타수": "打数",
+                        "안타": "安打",
+                        "홈런": "本塁打",
+                        "도루": "盗塁",
+                        "탈삼진": "奪三振",
+                        "승리": "勝利",
+                        "패배": "敗北",
+                        "무승부": "引き分け",
+                        "경기": "試合",
+                        "일": "日",
+                        "월": "月",
+                        "화": "火",
+                        "수": "水",
+                        "목": "木",
+                        "금": "金",
+                        "토": "土",
+                        "일요일": "日曜日",
+                        "월요일": "月曜日",
+                        "화요일": "火曜日",
+                        "수요일": "水曜日",
+                        "목요일": "木曜日",
+                        "금요일": "金曜日",
+                        "토요일": "土曜日",
+                        "경기 일정": "試合日程",
+                        "경기 결과": "試合結果",
+                        "홈팀": "ホームチーム",
+                        "원정팀": "ビジターチーム",
+                        "VS": "VS",
+                        "승": "勝",
+                        "패": "敗",
+                        "무": "分",
+                        "시간": "時間",
+                        "장소": "場所",
+                        "경기장": "球場",
+                        "스코어": "スコア",
+                        "결과": "結果",
+                        "일정 없음": "日程なし",
+                        "경기 준비 중": "試合準備中"
+                    }
                 },
-                // 단위 번역
-                units: {
-                    "개": "個",
-                    "이닝": "イニング",
-                    "타점": "打点",
-                    "타수": "打数",
-                    "안타": "安打",
-                    "홈런": "本塁打",
-                    "도루": "盗塁",
-                    "탈삼진": "奪三振",
-                    "승리": "勝利",
-                    "패배": "敗北",
-                    "무승부": "引き分け",
-                    "경기": "試合",
-                    "일": "日",
-                    "월": "月",
-                    "화": "火",
-                    "수": "水",
-                    "목": "木",
-                    "금": "金",
-                    "토": "土",
-                    "일요일": "日曜日",
-                    "월요일": "月曜日",
-                    "화요일": "火曜日",
-                    "수요일": "水曜日",
-                    "목요일": "木曜日",
-                    "금요일": "金曜日",
-                    "토요일": "土曜日",
-                    "경기 일정": "試合日程",
-                    "경기 결과": "試合結果",
-                    "홈팀": "ホームチーム",
-                    "원정팀": "ビジターチーム",
-                    "VS": "VS",
-                    "승": "勝",
-                    "패": "敗",
-                    "무": "分",
-                    "시간": "時間",
-                    "장소": "場所",
-                    "경기장": "球場",
-                    "스코어": "スコア",
-                    "결과": "結果",
-                    "일정 없음": "日程なし",
-                    "경기 준비 중": "試合準備中"
-                }
-            },
-            // 팀명 번역
+                // 팀명 번역
                 teamNames: {
                     "LEROLEROS": "レロレロス",
                     "BUBBLE STARS": "バブルスターズ",
@@ -1812,8 +1812,8 @@
                     "WHIP": "WHIP",
                     "ERA+": "ERA+"
                 }
-            };
-        }
+            }
+        };
         
         // 기본 함수들 정의
         function changeLanguage(lang) {
@@ -1907,16 +1907,6 @@
         // 번역된 팀명 가져오기
         function getTranslatedTeamName(teamId) {
             const texts = translations[currentLanguage];
-            
-            // 일본어 선택 시 팀명은 영어로 표시
-            if (currentLanguage === 'ja') {
-                // KR, JP는 일본어로 표시
-                if (teamId === 'KR') return '韓国';
-                if (teamId === 'JP') return '日本';
-                // 나머지 팀명은 영어로 표시
-                return teamId || '';
-            }
-            
             return texts.teamNames[teamId] || teamId || '';
         }
         
@@ -1929,9 +1919,6 @@
         // 번역된 단위 가져오기
         function getTranslatedUnit(unit) {
             const texts = translations[currentLanguage];
-            if (!texts || !texts.units) {
-                return unit || '';
-            }
             return texts.units[unit] || unit || '';
         }
         
@@ -1960,11 +1947,6 @@
             }
             
             // 스케줄 탭이 선택되면 데이터 로드
-            if (tabName === 'schedule') {
-                loadScheduleData();
-            }
-            
-            // 경기일정 탭이 선택되면 데이터 로드
             if (tabName === 'schedule') {
                 loadScheduleData();
             }
@@ -2074,13 +2056,6 @@
                     valueB = data.indexOf(b) + 1;
                 }
                 
-                // 통산 기록의 경우 rank 필드가 없을 수 있으므로 추가
-                if (tableType === 'careerBatters' || tableType === 'careerPitchers') {
-                    data.forEach((item, index) => {
-                        item.rank = index + 1;
-                    });
-                }
-                
                 if (!isNaN(parseFloat(valueA)) && !isNaN(parseFloat(valueB))) {
                     valueA = parseFloat(valueA) || 0;
                     valueB = parseFloat(valueB) || 0;
@@ -2102,47 +2077,8 @@
                 displayPitchers();
             } else if (tableType === 'careerBatters') {
                 displayCareerStats();
-                // 통산 타자 테이블 다시 그리기
-                const tbody = document.getElementById('careerBattersBody');
-                if (tbody) {
-                    tbody.innerHTML = '';
-                    data.forEach((player, index) => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td class="rank">${index + 1}</td>
-                            <td class="player-name">${getTranslatedPlayerName(player)}</td>
-                            <td>${getTranslatedTeamName(player.Team)}</td>
-                            <td>${player.AB || '-'}</td>
-                            <td>${player.H || '-'}</td>
-                            <td>${player.HR || '-'}</td>
-                            <td>${player.SB || '-'}</td>
-                            <td><strong>${parseFloat(player.AVG || 0).toFixed(3)}</strong></td>
-                            <td>${parseFloat(player.OBP || 0).toFixed(3)}</td>
-                            <td>${parseFloat(player.SLG || 0).toFixed(3)}</td>
-                        `;
-                        tbody.appendChild(row);
-                    });
-                }
             } else if (tableType === 'careerPitchers') {
                 displayCareerStats();
-                // 통산 투수 테이블 다시 그리기
-                const pitchersBody = document.getElementById('careerPitchersBody');
-                if (pitchersBody) {
-                    pitchersBody.innerHTML = '';
-                    data.forEach((pitcher, index) => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td class="rank">${index + 1}</td>
-                            <td class="player-name">${getTranslatedPlayerName(pitcher)}</td>
-                            <td>${getTranslatedTeamName(pitcher.Team)}</td>
-                            <td>${pitcher.IP || '-'}</td>
-                            <td>${pitcher.K || '-'}</td>
-                            <td><strong>${parseFloat(pitcher.ERA || 0).toFixed(2)}</strong></td>
-                            <td>${parseFloat(pitcher.WHIP || 0).toFixed(2)}</td>
-                        `;
-                        pitchersBody.appendChild(row);
-                    });
-                }
             }
         }
         
@@ -2790,7 +2726,6 @@
                 tbody.innerHTML = '';
                 
                 batters.forEach((player, index) => {
-                    player.rank = index + 1; // rank 필드 추가
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td class="rank">${index + 1}</td>
@@ -2836,7 +2771,6 @@
                 pitchersBody.innerHTML = '';
                 
                 pitchers.forEach((pitcher, index) => {
-                    pitcher.rank = index + 1; // rank 필드 추가
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td class="rank">${index + 1}</td>
@@ -2862,7 +2796,7 @@
                         <div class="performer-rank">${index + 1}</div>
                         <div class="performer-info">
                             <div class="performer-name">${getTranslatedPlayerName(pitcher)}</div>
-                            <div class="performer-stat">${getTranslatedTeamName(pitcher.Team)} | ${texts.strikeouts} ${pitcher.K || 0}${getTranslatedUnit('개')}</div>
+                            <div class="performer-stat">${getTranslatedTeamName(pitcher.Team)} | ${texts.strikeouts} ${pitcher.K || 0}개</div>
                         </div>
                         <div class="performer-value">${parseFloat(pitcher.ERA || 0).toFixed(2)}</div>
                     `;
@@ -3041,13 +2975,6 @@
         // 페이지 로드 시 데이터 불러오기
         document.addEventListener('DOMContentLoaded', function() {
             console.log('야구 기록실 페이지 로드됨');
-            
-            // 번역 사전 초기화
-            initializeTranslations();
-            
-            // 기본 언어 설정
-            changeLanguage('ko');
-            
             loadData();
         });
         
@@ -3146,7 +3073,7 @@
             // 타자 기록
             if (batters.length > 0) {
                 html += '<div style="margin-bottom: 30px;">';
-                html += `<h3 style="color: #e91e63; margin-bottom: 15px; border-bottom: 2px solid #e91e63; padding-bottom: 5px;">${texts.batterRecords || '타자 기록'}</h3>`;
+                html += '<h3 style="color: #e91e63; margin-bottom: 15px; border-bottom: 2px solid #e91e63; padding-bottom: 5px;">타자 기록</h3>';
                 html += '<div style="overflow-x: auto;">';
                 html += '<table class="stats-table">';
                 html += '<thead><tr>';
@@ -3185,7 +3112,7 @@
             // 투수 기록
             if (pitchers.length > 0) {
                 html += '<div style="margin-bottom: 30px;">';
-                html += `<h3 style="color: #e91e63; margin-bottom: 15px; border-bottom: 2px solid #e91e63; padding-bottom: 5px;">${texts.pitcherRecords || '투수 기록'}</h3>`;
+                html += '<h3 style="color: #e91e63; margin-bottom: 15px; border-bottom: 2px solid #e91e63; padding-bottom: 5px;">투수 기록</h3>';
                 html += '<div style="overflow-x: auto;">';
                 html += '<table class="stats-table">';
                 html += '<thead><tr>';
@@ -3543,102 +3470,6 @@
             html += '</div></div>';
             
             html += '</div>';
-            
-            container.innerHTML = html;
-        }
-        
-        // 경기일정 데이터 로드 함수
-        async function loadScheduleData() {
-            console.log('경기일정 데이터 로드 시작...');
-            
-            try {
-                const response = await fetch('./schedule.csv');
-                if (!response.ok) {
-                    throw new Error('schedule.csv 파일을 찾을 수 없습니다.');
-                }
-                
-                const csvText = await response.text();
-                console.log('경기일정 CSV 파일 크기:', csvText.length, '문자');
-                
-                Papa.parse(csvText, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        console.log('경기일정 파싱 완료!');
-                        console.log('데이터 행 수:', results.data.length);
-                        
-                        if (results.data && results.data.length > 0) {
-                            window.scheduleData = results.data;
-                            displayScheduleData(results.data);
-                        } else {
-                            window.scheduleData = [];
-                            displayScheduleData([]);
-                        }
-                    },
-                    error: function(error) {
-                        console.error('경기일정 CSV 파싱 오류:', error);
-                        window.scheduleData = [];
-                        displayScheduleData([]);
-                    }
-                });
-            } catch (error) {
-                console.error('경기일정 데이터 로드 오류:', error.message);
-                window.scheduleData = [];
-                displayScheduleData([]);
-            }
-        }
-        
-        // 경기일정 표시 함수
-        function displayScheduleData(data) {
-            const container = document.getElementById('schedule');
-            const loadingDiv = document.getElementById('scheduleLoading');
-            if (!container) return;
-            
-            const texts = translations[currentLanguage];
-            
-            if (!data || data.length === 0) {
-                if (loadingDiv) {
-                    loadingDiv.textContent = (texts && texts.units && texts.units['일정 없음']) || '일정 없음';
-                }
-                return;
-            }
-            
-            let html = '<div style="margin-bottom: 20px;">';
-            html += `<h3 style="color: #e91e63; margin-bottom: 15px;">${(texts && texts.units && texts.units['경기 일정']) || '경기 일정'}</h3>`;
-            html += '<div style="overflow-x: auto;">';
-            html += '<table class="stats-table">';
-            html += '<thead><tr>';
-            html += `<th>${(texts && texts.units && texts.units['일']) || '일'}</th>`;
-            html += `<th>${(texts && texts.units && texts.units['시간']) || '시간'}</th>`;
-            html += `<th>${(texts && texts.units && texts.units['홈팀']) || '홈팀'}</th>`;
-            html += `<th>${(texts && texts.units && texts.units['VS']) || 'VS'}</th>`;
-            html += `<th>${(texts && texts.units && texts.units['원정팀']) || '원정팀'}</th>`;
-            html += `<th>${(texts && texts.units && texts.units['장소']) || '장소'}</th>`;
-            html += `<th>${(texts && texts.units && texts.units['결과']) || '결과'}</th>`;
-            html += '</tr></thead>';
-            html += '<tbody>';
-            
-            data.forEach(game => {
-                const date = game['날짜'] || '';
-                const time = game['시간'] || '';
-                const homeTeam = getTranslatedTeamName(game['홈팀']) || '';
-                const awayTeam = getTranslatedTeamName(game['원정팀']) || '';
-                const venue = game['장소'] || '';
-                const result = game['결과'] || '';
-                
-                html += '<tr>';
-                html += `<td>${date}</td>`;
-                html += `<td>${time}</td>`;
-                html += `<td>${homeTeam}</td>`;
-                html += `<td>${(texts && texts.units && texts.units['VS']) || 'VS'}</td>`;
-                html += `<td>${awayTeam}</td>`;
-                html += `<td>${venue}</td>`;
-                html += `<td>${result}</td>`;
-                html += '</tr>';
-            });
-            
-            html += '</tbody></table>';
-            html += '</div></div>';
             
             container.innerHTML = html;
         }
