@@ -660,7 +660,7 @@
                             <table class="stats-table">
                                 <thead>
                                     <tr>
-                                        <th>순위</th>
+                                        <th onclick="sortTable('batters', 'rank')" class="sortable" style="cursor: pointer;">순위</th>
                                         <th onclick="sortTable('batters', 'Name')" class="sortable" style="cursor: pointer;">선수명</th>
                                         <th onclick="sortTable('batters', 'Team')" class="sortable" style="cursor: pointer;">팀</th>
                                         <th onclick="sortTable('batters', 'AB')" class="sortable" style="cursor: pointer;">타수</th>
@@ -685,7 +685,7 @@
                             <table class="stats-table">
                                 <thead>
                                     <tr>
-                                        <th>순위</th>
+                                        <th onclick="sortTable('pitchers', 'rank')" class="sortable" style="cursor: pointer;">순위</th>
                                         <th onclick="sortTable('pitchers', 'Name')" class="sortable" style="cursor: pointer;">선수명</th>
                                         <th onclick="sortTable('pitchers', 'Team')" class="sortable" style="cursor: pointer;">팀</th>
                                         <th onclick="sortTable('pitchers', 'ERA')" class="sortable" style="cursor: pointer;">평균자책점</th>
@@ -737,16 +737,16 @@
                             <table class="stats-table">
                                 <thead>
                                     <tr>
-                                        <th>순위</th>
-                                        <th>선수명</th>
-                                        <th>팀</th>
-                                        <th>타수</th>
-                                        <th>안타</th>
-                                        <th>홈런</th>
-                                        <th>도루</th>
-                                        <th>타율</th>
-                                        <th>출루율</th>
-                                        <th>장타율</th>
+                                        <th onclick="sortTable('careerBatters', 'rank')" class="sortable" style="cursor: pointer;">순위</th>
+                                        <th onclick="sortTable('careerBatters', 'Name')" class="sortable" style="cursor: pointer;">선수명</th>
+                                        <th onclick="sortTable('careerBatters', 'Team')" class="sortable" style="cursor: pointer;">팀</th>
+                                        <th onclick="sortTable('careerBatters', 'AB')" class="sortable" style="cursor: pointer;">타수</th>
+                                        <th onclick="sortTable('careerBatters', 'H')" class="sortable" style="cursor: pointer;">안타</th>
+                                        <th onclick="sortTable('careerBatters', 'HR')" class="sortable" style="cursor: pointer;">홈런</th>
+                                        <th onclick="sortTable('careerBatters', 'SB')" class="sortable" style="cursor: pointer;">도루</th>
+                                        <th onclick="sortTable('careerBatters', 'AVG')" class="sortable" style="cursor: pointer;">타율</th>
+                                        <th onclick="sortTable('careerBatters', 'OBP')" class="sortable" style="cursor: pointer;">출루율</th>
+                                        <th onclick="sortTable('careerBatters', 'SLG')" class="sortable" style="cursor: pointer;">장타율</th>
                                     </tr>
                                 </thead>
                                 <tbody id="careerBattersBody">
@@ -761,13 +761,13 @@
                             <table class="stats-table">
                                 <thead>
                                     <tr>
-                                        <th>순위</th>
-                                        <th>선수명</th>
-                                        <th>팀</th>
-                                        <th>이닝</th>
-                                        <th>탈삼진</th>
-                                        <th>평균자책점</th>
-                                        <th>WHIP</th>
+                                        <th onclick="sortTable('careerPitchers', 'rank')" class="sortable" style="cursor: pointer;">순위</th>
+                                        <th onclick="sortTable('careerPitchers', 'Name')" class="sortable" style="cursor: pointer;">선수명</th>
+                                        <th onclick="sortTable('careerPitchers', 'Team')" class="sortable" style="cursor: pointer;">팀</th>
+                                        <th onclick="sortTable('careerPitchers', 'IP')" class="sortable" style="cursor: pointer;">이닝</th>
+                                        <th onclick="sortTable('careerPitchers', 'K')" class="sortable" style="cursor: pointer;">탈삼진</th>
+                                        <th onclick="sortTable('careerPitchers', 'ERA')" class="sortable" style="cursor: pointer;">평균자책점</th>
+                                        <th onclick="sortTable('careerPitchers', 'WHIP')" class="sortable" style="cursor: pointer;">WHIP</th>
                                     </tr>
                                 </thead>
                                 <tbody id="careerPitchersBody">
@@ -1032,6 +1032,8 @@
                 pitcherRecords: "투수 기록",
                 batterRecords: "타자 기록",
                 teamRecords: "팀 기록",
+                wrcPlus: "wRC+",
+                eraPlus: "ERA+",
                 // 선수명 번역
                 playerNames: {
                     "홍길동": "홍길동",
@@ -1162,7 +1164,25 @@
                     "1호 고의사구": "1호 고의사구",
                     "1호 몸에 맞는 볼": "1호 몸에 맞는 볼",
                     "1호 헤드샷(?)": "1호 헤드샷(?)",
-                    "1호 타점": "1호 타점"
+                    "1호 타점": "1호 타점",
+                    "투수 기록": "투수 기록",
+                    "타자 기록": "타자 기록",
+                    "순위": "순위",
+                    "선수명": "선수명",
+                    "팀": "팀",
+                    "타수": "타수",
+                    "안타": "안타",
+                    "홈런": "홈런",
+                    "도루": "도루",
+                    "타율": "타율",
+                    "출루율": "출루율",
+                    "장타율": "장타율",
+                    "wRC+": "wRC+",
+                    "평균자책점": "평균자책점",
+                    "이닝": "이닝",
+                    "탈삼진": "탈삼진",
+                    "WHIP": "WHIP",
+                    "ERA+": "ERA+"
                 },
                 // 팀명 번역
                 teamNames: {
@@ -1236,7 +1256,25 @@
                     "1호 고의사구": "1호 고의사구",
                     "1호 몸에 맞는 볼": "1호 몸에 맞는 볼",
                     "1호 헤드샷(?)": "1호 헤드샷(?)",
-                    "1호 타점": "1호 타점"
+                    "1호 타점": "1호 타점",
+                    "투수 기록": "투수 기록",
+                    "타자 기록": "타자 기록",
+                    "순위": "순위",
+                    "선수명": "선수명",
+                    "팀": "팀",
+                    "타수": "타수",
+                    "안타": "안타",
+                    "홈런": "홈런",
+                    "도루": "도루",
+                    "타율": "타율",
+                    "출루율": "출루율",
+                    "장타율": "장타율",
+                    "wRC+": "wRC+",
+                    "평균자책점": "평균자책점",
+                    "이닝": "이닝",
+                    "탈삼진": "탈삼진",
+                    "WHIP": "WHIP",
+                    "ERA+": "ERA+"
                 }
             },
             ja: {
@@ -1306,6 +1344,8 @@
                 pitcherRecords: "投手レコード",
                 batterRecords: "打者レコード",
                 teamRecords: "チームレコード",
+                wrcPlus: "wRC+",
+                eraPlus: "ERA+",
                 // 선수명 번역
                 playerNames: {
                     "홍길동": "ホンギルドン",
@@ -1436,7 +1476,25 @@
                     "1호 고의사구": "1号故意四球",
                     "1호 몸에 맞는 볼": "1号死球",
                     "1호 헤드샷(?)": "1号ヘッドショット(?)",
-                    "1호 타점": "1号打点"
+                    "1호 타점": "1号打点",
+                    "투수 기록": "投手レコード",
+                    "타자 기록": "打者レコード",
+                    "순위": "순위",
+                    "선수명": "선수명",
+                    "팀": "팀",
+                    "타수": "타수",
+                    "안타": "안타",
+                    "홈런": "홈런",
+                    "도루": "도루",
+                    "타율": "타율",
+                    "출루율": "출루율",
+                    "장타율": "장타율",
+                    "wRC+": "wRC+",
+                    "평균자책점": "평균자책점",
+                    "이닝": "이닝",
+                    "탈삼진": "탈삼진",
+                    "WHIP": "WHIP",
+                    "ERA+": "ERA+"
                 },
                 // 팀명 번역
                 teamNames: {
@@ -1488,7 +1546,25 @@
                     "最多打点": "最多打点",
                     "最多本塁打": "最多本塁打",
                     "最多安打": "最多安打",
-                    "最優秀投手": "最優秀投手"
+                    "最優秀投手": "最優秀投手",
+                    "투수 기록": "投手レコード",
+                    "타자 기록": "打者レコード",
+                    "순위": "순위",
+                    "선수명": "선수명",
+                    "팀": "팀",
+                    "타수": "타수",
+                    "안타": "안타",
+                    "홈런": "홈런",
+                    "도루": "도루",
+                    "타율": "타율",
+                    "출루율": "출루율",
+                    "장타율": "장타율",
+                    "wRC+": "wRC+",
+                    "평균자책점": "평균자책점",
+                    "이닝": "이닝",
+                    "탈삼진": "탈삼진",
+                    "WHIP": "WHIP",
+                    "ERA+": "ERA+"
                 }
             }
         };
@@ -1554,11 +1630,18 @@
                         record.translatedRecordName = record['기록 명'];
                     }
                     
-                    // 선수명 번역
+                    // 선수명 번역 (닉네임 필드)
                     if (record['닉네임'] && texts.playerNames[record['닉네임']]) {
                         record.translatedNickname = texts.playerNames[record['닉네임']];
                     } else {
                         record.translatedNickname = record['닉네임'];
+                    }
+                    
+                    // 분류 번역
+                    if (record['분류'] && texts.recordNames[record['분류']]) {
+                        record.translatedCategory = texts.recordNames[record['분류']];
+                    } else {
+                        record.translatedCategory = record['분류'];
                     }
                 });
             }
@@ -1698,11 +1781,28 @@
                 clickedHeader.classList.add(currentSortDirection);
             }
             
-            const data = tableType === 'batters' ? filteredBatters : filteredPitchers;
+            let data;
+            if (tableType === 'batters') {
+                data = filteredBatters;
+            } else if (tableType === 'pitchers') {
+                data = filteredPitchers;
+            } else if (tableType === 'careerBatters') {
+                data = playersData.filter(player => player.AB && parseFloat(player.AB) > 0);
+            } else if (tableType === 'careerPitchers') {
+                data = playersData.filter(player => player.ERA && parseFloat(player.IP || 0) > 0);
+            } else {
+                return;
+            }
             
             data.sort((a, b) => {
                 let valueA = a[column];
                 let valueB = b[column];
+                
+                // 순위 컬럼은 인덱스 기반으로 정렬
+                if (column === 'rank') {
+                    valueA = data.indexOf(a) + 1;
+                    valueB = data.indexOf(b) + 1;
+                }
                 
                 if (!isNaN(parseFloat(valueA)) && !isNaN(parseFloat(valueB))) {
                     valueA = parseFloat(valueA) || 0;
@@ -1721,8 +1821,12 @@
             
             if (tableType === 'batters') {
                 displayBatters();
-            } else {
+            } else if (tableType === 'pitchers') {
                 displayPitchers();
+            } else if (tableType === 'careerBatters') {
+                displayCareerStats();
+            } else if (tableType === 'careerPitchers') {
+                displayCareerStats();
             }
         }
         
@@ -1886,26 +1990,56 @@
             // 타자 테이블 헤더
             const batterHeaders = document.querySelectorAll('#battersTable th');
             if (batterHeaders.length >= 11) {
-                batterHeaders[1].textContent = texts.playerName;
-                batterHeaders[2].textContent = texts.team;
-                batterHeaders[3].textContent = texts.atBats;
-                batterHeaders[4].textContent = texts.hits;
-                batterHeaders[5].textContent = texts.homeRuns;
-                batterHeaders[6].textContent = texts.stolenBases;
-                batterHeaders[7].textContent = texts.battingAvg;
-                batterHeaders[8].textContent = texts.onBasePct;
-                batterHeaders[9].textContent = texts.sluggingPct;
+                batterHeaders[0].textContent = texts.rank || "순위";
+                batterHeaders[1].textContent = texts.playerName || "선수명";
+                batterHeaders[2].textContent = texts.team || "팀";
+                batterHeaders[3].textContent = texts.atBats || "타수";
+                batterHeaders[4].textContent = texts.hits || "안타";
+                batterHeaders[5].textContent = texts.homeRuns || "홈런";
+                batterHeaders[6].textContent = texts.stolenBases || "도루";
+                batterHeaders[7].textContent = texts.battingAvg || "타율";
+                batterHeaders[8].textContent = texts.onBasePct || "출루율";
+                batterHeaders[9].textContent = texts.sluggingPct || "장타율";
+                batterHeaders[10].textContent = texts.wrcPlus || "wRC+";
             }
             
             // 투수 테이블 헤더
             const pitcherHeaders = document.querySelectorAll('#pitchersTable th');
             if (pitcherHeaders.length >= 8) {
-                pitcherHeaders[1].textContent = texts.playerName;
-                pitcherHeaders[2].textContent = texts.team;
-                pitcherHeaders[3].textContent = texts.era;
-                pitcherHeaders[4].textContent = texts.innings;
-                pitcherHeaders[5].textContent = texts.strikeouts;
-                pitcherHeaders[6].textContent = texts.whip;
+                pitcherHeaders[0].textContent = texts.rank || "순위";
+                pitcherHeaders[1].textContent = texts.playerName || "선수명";
+                pitcherHeaders[2].textContent = texts.team || "팀";
+                pitcherHeaders[3].textContent = texts.era || "평균자책점";
+                pitcherHeaders[4].textContent = texts.innings || "이닝";
+                pitcherHeaders[5].textContent = texts.strikeouts || "탈삼진";
+                pitcherHeaders[6].textContent = texts.whip || "WHIP";
+                pitcherHeaders[7].textContent = texts.eraPlus || "ERA+";
+            }
+            
+            // 통산 기록 테이블 헤더
+            const careerBatterHeaders = document.querySelectorAll('#careerBattersTable th');
+            if (careerBatterHeaders.length >= 10) {
+                careerBatterHeaders[0].textContent = texts.rank || "순위";
+                careerBatterHeaders[1].textContent = texts.playerName || "선수명";
+                careerBatterHeaders[2].textContent = texts.team || "팀";
+                careerBatterHeaders[3].textContent = texts.atBats || "타수";
+                careerBatterHeaders[4].textContent = texts.hits || "안타";
+                careerBatterHeaders[5].textContent = texts.homeRuns || "홈런";
+                careerBatterHeaders[6].textContent = texts.stolenBases || "도루";
+                careerBatterHeaders[7].textContent = texts.battingAvg || "타율";
+                careerBatterHeaders[8].textContent = texts.onBasePct || "출루율";
+                careerBatterHeaders[9].textContent = texts.sluggingPct || "장타율";
+            }
+            
+            const careerPitcherHeaders = document.querySelectorAll('#careerPitchersTable th');
+            if (careerPitcherHeaders.length >= 7) {
+                careerPitcherHeaders[0].textContent = texts.rank || "순위";
+                careerPitcherHeaders[1].textContent = texts.playerName || "선수명";
+                careerPitcherHeaders[2].textContent = texts.team || "팀";
+                careerPitcherHeaders[3].textContent = texts.innings || "이닝";
+                careerPitcherHeaders[4].textContent = texts.strikeouts || "탈삼진";
+                careerPitcherHeaders[5].textContent = texts.era || "평균자책점";
+                careerPitcherHeaders[6].textContent = texts.whip || "WHIP";
             }
         }
         
@@ -2691,16 +2825,16 @@
                 html += '<div style="overflow-x: auto;">';
                 html += '<table class="stats-table">';
                 html += '<thead><tr>';
-                html += '<th>순위</th>';
-                html += '<th>선수명</th>';
-                html += '<th>타수</th>';
-                html += '<th>안타</th>';
-                html += '<th>홈런</th>';
-                html += '<th>도루</th>';
-                html += '<th>타율</th>';
-                html += '<th>출루율</th>';
-                html += '<th>장타율</th>';
-                html += '<th>wRC+</th>';
+                html += '<th onclick="sortTeamTable(\'batters\', \'rank\')" class="sortable" style="cursor: pointer;">순위</th>';
+                html += '<th onclick="sortTeamTable(\'batters\', \'Name\')" class="sortable" style="cursor: pointer;">선수명</th>';
+                html += '<th onclick="sortTeamTable(\'batters\', \'AB\')" class="sortable" style="cursor: pointer;">타수</th>';
+                html += '<th onclick="sortTeamTable(\'batters\', \'H\')" class="sortable" style="cursor: pointer;">안타</th>';
+                html += '<th onclick="sortTeamTable(\'batters\', \'HR\')" class="sortable" style="cursor: pointer;">홈런</th>';
+                html += '<th onclick="sortTeamTable(\'batters\', \'SB\')" class="sortable" style="cursor: pointer;">도루</th>';
+                html += '<th onclick="sortTeamTable(\'batters\', \'AVG\')" class="sortable" style="cursor: pointer;">타율</th>';
+                html += '<th onclick="sortTeamTable(\'batters\', \'OBP\')" class="sortable" style="cursor: pointer;">출루율</th>';
+                html += '<th onclick="sortTeamTable(\'batters\', \'SLG\')" class="sortable" style="cursor: pointer;">장타율</th>';
+                html += '<th onclick="sortTeamTable(\'batters\', \'wRC+\')" class="sortable" style="cursor: pointer;">wRC+</th>';
                 html += '</tr></thead>';
                 html += '<tbody>';
                 
@@ -2730,13 +2864,13 @@
                 html += '<div style="overflow-x: auto;">';
                 html += '<table class="stats-table">';
                 html += '<thead><tr>';
-                html += '<th>순위</th>';
-                html += '<th>선수명</th>';
-                html += '<th>이닝</th>';
-                html += '<th>탈삼진</th>';
-                html += '<th>평균자책점</th>';
-                html += '<th>WHIP</th>';
-                html += '<th>ERA+</th>';
+                html += '<th onclick="sortTeamTable(\'pitchers\', \'rank\')" class="sortable" style="cursor: pointer;">순위</th>';
+                html += '<th onclick="sortTeamTable(\'pitchers\', \'Name\')" class="sortable" style="cursor: pointer;">선수명</th>';
+                html += '<th onclick="sortTeamTable(\'pitchers\', \'IP\')" class="sortable" style="cursor: pointer;">이닝</th>';
+                html += '<th onclick="sortTeamTable(\'pitchers\', \'K\')" class="sortable" style="cursor: pointer;">탈삼진</th>';
+                html += '<th onclick="sortTeamTable(\'pitchers\', \'ERA\')" class="sortable" style="cursor: pointer;">평균자책점</th>';
+                html += '<th onclick="sortTeamTable(\'pitchers\', \'WHIP\')" class="sortable" style="cursor: pointer;">WHIP</th>';
+                html += '<th onclick="sortTeamTable(\'pitchers\', \'ERA+\')" class="sortable" style="cursor: pointer;">ERA+</th>';
                 html += '</tr></thead>';
                 html += '<tbody>';
                 
@@ -2825,7 +2959,7 @@
             const categories = {};
             data.forEach(record => {
                 if (record['분류'] && record['기록 명']) {
-                    const category = record['분류'];
+                    const category = record.translatedCategory || record['분류'];
                     if (!categories[category]) {
                         categories[category] = [];
                     }
@@ -2858,7 +2992,7 @@
                     }
                 });
                 
-                html += `</div>`;
+                html += '</div>';
             });
             
             container.innerHTML = html;
@@ -3086,6 +3220,111 @@
             html += '</div>';
             
             container.innerHTML = html;
+        }
+        
+        // 팀 테이블 정렬 함수
+        function sortTeamTable(tableType, column) {
+            // 기존 정렬 표시 제거
+            document.querySelectorAll('.sortable').forEach(th => {
+                th.classList.remove('asc', 'desc');
+            });
+            
+            if (currentSortColumn === column) {
+                currentSortDirection = currentSortDirection === 'desc' ? 'asc' : 'desc';
+            } else {
+                currentSortColumn = column;
+                currentSortDirection = 'desc';
+            }
+            
+            // 현재 정렬된 컬럼에 방향 표시
+            const clickedHeader = event.target;
+            if (clickedHeader.classList.contains('sortable')) {
+                clickedHeader.classList.add(currentSortDirection);
+            }
+            
+            // 팀 정보 컨테이너에서 데이터 가져오기
+            const teamInfoContainer = document.getElementById('teamInfoContainer');
+            if (!teamInfoContainer) return;
+            
+            let data = [];
+            if (tableType === 'batters') {
+                // 타자 데이터 수집
+                const rows = teamInfoContainer.querySelectorAll('table tbody tr');
+                rows.forEach((row, index) => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 10) {
+                        data.push({
+                            rank: index + 1,
+                            Name: cells[1].textContent,
+                            AB: cells[2].textContent,
+                            H: cells[3].textContent,
+                            HR: cells[4].textContent,
+                            SB: cells[5].textContent,
+                            AVG: cells[6].textContent,
+                            OBP: cells[7].textContent,
+                            SLG: cells[8].textContent,
+                            'wRC+': cells[9].textContent,
+                            element: row
+                        });
+                    }
+                });
+            } else if (tableType === 'pitchers') {
+                // 투수 데이터 수집
+                const rows = teamInfoContainer.querySelectorAll('table tbody tr');
+                rows.forEach((row, index) => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 7) {
+                        data.push({
+                            rank: index + 1,
+                            Name: cells[1].textContent,
+                            IP: cells[2].textContent,
+                            K: cells[3].textContent,
+                            ERA: cells[4].textContent,
+                            WHIP: cells[5].textContent,
+                            'ERA+': cells[6].textContent,
+                            element: row
+                        });
+                    }
+                });
+            }
+            
+            data.sort((a, b) => {
+                let valueA = a[column];
+                let valueB = b[column];
+                
+                // 순위 컬럼은 인덱스 기반으로 정렬
+                if (column === 'rank') {
+                    valueA = data.indexOf(a) + 1;
+                    valueB = data.indexOf(b) + 1;
+                }
+                
+                if (!isNaN(parseFloat(valueA)) && !isNaN(parseFloat(valueB))) {
+                    valueA = parseFloat(valueA) || 0;
+                    valueB = parseFloat(valueB) || 0;
+                } else {
+                    valueA = (valueA || '').toString().toLowerCase();
+                    valueB = (valueB || '').toString().toLowerCase();
+                }
+                
+                if (currentSortDirection === 'desc') { 
+                    return valueB > valueA ? 1 : valueB < valueA ? -1 : 0;
+                } else {
+                    return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+                }
+            });
+            
+            // 정렬된 순서로 DOM 재배치
+            const tbody = data[0]?.element?.parentNode;
+            if (tbody) {
+                data.forEach((item, index) => {
+                    // 순위 업데이트
+                    const rankCell = item.element.querySelector('td:first-child');
+                    if (rankCell) {
+                        rankCell.textContent = index + 1;
+                    }
+                    tbody.appendChild(item.element);
+                });
+            }
         }
     </script>
 </body>
