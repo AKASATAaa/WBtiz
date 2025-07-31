@@ -1125,7 +1125,7 @@
             
             // 언어 변경 시 특별 기록과 스케줄 데이터 다시 로드
             if (window.specialRecordsData) {
-                loadSpecialRecords();
+                loadSpecialData();
             }
             if (window.scheduleData) {
                 loadScheduleData();
@@ -1153,7 +1153,7 @@
             
             // 특별 기록 탭이 선택되면 데이터 로드
             if (tabName === 'special') {
-                loadSpecialRecords();
+                loadSpecialData();
             }
             
             // 스케줄 탭이 선택되면 데이터 로드
