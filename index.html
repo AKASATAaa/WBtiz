@@ -581,22 +581,66 @@
         /* 모바일 반응형 */
         @media (max-width: 768px) {
             .calendar-grid {
-                gap: 1px;
+                display: block;
+                background: none;
+                border-radius: 0;
+                overflow: visible;
+            }
+            
+            .calendar-header {
+                display: none;
+            }
+            
+            .calendar-body {
+                display: block;
             }
             
             .calendar-day {
-                min-height: 80px;
-                padding: 4px;
+                display: block;
+                min-height: auto;
+                padding: 15px;
+                margin-bottom: 10px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                background: white;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
             
-            .calendar-day-header {
-                padding: 8px 4px;
-                font-size: 0.8em;
+            .calendar-day.empty {
+                display: none;
+            }
+            
+            .calendar-date {
+                font-size: 1.2em;
+                margin-bottom: 10px;
+                color: #e91e63;
+                font-weight: bold;
             }
             
             .game-item {
-                font-size: 0.7em;
-                padding: 2px 4px;
+                background: #f8f9fa;
+                padding: 8px;
+                margin: 5px 0;
+                border-radius: 6px;
+                font-size: 0.9em;
+            }
+            
+            .game-teams {
+                font-size: 1em;
+                margin-bottom: 5px;
+            }
+            
+            .game-time {
+                font-size: 0.8em;
+                margin-top: 5px;
+            }
+            
+            .team {
+                display: inline-block;
+                padding: 4px 8px;
+                margin: 2px;
+                border-radius: 4px;
+                font-size: 0.9em;
             }
         }
     </style>
