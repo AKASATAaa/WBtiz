@@ -1069,6 +1069,16 @@
                 strikeouts: "탈삼진",
                 whip: "WHIP",
                 eraPlus: "ERA+",
+                teamNames: {
+                    "LEROLEROS": "레로레로스",
+                    "BUBBLE STARS": "버블 스타즈",
+                    "MoonShot Spirits": "문샷 스피릿츠",
+                    "FLORIAN T-SHIRTS": "플로리안 티셔츠",
+                    "Ishikawa Fighting Folks": "이시카와 파이팅 호크스",
+                    "Nyanko AVENGERS": "냥코 어벤저스",
+                    "KR": "한국",
+                    "JP": "일본"
+                },
                 units: {
                     "개": "개",
                     "이닝": "이닝",
@@ -1217,6 +1227,16 @@
                 strikeouts: "奪三振",
                 whip: "WHIP",
                 eraPlus: "ERA+",
+                teamNames: {
+                    "LEROLEROS": "レロレロス",
+                    "BUBBLE STARS": "バブルスターズ",
+                    "MoonShot Spirits": "ムーンショットスピリッツ",
+                    "FLORIAN T-SHIRTS": "フロリアンTシャツ",
+                    "Ishikawa Fighting Folks": "石川ファイティングフォークス",
+                    "Nyanko AVENGERS": "ニャンコアベンジャーズ",
+                    "KR": "韓国",
+                    "JP": "日本"
+                },
                 units: {
                     "개": "個",
                     "이닝": "イニング",
@@ -2728,7 +2748,7 @@
             });
             
             let html = '<div class="stats-section">';
-            html += '<div class="section-title">경기 일정</div>';
+                            html += `<div class="section-title">${texts.schedule}</div>`;
             
             // 월별 달력 생성
             Object.keys(monthlyData).forEach(month => {
@@ -2736,7 +2756,7 @@
                 monthData.sort((a, b) => a.date - b.date);
                 
                 html += `<div style="margin-bottom: 40px;">`;
-                html += `<h3 style="color: #e91e63; margin-bottom: 20px; text-align: center;">${month}월</h3>`;
+                html += `<h3 style="color: #e91e63; margin-bottom: 20px; text-align: center;">${month}${texts.units['월']}</h3>`;
                 
                 // 달력 그리드 시작
                 html += '<div class="calendar-grid">';
@@ -2845,14 +2865,14 @@
             
             // 팀 정보 요약 추가
             html += '<div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">';
-            html += '<h3 style="color: #e91e63; margin-bottom: 15px;">팀 정보</h3>';
+                            html += `<h3 style="color: #e91e63; margin-bottom: 15px;">${texts.teamInfo}</h3>`;
             html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">';
-            html += '<div><strong>냥코 어벤저스</strong> (Nyanko Avengers)<br><small>주장: ゆっち一</small></div>';
-            html += '<div><strong>이시카와 파이팅 호크스</strong> (Ishikawa Fighting Folks)<br><small>주장: 甲斐野柊太</small></div>';
-            html += '<div><strong>버블 스타즈</strong> (Bubble Starts)<br><small>주장: 장덕춘_</small></div>';
-            html += '<div><strong>플로리안 티셔츠</strong> (FLORIAN T-SHIRTS)<br><small>주장: Floră</small></div>';
-            html += '<div><strong>레로레로스</strong> (LEROLEROS)<br><small>주장: ke ro</small></div>';
-            html += '<div><strong>문샷 스피릿츠</strong> (MoonShot Spirits)<br><small>주장: HANA_ARASHI</small></div>';
+            html += `<div><strong>${texts.teamNames['Nyanko AVENGERS']}</strong> (Nyanko Avengers)<br><small>${texts.captain}: ゆっち一</small></div>`;
+            html += `<div><strong>${texts.teamNames['Ishikawa Fighting Folks']}</strong> (Ishikawa Fighting Folks)<br><small>${texts.captain}: 甲斐野柊太</small></div>`;
+            html += `<div><strong>${texts.teamNames['BUBBLE STARS']}</strong> (Bubble Starts)<br><small>${texts.captain}: 장덕춘_</small></div>`;
+            html += `<div><strong>${texts.teamNames['FLORIAN T-SHIRTS']}</strong> (FLORIAN T-SHIRTS)<br><small>${texts.captain}: Floră</small></div>`;
+            html += `<div><strong>${texts.teamNames['LEROLEROS']}</strong> (LEROLEROS)<br><small>${texts.captain}: ke ro</small></div>`;
+            html += `<div><strong>${texts.teamNames['MoonShot Spirits']}</strong> (MoonShot Spirits)<br><small>${texts.captain}: HANA_ARASHI</small></div>`;
             html += '</div></div>';
             
             html += '</div>';
