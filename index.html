@@ -1426,13 +1426,13 @@
         
         // 타자 표시
         function showBatters() {
-            const battersSection = document.getElementById('battersSection');
-            const pitchersSection = document.getElementById('pitchersSection');
+            const battersTable = document.getElementById('battersTable');
+            const pitchersTable = document.getElementById('pitchersTable');
             const battersBtn = document.getElementById('battersBtn');
             const pitchersBtn = document.getElementById('pitchersBtn');
             
-            if (battersSection) battersSection.style.display = 'block';
-            if (pitchersSection) pitchersSection.style.display = 'none';
+            if (battersTable) battersTable.style.display = 'block';
+            if (pitchersTable) pitchersTable.style.display = 'none';
             if (battersBtn) battersBtn.classList.add('active');
             if (pitchersBtn) pitchersBtn.classList.remove('active');
             
@@ -1442,13 +1442,13 @@
         
         // 투수 표시
         function showPitchers() {
-            const battersSection = document.getElementById('battersSection');
-            const pitchersSection = document.getElementById('pitchersSection');
+            const battersTable = document.getElementById('battersTable');
+            const pitchersTable = document.getElementById('pitchersTable');
             const battersBtn = document.getElementById('battersBtn');
             const pitchersBtn = document.getElementById('pitchersBtn');
             
-            if (battersSection) battersSection.style.display = 'none';
-            if (pitchersSection) pitchersSection.style.display = 'block';
+            if (battersTable) battersTable.style.display = 'none';
+            if (pitchersTable) pitchersTable.style.display = 'block';
             if (battersBtn) battersBtn.classList.remove('active');
             if (pitchersBtn) pitchersBtn.classList.add('active');
             
@@ -2247,10 +2247,23 @@
                 ) : null;
             
             if (homerunLeader) {
+                const teamInfo = teamsData.find(t => t.PlayerName === homerunLeader.Name);
+                const teamName = teamInfo ? teamInfo.TeamName : '';
+                let displayTeamName = '';
+                if (teamName) {
+                    if (teamName === 'KR') {
+                        displayTeamName = texts.korea;
+                    } else if (teamName === 'JP') {
+                        displayTeamName = texts.japan;
+                    } else {
+                        displayTeamName = texts.teamNames[teamName] || teamName;
+                    }
+                }
+                
                 document.getElementById('homerunKing').innerHTML = `
                     <div class="leader-card">
                         <strong>${homerunLeader.Name || ''}</strong><br>
-                        <small>${getTeamName(teamsData.find(t => t.PlayerName === homerunLeader.Name)?.TeamName || '')}</small><br>
+                        <small>${displayTeamName}</small><br>
                         <span style="font-size: 1.2em; color: #e91e63;">${homerunLeader.홈런 || 0}${texts.units['개']}</span>
                     </div>
                 `;
@@ -2269,10 +2282,23 @@
                 }) : null;
             
             if (rbiLeader) {
+                const teamInfo = teamsData.find(t => t.PlayerName === rbiLeader.Name);
+                const teamName = teamInfo ? teamInfo.TeamName : '';
+                let displayTeamName = '';
+                if (teamName) {
+                    if (teamName === 'KR') {
+                        displayTeamName = texts.korea;
+                    } else if (teamName === 'JP') {
+                        displayTeamName = texts.japan;
+                    } else {
+                        displayTeamName = texts.teamNames[teamName] || teamName;
+                    }
+                }
+                
                 document.getElementById('rbiKing').innerHTML = `
                     <div class="leader-card">
                         <strong>${rbiLeader.Name || ''}</strong><br>
-                        <small>${getTeamName(teamsData.find(t => t.PlayerName === rbiLeader.Name)?.TeamName || '')}</small><br>
+                        <small>${displayTeamName}</small><br>
                         <span style="font-size: 1.2em; color: #e91e63;">${rbiCount}${texts.units['타점']}</span>
                     </div>
                 `;
@@ -2285,10 +2311,23 @@
                 ) : null;
             
             if (stealLeader) {
+                const teamInfo = teamsData.find(t => t.PlayerName === stealLeader.Name);
+                const teamName = teamInfo ? teamInfo.TeamName : '';
+                let displayTeamName = '';
+                if (teamName) {
+                    if (teamName === 'KR') {
+                        displayTeamName = texts.korea;
+                    } else if (teamName === 'JP') {
+                        displayTeamName = texts.japan;
+                    } else {
+                        displayTeamName = texts.teamNames[teamName] || teamName;
+                    }
+                }
+                
                 document.getElementById('stealKing').innerHTML = `
                     <div class="leader-card">
                         <strong>${stealLeader.Name || ''}</strong><br>
-                        <small>${getTeamName(teamsData.find(t => t.PlayerName === stealLeader.Name)?.TeamName || '')}</small><br>
+                        <small>${displayTeamName}</small><br>
                         <span style="font-size: 1.2em; color: #e91e63;">${stealLeader.도루 || 0}${texts.units['개']}</span>
                     </div>
                 `;
@@ -2301,10 +2340,23 @@
                 ) : null;
             
             if (strikeoutLeader) {
+                const teamInfo = teamsData.find(t => t.PlayerName === strikeoutLeader.Name);
+                const teamName = teamInfo ? teamInfo.TeamName : '';
+                let displayTeamName = '';
+                if (teamName) {
+                    if (teamName === 'KR') {
+                        displayTeamName = texts.korea;
+                    } else if (teamName === 'JP') {
+                        displayTeamName = texts.japan;
+                    } else {
+                        displayTeamName = texts.teamNames[teamName] || teamName;
+                    }
+                }
+                
                 document.getElementById('strikeoutKing').innerHTML = `
                     <div class="leader-card">
                         <strong>${strikeoutLeader.Name || ''}</strong><br>
-                        <small>${getTeamName(teamsData.find(t => t.PlayerName === strikeoutLeader.Name)?.TeamName || '')}</small><br>
+                        <small>${displayTeamName}</small><br>
                         <span style="font-size: 1.2em; color: #e91e63;">${strikeoutLeader.탈삼진 || 0}${texts.units['개']}</span>
                     </div>
                 `;
@@ -2317,10 +2369,23 @@
                 ) : null;
             
             if (inningLeader) {
+                const teamInfo = teamsData.find(t => t.PlayerName === inningLeader.Name);
+                const teamName = teamInfo ? teamInfo.TeamName : '';
+                let displayTeamName = '';
+                if (teamName) {
+                    if (teamName === 'KR') {
+                        displayTeamName = texts.korea;
+                    } else if (teamName === 'JP') {
+                        displayTeamName = texts.japan;
+                    } else {
+                        displayTeamName = texts.teamNames[teamName] || teamName;
+                    }
+                }
+                
                 document.getElementById('inningKing').innerHTML = `
                     <div class="leader-card">
                         <strong>${inningLeader.Name || ''}</strong><br>
-                        <small>${getTeamName(teamsData.find(t => t.PlayerName === inningLeader.Name)?.TeamName || '')}</small><br>
+                        <small>${displayTeamName}</small><br>
                         <span style="font-size: 1.2em; color: #e91e63;">${inningLeader.이닝 || 0}${texts.units['이닝']}</span>
                     </div>
                 `;
@@ -2996,10 +3061,22 @@
                     const teamInfo = teamsData.find(team => team.PlayerName === player.Name);
                     const teamName = teamInfo ? teamInfo.TeamName : '';
                     
+                    // 팀명을 현재 언어로 번역
+                    let displayTeamName = '';
+                    if (teamName) {
+                        if (teamName === 'KR') {
+                            displayTeamName = texts.korea;
+                        } else if (teamName === 'JP') {
+                            displayTeamName = texts.japan;
+                        } else {
+                            displayTeamName = texts.teamNames[teamName] || teamName;
+                        }
+                    }
+                    
                     html += '<tr>';
                     html += `<td>${index + 1}</td>`;
                     html += `<td>${player.Name}</td>`;
-                    html += `<td>${getTeamName(teamName)}</td>`;
+                    html += `<td>${displayTeamName}</td>`;
                     html += `<td>${player.타수 || 0}</td>`;
                     html += `<td>${player.안타 || 0}</td>`;
                     html += `<td>${player.홈런 || 0}</td>`;
@@ -3040,10 +3117,22 @@
                     const teamInfo = teamsData.find(team => team.PlayerName === player.Name);
                     const teamName = teamInfo ? teamInfo.TeamName : '';
                     
+                    // 팀명을 현재 언어로 번역
+                    let displayTeamName = '';
+                    if (teamName) {
+                        if (teamName === 'KR') {
+                            displayTeamName = texts.korea;
+                        } else if (teamName === 'JP') {
+                            displayTeamName = texts.japan;
+                        } else {
+                            displayTeamName = texts.teamNames[teamName] || teamName;
+                        }
+                    }
+                    
                     html += '<tr>';
                     html += `<td>${index + 1}</td>`;
                     html += `<td>${player.Name}</td>`;
-                    html += `<td>${getTeamName(teamName)}</td>`;
+                    html += `<td>${displayTeamName}</td>`;
                     html += `<td>${player.이닝 || 0}</td>`;
                     html += `<td>${player.탈삼진 || 0}</td>`;
                     html += `<td>${player.평균자책점 || '0.00'}</td>`;
