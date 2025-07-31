@@ -1587,6 +1587,7 @@
             // 타자 테이블 헤더
             const batterHeaders = document.querySelectorAll('#battersTable th');
             if (batterHeaders.length >= 11) {
+                batterHeaders[0].textContent = texts.rank;
                 batterHeaders[1].textContent = texts.playerName;
                 batterHeaders[2].textContent = texts.team;
                 batterHeaders[3].textContent = texts.atBats;
@@ -1596,17 +1597,47 @@
                 batterHeaders[7].textContent = texts.battingAvg;
                 batterHeaders[8].textContent = texts.onBasePct;
                 batterHeaders[9].textContent = texts.sluggingPct;
+                batterHeaders[10].textContent = texts.wrcPlus;
             }
             
             // 투수 테이블 헤더
             const pitcherHeaders = document.querySelectorAll('#pitchersTable th');
             if (pitcherHeaders.length >= 8) {
+                pitcherHeaders[0].textContent = texts.rank;
                 pitcherHeaders[1].textContent = texts.playerName;
                 pitcherHeaders[2].textContent = texts.team;
                 pitcherHeaders[3].textContent = texts.era;
                 pitcherHeaders[4].textContent = texts.innings;
                 pitcherHeaders[5].textContent = texts.strikeouts;
                 pitcherHeaders[6].textContent = texts.whip;
+                pitcherHeaders[7].textContent = texts.eraPlus;
+            }
+            
+            // 통산 타자 테이블 헤더
+            const careerBatterHeaders = document.querySelectorAll('#careerBattersTable th');
+            if (careerBatterHeaders.length >= 10) {
+                careerBatterHeaders[0].textContent = texts.rank;
+                careerBatterHeaders[1].textContent = texts.playerName;
+                careerBatterHeaders[2].textContent = texts.team;
+                careerBatterHeaders[3].textContent = texts.atBats;
+                careerBatterHeaders[4].textContent = texts.hits;
+                careerBatterHeaders[5].textContent = texts.homeRuns;
+                careerBatterHeaders[6].textContent = texts.stolenBases;
+                careerBatterHeaders[7].textContent = texts.battingAvg;
+                careerBatterHeaders[8].textContent = texts.onBasePct;
+                careerBatterHeaders[9].textContent = texts.sluggingPct;
+            }
+            
+            // 통산 투수 테이블 헤더
+            const careerPitcherHeaders = document.querySelectorAll('#careerPitchersTable th');
+            if (careerPitcherHeaders.length >= 7) {
+                careerPitcherHeaders[0].textContent = texts.rank;
+                careerPitcherHeaders[1].textContent = texts.playerName;
+                careerPitcherHeaders[2].textContent = texts.team;
+                careerPitcherHeaders[3].textContent = texts.innings;
+                careerPitcherHeaders[4].textContent = texts.strikeouts;
+                careerPitcherHeaders[5].textContent = texts.era;
+                careerPitcherHeaders[6].textContent = texts.whip;
             }
         }
         
@@ -2134,7 +2165,7 @@
                     homerunKingDiv.innerHTML = `
                         <strong>${homerunLeader.Name || ''}</strong><br>
                         <small>${getTeamName(homerunLeader.Team)}</small><br>
-                        <span style="font-size: 1.2em; color: #e91e63;">${homerunLeader.HR || 0}개</span>
+                        <span style="font-size: 1.2em; color: #e91e63;">${homerunLeader.HR || 0}${texts.units['개']}</span>
                     `;
                 }
                 
@@ -2150,7 +2181,7 @@
                     rbiKingDiv.innerHTML = `
                         <strong>${rbiLeader.Name || ''}</strong><br>
                         <small>${getTeamName(rbiLeader.Team)}</small><br>
-                        <span style="font-size: 1.2em; color: #e91e63;">약 ${rbiCount}타점</span>
+                        <span style="font-size: 1.2em; color: #e91e63;">약 ${rbiCount}${texts.units['타점']}</span>
                     `;
                 }
                 
@@ -2163,7 +2194,7 @@
                     stealKingDiv.innerHTML = `
                         <strong>${stealLeader.Name || ''}</strong><br>
                         <small>${getTeamName(stealLeader.Team)}</small><br>
-                        <span style="font-size: 1.2em; color: #e91e63;">${stealLeader.SB || 0}개</span>
+                        <span style="font-size: 1.2em; color: #e91e63;">${stealLeader.SB || 0}${texts.units['개']}</span>
                     `;
                 }
                 
@@ -2220,7 +2251,7 @@
                     strikeoutKingDiv.innerHTML = `
                         <strong>${strikeoutLeader.Name || ''}</strong><br>
                         <small>${getTeamName(strikeoutLeader.Team)}</small><br>
-                        <span style="font-size: 1.2em; color: #e91e63;">${strikeoutLeader.K || 0}개</span>
+                        <span style="font-size: 1.2em; color: #e91e63;">${strikeoutLeader.K || 0}${texts.units['개']}</span>
                     `;
                 }
                 
@@ -2233,7 +2264,7 @@
                     inningKingDiv.innerHTML = `
                         <strong>${inningLeader.Name || ''}</strong><br>
                         <small>${getTeamName(inningLeader.Team)}</small><br>
-                        <span style="font-size: 1.2em; color: #e91e63;">${inningLeader.IP || 0}이닝</span>
+                        <span style="font-size: 1.2em; color: #e91e63;">${inningLeader.IP || 0}${texts.units['이닝']}</span>
                     `;
                 }
                 
@@ -2412,16 +2443,16 @@
                 html += '<div style="overflow-x: auto;">';
                 html += '<table class="stats-table">';
                 html += '<thead><tr>';
-                html += '<th>순위</th>';
-                html += '<th>선수명</th>';
-                html += '<th>타수</th>';
-                html += '<th>안타</th>';
-                html += '<th>홈런</th>';
-                html += '<th>도루</th>';
-                html += '<th>타율</th>';
-                html += '<th>출루율</th>';
-                html += '<th>장타율</th>';
-                html += '<th>wRC+</th>';
+                html += `<th>${texts.rank}</th>`;
+                html += `<th>${texts.playerName}</th>`;
+                html += `<th>${texts.atBats}</th>`;
+                html += `<th>${texts.hits}</th>`;
+                html += `<th>${texts.homeRuns}</th>`;
+                html += `<th>${texts.stolenBases}</th>`;
+                html += `<th>${texts.battingAvg}</th>`;
+                html += `<th>${texts.onBasePct}</th>`;
+                html += `<th>${texts.sluggingPct}</th>`;
+                html += `<th>${texts.wrcPlus}</th>`;
                 html += '</tr></thead>';
                 html += '<tbody>';
                 
@@ -2452,13 +2483,13 @@
                 html += '<div style="overflow-x: auto;">';
                 html += '<table class="stats-table">';
                 html += '<thead><tr>';
-                html += '<th>순위</th>';
-                html += '<th>선수명</th>';
-                html += '<th>이닝</th>';
-                html += '<th>탈삼진</th>';
-                html += '<th>평균자책점</th>';
-                html += '<th>WHIP</th>';
-                html += '<th>ERA+</th>';
+                html += `<th>${texts.rank}</th>`;
+                html += `<th>${texts.playerName}</th>`;
+                html += `<th>${texts.innings}</th>`;
+                html += `<th>${texts.strikeouts}</th>`;
+                html += `<th>${texts.era}</th>`;
+                html += `<th>${texts.whip}</th>`;
+                html += `<th>${texts.eraPlus}</th>`;
                 html += '</tr></thead>';
                 html += '<tbody>';
                 
@@ -2712,13 +2743,13 @@
                 
                 // 요일 헤더
                 html += '<div class="calendar-header">';
-                html += '<div class="calendar-day-header">일</div>';
-                html += '<div class="calendar-day-header">월</div>';
-                html += '<div class="calendar-day-header">화</div>';
-                html += '<div class="calendar-day-header">수</div>';
-                html += '<div class="calendar-day-header">목</div>';
-                html += '<div class="calendar-day-header">금</div>';
-                html += '<div class="calendar-day-header">토</div>';
+                html += `<div class="calendar-day-header">${texts.units['일']}</div>`;
+                html += `<div class="calendar-day-header">${texts.units['월']}</div>`;
+                html += `<div class="calendar-day-header">${texts.units['화']}</div>`;
+                html += `<div class="calendar-day-header">${texts.units['수']}</div>`;
+                html += `<div class="calendar-day-header">${texts.units['목']}</div>`;
+                html += `<div class="calendar-day-header">${texts.units['금']}</div>`;
+                html += `<div class="calendar-day-header">${texts.units['토']}</div>`;
                 html += '</div>';
                 
                 // 달력 바디
@@ -2769,14 +2800,14 @@
                                     const homeWon = parseInt(game.homeScore) > parseInt(game.awayScore);
                                     html += `<div class="game-teams">`;
                                     html += `<div class="team ${homeWon ? 'loser' : 'winner'}">${game.away} ${game.awayScore}</div>`;
-                                    html += `<div class="vs">vs</div>`;
+                                    html += `<div class="vs">${texts.units['VS']}</div>`;
                                     html += `<div class="team ${homeWon ? 'winner' : 'loser'}">${game.home} ${game.homeScore}</div>`;
                                     html += `</div>`;
                                 } else {
                                     // 경기 예정인 경우
                                     html += `<div class="game-teams">`;
                                     html += `<div class="team">${game.away}</div>`;
-                                    html += `<div class="vs">vs</div>`;
+                                    html += `<div class="vs">${texts.units['VS']}</div>`;
                                     html += `<div class="team">${game.home}</div>`;
                                     html += `</div>`;
                                 }
