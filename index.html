@@ -2243,15 +2243,15 @@
             // 홈런왕
             const homerunLeader = seasonHitterData.length > 0 ? 
                 seasonHitterData.reduce((max, player) => 
-                    (parseInt(player.HR) || 0) > (parseInt(max.HR) || 0) ? player : max
+                    (parseInt(player.홈런) || 0) > (parseInt(max.홈런) || 0) ? player : max
                 ) : null;
             
             if (homerunLeader) {
                 document.getElementById('homerunKing').innerHTML = `
                     <div class="leader-card">
                         <strong>${homerunLeader.Name || ''}</strong><br>
-                        <small>${getTeamName(homerunLeader.Team)}</small><br>
-                        <span style="font-size: 1.2em; color: #e91e63;">${homerunLeader.HR || 0}${texts.units['개']}</span>
+                        <small>${getTeamName(teamsData.find(t => t.PlayerName === homerunLeader.Name)?.TeamName || '')}</small><br>
+                        <span style="font-size: 1.2em; color: #e91e63;">${homerunLeader.홈런 || 0}${texts.units['개']}</span>
                     </div>
                 `;
             }
@@ -2260,7 +2260,7 @@
             let rbiCount = 0;
             const rbiLeader = seasonHitterData.length > 0 ? 
                 seasonHitterData.reduce((max, player) => {
-                    const rbi = parseInt(player.RBI) || 0;
+                    const rbi = parseInt(player.타점) || 0;
                     if (rbi > rbiCount) {
                         rbiCount = rbi;
                         return player;
@@ -2272,7 +2272,7 @@
                 document.getElementById('rbiKing').innerHTML = `
                     <div class="leader-card">
                         <strong>${rbiLeader.Name || ''}</strong><br>
-                        <small>${getTeamName(rbiLeader.Team)}</small><br>
+                        <small>${getTeamName(teamsData.find(t => t.PlayerName === rbiLeader.Name)?.TeamName || '')}</small><br>
                         <span style="font-size: 1.2em; color: #e91e63;">${rbiCount}${texts.units['타점']}</span>
                     </div>
                 `;
@@ -2281,15 +2281,15 @@
             // 도루왕
             const stealLeader = seasonHitterData.length > 0 ? 
                 seasonHitterData.reduce((max, player) => 
-                    (parseInt(player.SB) || 0) > (parseInt(max.SB) || 0) ? player : max
+                    (parseInt(player.도루) || 0) > (parseInt(max.도루) || 0) ? player : max
                 ) : null;
             
             if (stealLeader) {
                 document.getElementById('stealKing').innerHTML = `
                     <div class="leader-card">
                         <strong>${stealLeader.Name || ''}</strong><br>
-                        <small>${getTeamName(stealLeader.Team)}</small><br>
-                        <span style="font-size: 1.2em; color: #e91e63;">${stealLeader.SB || 0}${texts.units['개']}</span>
+                        <small>${getTeamName(teamsData.find(t => t.PlayerName === stealLeader.Name)?.TeamName || '')}</small><br>
+                        <span style="font-size: 1.2em; color: #e91e63;">${stealLeader.도루 || 0}${texts.units['개']}</span>
                     </div>
                 `;
             }
@@ -2297,15 +2297,15 @@
             // 탈삼진왕
             const strikeoutLeader = seasonPitcherData.length > 0 ? 
                 seasonPitcherData.reduce((max, player) => 
-                    (parseInt(player.K) || 0) > (parseInt(max.K) || 0) ? player : max
+                    (parseInt(player.탈삼진) || 0) > (parseInt(max.탈삼진) || 0) ? player : max
                 ) : null;
             
             if (strikeoutLeader) {
                 document.getElementById('strikeoutKing').innerHTML = `
                     <div class="leader-card">
                         <strong>${strikeoutLeader.Name || ''}</strong><br>
-                        <small>${getTeamName(strikeoutLeader.Team)}</small><br>
-                        <span style="font-size: 1.2em; color: #e91e63;">${strikeoutLeader.K || 0}${texts.units['개']}</span>
+                        <small>${getTeamName(teamsData.find(t => t.PlayerName === strikeoutLeader.Name)?.TeamName || '')}</small><br>
+                        <span style="font-size: 1.2em; color: #e91e63;">${strikeoutLeader.탈삼진 || 0}${texts.units['개']}</span>
                     </div>
                 `;
             }
@@ -2313,15 +2313,15 @@
             // 이닝왕
             const inningLeader = seasonPitcherData.length > 0 ? 
                 seasonPitcherData.reduce((max, player) => 
-                    (parseFloat(player.IP) || 0) > (parseFloat(max.IP) || 0) ? player : max
+                    (parseFloat(player.이닝) || 0) > (parseFloat(max.이닝) || 0) ? player : max
                 ) : null;
             
             if (inningLeader) {
                 document.getElementById('inningKing').innerHTML = `
                     <div class="leader-card">
                         <strong>${inningLeader.Name || ''}</strong><br>
-                        <small>${getTeamName(inningLeader.Team)}</small><br>
-                        <span style="font-size: 1.2em; color: #e91e63;">${inningLeader.IP || 0}${texts.units['이닝']}</span>
+                        <small>${getTeamName(teamsData.find(t => t.PlayerName === inningLeader.Name)?.TeamName || '')}</small><br>
+                        <span style="font-size: 1.2em; color: #e91e63;">${inningLeader.이닝 || 0}${texts.units['이닝']}</span>
                     </div>
                 `;
             }
@@ -2402,12 +2402,19 @@
         function showTeamInfo(teamName) {
             console.log(`${teamName} 팀 정보를 표시합니다.`);
             
-            // 팀별 데이터 수집 - 시즌 데이터에서 해당 팀 선수들 찾기
+            // teams.csv에서 해당 팀의 선수들 찾기
+            const teamPlayerNames = teamsData
+                .filter(player => player.TeamName && player.TeamName.trim() === teamName.trim())
+                .map(player => player.PlayerName);
+            
+            console.log(`${teamName} 팀 선수명들:`, teamPlayerNames);
+            
+            // 시즌 데이터에서 해당 팀 선수들 찾기
             const teamBatters = seasonHitterData.filter(player => 
-                player.Team && player.Team.trim() === teamName.trim()
+                teamPlayerNames.includes(player.Name)
             );
             const teamPitchers = seasonPitcherData.filter(player => 
-                player.Team && player.Team.trim() === teamName.trim()
+                teamPlayerNames.includes(player.Name)
             );
             
             console.log(`${teamName} 팀 타자 수:`, teamBatters.length);
@@ -2418,10 +2425,6 @@
             // 특별 기록에서 해당 팀 선수 찾기
             let specialRecords = [];
             if (window.specialRecordsData) {
-                const teamPlayerNames = [
-                    ...teamBatters.map(p => p.Name),
-                    ...teamPitchers.map(p => p.Name)
-                ];
                 specialRecords = window.specialRecordsData.filter(record => {
                     const playerName = record['닉네임'] || '';
                     return teamPlayerNames.includes(playerName);
@@ -2498,13 +2501,13 @@
                     html += '<tr>';
                     html += `<td class="rank">${index + 1}</td>`;
                     html += `<td class="player-name">${player.Name || ''}</td>`;
-                    html += `<td>${player.AB || '-'}</td>`;
-                    html += `<td>${player.H || '-'}</td>`;
-                    html += `<td>${player.HR || '-'}</td>`;
-                    html += `<td>${player.SB || '-'}</td>`;
-                    html += `<td><strong>${parseFloat(player.AVG || 0).toFixed(3)}</strong></td>`;
-                    html += `<td>${parseFloat(player.OBP || 0).toFixed(3)}</td>`;
-                    html += `<td>${parseFloat(player.SLG || 0).toFixed(3)}</td>`;
+                    html += `<td>${player.타수 || '-'}</td>`;
+                    html += `<td>${player.안타 || '-'}</td>`;
+                    html += `<td>${player.홈런 || '-'}</td>`;
+                    html += `<td>${player.도루 || '-'}</td>`;
+                    html += `<td><strong>${parseFloat(player.타율 || 0).toFixed(3)}</strong></td>`;
+                    html += `<td>${parseFloat(player.출루율 || 0).toFixed(3)}</td>`;
+                    html += `<td>${parseFloat(player.장타율 || 0).toFixed(3)}</td>`;
                     html += `<td>${player['wRC+'] || '-'}</td>`;
                     html += '</tr>';
                 });
@@ -2535,9 +2538,9 @@
                     html += '<tr>';
                     html += `<td class="rank">${index + 1}</td>`;
                     html += `<td class="player-name">${player.Name || ''}</td>`;
-                    html += `<td>${player.IP || '-'}</td>`;
-                    html += `<td>${player.K || '-'}</td>`;
-                    html += `<td><strong>${parseFloat(player.ERA || 0).toFixed(2)}</strong></td>`;
+                    html += `<td>${player.이닝 || '-'}</td>`;
+                    html += `<td>${player.탈삼진 || '-'}</td>`;
+                    html += `<td><strong>${parseFloat(player.평균자책점 || 0).toFixed(2)}</strong></td>`;
                     html += `<td>${parseFloat(player.WHIP || 0).toFixed(2)}</td>`;
                     html += `<td>${player['ERA+'] || '-'}</td>`;
                     html += '</tr>';
@@ -2988,17 +2991,21 @@
             
             seasonHitterData.forEach((player, index) => {
                 if (player.Name && player.Name.trim() !== '') {
+                    // teams.csv에서 팀명 찾기
+                    const teamInfo = teamsData.find(team => team.PlayerName === player.Name);
+                    const teamName = teamInfo ? teamInfo.TeamName : '';
+                    
                     html += '<tr>';
                     html += `<td>${index + 1}</td>`;
                     html += `<td>${player.Name}</td>`;
-                    html += `<td>${getTeamName(player.Team)}</td>`;
-                    html += `<td>${player.AB || 0}</td>`;
-                    html += `<td>${player.H || 0}</td>`;
-                    html += `<td>${player.HR || 0}</td>`;
-                    html += `<td>${player.SB || 0}</td>`;
-                    html += `<td>${player.AVG || '0.000'}</td>`;
-                    html += `<td>${player.OBP || '0.000'}</td>`;
-                    html += `<td>${player.SLG || '0.000'}</td>`;
+                    html += `<td>${getTeamName(teamName)}</td>`;
+                    html += `<td>${player.타수 || 0}</td>`;
+                    html += `<td>${player.안타 || 0}</td>`;
+                    html += `<td>${player.홈런 || 0}</td>`;
+                    html += `<td>${player.도루 || 0}</td>`;
+                    html += `<td>${player.타율 || '0.000'}</td>`;
+                    html += `<td>${player.출루율 || '0.000'}</td>`;
+                    html += `<td>${player.장타율 || '0.000'}</td>`;
                     html += `<td>${player['wRC+'] || 0}</td>`;
                     html += '</tr>';
                 }
@@ -3027,13 +3034,17 @@
             
             seasonPitcherData.forEach((player, index) => {
                 if (player.Name && player.Name.trim() !== '') {
+                    // teams.csv에서 팀명 찾기
+                    const teamInfo = teamsData.find(team => team.PlayerName === player.Name);
+                    const teamName = teamInfo ? teamInfo.TeamName : '';
+                    
                     html += '<tr>';
                     html += `<td>${index + 1}</td>`;
                     html += `<td>${player.Name}</td>`;
-                    html += `<td>${getTeamName(player.Team)}</td>`;
-                    html += `<td>${player.IP || 0}</td>`;
-                    html += `<td>${player.K || 0}</td>`;
-                    html += `<td>${player.ERA || '0.00'}</td>`;
+                    html += `<td>${getTeamName(teamName)}</td>`;
+                    html += `<td>${player.이닝 || 0}</td>`;
+                    html += `<td>${player.탈삼진 || 0}</td>`;
+                    html += `<td>${player.평균자책점 || '0.00'}</td>`;
                     html += `<td>${player.WHIP || '0.00'}</td>`;
                     html += `<td>${player['ERA+'] || 0}</td>`;
                     html += '</tr>';
