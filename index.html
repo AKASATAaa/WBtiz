@@ -2975,7 +2975,8 @@
             if (!container || seasonHitterData.length === 0) return;
             
             const texts = translations[currentLanguage];
-            let html = '<thead><tr>';
+            let html = '<table class="stats-table">';
+            html += '<thead><tr>';
             html += `<th>${texts.rank}</th>`;
             html += `<th>${texts.playerName}</th>`;
             html += `<th>${texts.team}</th>`;
@@ -3011,7 +3012,7 @@
                 }
             });
             
-            html += '</tbody>';
+            html += '</tbody></table>';
             container.innerHTML = html;
         }
         
@@ -3021,7 +3022,8 @@
             if (!container || seasonPitcherData.length === 0) return;
             
             const texts = translations[currentLanguage];
-            let html = '<thead><tr>';
+            let html = '<table class="stats-table">';
+            html += '<thead><tr>';
             html += `<th>${texts.rank}</th>`;
             html += `<th>${texts.playerName}</th>`;
             html += `<th>${texts.team}</th>`;
@@ -3051,7 +3053,7 @@
                 }
             });
             
-            html += '</tbody>';
+            html += '</tbody></table>';
             container.innerHTML = html;
         }
     </script>
