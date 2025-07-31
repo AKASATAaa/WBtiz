@@ -998,14 +998,16 @@
     </div>
 
     <script>
-        // 전역 변수들
+        // 전역 변수
         let playersData = [];
         let teamsData = [];
+        let seasonHitterData = [];
+        let seasonPitcherData = [];
         let filteredBatters = [];
         let filteredPitchers = [];
         let currentSortColumn = '';
-        let currentSortDirection = 'desc';
-        let currentLanguage = 'ko'; // 기본 언어는 한국어
+        let currentSortDirection = 'asc';
+        let currentLanguage = 'ko';
         
         // 다국어 텍스트 객체
         const translations = {
@@ -1350,6 +1352,10 @@
             // 언어 변경 시 특별 기록과 스케줄 데이터 다시 로드
             loadSpecialData();
             loadScheduleData();
+            
+            // 시즌 데이터 다시 로드
+            loadSeasonHitterData();
+            loadSeasonPitcherData();
         }
         
         function showTab(tabName, event) {
@@ -1418,30 +1424,36 @@
             }
         }
         
+        // 타자 표시
         function showBatters() {
-            const battersTable = document.getElementById('battersTable');
-            const pitchersTable = document.getElementById('pitchersTable');
+            const battersSection = document.getElementById('battersSection');
+            const pitchersSection = document.getElementById('pitchersSection');
             const battersBtn = document.getElementById('battersBtn');
             const pitchersBtn = document.getElementById('pitchersBtn');
             
-            if (battersTable) battersTable.style.display = 'block';
-            if (pitchersTable) pitchersTable.style.display = 'none';
+            if (battersSection) battersSection.style.display = 'block';
+            if (pitchersSection) pitchersSection.style.display = 'none';
             if (battersBtn) battersBtn.classList.add('active');
             if (pitchersBtn) pitchersBtn.classList.remove('active');
-            displayBatters();
+            
+            // 시즌 타자 데이터 표시
+            displaySeasonBatters();
         }
         
+        // 투수 표시
         function showPitchers() {
-            const battersTable = document.getElementById('battersTable');
-            const pitchersTable = document.getElementById('pitchersTable');
+            const battersSection = document.getElementById('battersSection');
+            const pitchersSection = document.getElementById('pitchersSection');
             const battersBtn = document.getElementById('battersBtn');
             const pitchersBtn = document.getElementById('pitchersBtn');
             
-            if (battersTable) battersTable.style.display = 'none';
-            if (pitchersTable) pitchersTable.style.display = 'block';
+            if (battersSection) battersSection.style.display = 'none';
+            if (pitchersSection) pitchersSection.style.display = 'block';
             if (battersBtn) battersBtn.classList.remove('active');
             if (pitchersBtn) pitchersBtn.classList.add('active');
-            displayPitchers();
+            
+            // 시즌 투수 데이터 표시
+            displaySeasonPitchers();
         }
         
         function sortTable(tableType, column) {
@@ -1912,13 +1924,23 @@
             });
         }
         
+        // 데이터 초기화
         function initializeData() {
+            console.log('데이터 초기화 시작...');
+            
+            // 시즌 데이터 로드
+            loadSeasonHitterData();
+            loadSeasonPitcherData();
+            
+            // 기존 데이터 설정
             setupTeamFilter();
             applyFilters();
             displayTopPerformers();
             displayCareerStats();
             displayCategoryLeaders();
             updateAllTexts();
+            
+            console.log('데이터 초기화 완료!');
         }
         
         function setupTeamFilter() {
@@ -2214,149 +2236,94 @@
             }
         }
         
+        // 카테고리별 순위 표시
         function displayCategoryLeaders() {
             const texts = translations[currentLanguage];
-            const batters = playersData.filter(player => player.AB && parseFloat(player.AB) > 0);
-            const pitchers = playersData.filter(player => player.ERA && parseFloat(player.IP || 0) > 0);
             
-            if (batters.length > 0) {
-                // 홈런왕
-                const homerunLeader = batters.reduce((max, player) => 
-                    parseInt(player.HR || 0) > parseInt(max.HR || 0) ? player : max
-                );
-                const homerunKingDiv = document.getElementById('homerunKing');
-                if (homerunKingDiv) {
-                    homerunKingDiv.innerHTML = `
+            // 홈런왕
+            const homerunLeader = seasonHitterData.length > 0 ? 
+                seasonHitterData.reduce((max, player) => 
+                    (parseInt(player.HR) || 0) > (parseInt(max.HR) || 0) ? player : max
+                ) : null;
+            
+            if (homerunLeader) {
+                document.getElementById('homerunKing').innerHTML = `
+                    <div class="leader-card">
                         <strong>${homerunLeader.Name || ''}</strong><br>
                         <small>${getTeamName(homerunLeader.Team)}</small><br>
                         <span style="font-size: 1.2em; color: #e91e63;">${homerunLeader.HR || 0}${texts.units['개']}</span>
-                    `;
-                }
-                
-                // 타점왕 (임시로 홈런*3 + 안타로 계산)
-                const rbiLeader = batters.reduce((max, player) => {
-                    const playerRBI = (parseInt(player.HR || 0) * 3) + parseInt(player.H || 0);
-                    const maxRBI = (parseInt(max.HR || 0) * 3) + parseInt(max.H || 0);
-                    return playerRBI > maxRBI ? player : max;
-                });
-                const rbiCount = (parseInt(rbiLeader.HR || 0) * 3) + parseInt(rbiLeader.H || 0);
-                const rbiKingDiv = document.getElementById('rbiKing');
-                if (rbiKingDiv) {
-                    rbiKingDiv.innerHTML = `
+                    </div>
+                `;
+            }
+            
+            // 타점왕 (시즌 데이터에서 계산)
+            let rbiCount = 0;
+            const rbiLeader = seasonHitterData.length > 0 ? 
+                seasonHitterData.reduce((max, player) => {
+                    const rbi = parseInt(player.RBI) || 0;
+                    if (rbi > rbiCount) {
+                        rbiCount = rbi;
+                        return player;
+                    }
+                    return max;
+                }) : null;
+            
+            if (rbiLeader) {
+                document.getElementById('rbiKing').innerHTML = `
+                    <div class="leader-card">
                         <strong>${rbiLeader.Name || ''}</strong><br>
                         <small>${getTeamName(rbiLeader.Team)}</small><br>
-                        <span style="font-size: 1.2em; color: #e91e63;">약 ${rbiCount}${texts.units['타점']}</span>
-                    `;
-                }
-                
-                // 도루왕
-                const stealLeader = batters.reduce((max, player) => 
-                    parseInt(player.SB || 0) > parseInt(max.SB || 0) ? player : max
-                );
-                const stealKingDiv = document.getElementById('stealKing');
-                if (stealKingDiv) {
-                    stealKingDiv.innerHTML = `
+                        <span style="font-size: 1.2em; color: #e91e63;">${rbiCount}${texts.units['타점']}</span>
+                    </div>
+                `;
+            }
+            
+            // 도루왕
+            const stealLeader = seasonHitterData.length > 0 ? 
+                seasonHitterData.reduce((max, player) => 
+                    (parseInt(player.SB) || 0) > (parseInt(max.SB) || 0) ? player : max
+                ) : null;
+            
+            if (stealLeader) {
+                document.getElementById('stealKing').innerHTML = `
+                    <div class="leader-card">
                         <strong>${stealLeader.Name || ''}</strong><br>
                         <small>${getTeamName(stealLeader.Team)}</small><br>
                         <span style="font-size: 1.2em; color: #e91e63;">${stealLeader.SB || 0}${texts.units['개']}</span>
-                    `;
-                }
-                
-                // 타율왕
-                const avgLeader = batters.reduce((max, player) => 
-                    parseFloat(player.AVG || 0) > parseFloat(max.AVG || 0) ? player : max
-                );
-                const avgKingDiv = document.getElementById('avgKing');
-                if (avgKingDiv) {
-                    avgKingDiv.innerHTML = `
-                        <strong>${avgLeader.Name || ''}</strong><br>
-                        <small>${getTeamName(avgLeader.Team)}</small><br>
-                        <span style="font-size: 1.2em; color: #e91e63;">${parseFloat(avgLeader.AVG || 0).toFixed(3)}</span>
-                    `;
-                }
-                
-                // 최고 OPS
-                const opsLeader = batters.reduce((max, player) => {
-                    const playerOPS = parseFloat(player.OBP || 0) + parseFloat(player.SLG || 0);
-                    const maxOPS = parseFloat(max.OBP || 0) + parseFloat(max.SLG || 0);
-                    return playerOPS > maxOPS ? player : max;
-                });
-                const opsValue = parseFloat(opsLeader.OBP || 0) + parseFloat(opsLeader.SLG || 0);
-                const opsKingDiv = document.getElementById('opsKing');
-                if (opsKingDiv) {
-                    opsKingDiv.innerHTML = `
-                        <strong>${opsLeader.Name || ''}</strong><br>
-                        <small>${getTeamName(opsLeader.Team)}</small><br>
-                        <span style="font-size: 1.2em; color: #e91e63;">${opsValue.toFixed(3)}</span>
-                    `;
-                }
+                    </div>
+                `;
             }
             
-            if (pitchers.length > 0) {
-                // 최우수 ERA
-                const eraLeader = pitchers.reduce((min, player) => 
-                    parseFloat(player.ERA || 10) < parseFloat(min.ERA || 10) ? player : min
-                );
-                const eraKingDiv = document.getElementById('eraKing');
-                if (eraKingDiv) {
-                    eraKingDiv.innerHTML = `
-                        <strong>${eraLeader.Name || ''}</strong><br>
-                        <small>${getTeamName(eraLeader.Team)}</small><br>
-                        <span style="font-size: 1.2em; color: #e91e63;">${parseFloat(eraLeader.ERA || 0).toFixed(2)}</span>
-                    `;
-                }
-                
-                // 탈삼진왕
-                const strikeoutLeader = pitchers.reduce((max, player) => 
-                    parseInt(player.K || 0) > parseInt(max.K || 0) ? player : max
-                );
-                const strikeoutKingDiv = document.getElementById('strikeoutKing');
-                if (strikeoutKingDiv) {
-                    strikeoutKingDiv.innerHTML = `
+            // 탈삼진왕
+            const strikeoutLeader = seasonPitcherData.length > 0 ? 
+                seasonPitcherData.reduce((max, player) => 
+                    (parseInt(player.K) || 0) > (parseInt(max.K) || 0) ? player : max
+                ) : null;
+            
+            if (strikeoutLeader) {
+                document.getElementById('strikeoutKing').innerHTML = `
+                    <div class="leader-card">
                         <strong>${strikeoutLeader.Name || ''}</strong><br>
                         <small>${getTeamName(strikeoutLeader.Team)}</small><br>
                         <span style="font-size: 1.2em; color: #e91e63;">${strikeoutLeader.K || 0}${texts.units['개']}</span>
-                    `;
-                }
-                
-                // 최다 이닝
-                const inningLeader = pitchers.reduce((max, player) => 
-                    parseFloat(player.IP || 0) > parseFloat(max.IP || 0) ? player : max
-                );
-                const inningKingDiv = document.getElementById('inningKing');
-                if (inningKingDiv) {
-                    inningKingDiv.innerHTML = `
+                    </div>
+                `;
+            }
+            
+            // 이닝왕
+            const inningLeader = seasonPitcherData.length > 0 ? 
+                seasonPitcherData.reduce((max, player) => 
+                    (parseFloat(player.IP) || 0) > (parseFloat(max.IP) || 0) ? player : max
+                ) : null;
+            
+            if (inningLeader) {
+                document.getElementById('inningKing').innerHTML = `
+                    <div class="leader-card">
                         <strong>${inningLeader.Name || ''}</strong><br>
                         <small>${getTeamName(inningLeader.Team)}</small><br>
                         <span style="font-size: 1.2em; color: #e91e63;">${inningLeader.IP || 0}${texts.units['이닝']}</span>
-                    `;
-                }
-                
-                // 최고 WHIP
-                const whipLeader = pitchers.reduce((min, player) => 
-                    parseFloat(player.WHIP || 10) < parseFloat(min.WHIP || 10) ? player : min
-                );
-                const whipKingDiv = document.getElementById('whipKing');
-                if (whipKingDiv) {
-                    whipKingDiv.innerHTML = `
-                        <strong>${whipLeader.Name || ''}</strong><br>
-                        <small>${getTeamName(whipLeader.Team)}</small><br>
-                        <span style="font-size: 1.2em; color: #e91e63;">${parseFloat(whipLeader.WHIP || 0).toFixed(2)}</span>
-                    `;
-                }
-                
-                // 최고 ERA+
-                const eraPlusLeader = pitchers.reduce((max, player) => 
-                    parseFloat(player['ERA+'] || 0) > parseFloat(max['ERA+'] || 0) ? player : max
-                );
-                const eraPlusKingDiv = document.getElementById('eraPlusKing');
-                if (eraPlusKingDiv) {
-                    eraPlusKingDiv.innerHTML = `
-                        <strong>${eraPlusLeader.Name || ''}</strong><br>
-                        <small>${getTeamName(eraPlusLeader.Team)}</small><br>
-                        <span style="font-size: 1.2em; color: #e91e63;">${eraPlusLeader['ERA+'] || 0}</span>
-                    `;
-                }
+                    </div>
+                `;
             }
         }
         
@@ -2381,10 +2348,21 @@
             initializeData();
         }
         
-        // 페이지 로드 시 데이터 불러오기
+        // 페이지 로드 시 데이터 로드
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('야구 기록실 페이지 로드됨');
+            console.log('페이지 로드됨 - 데이터 로드 시작');
+            
+            // 기본 데이터 로드
             loadData();
+            loadTeamsData();
+            
+            // 시즌 데이터 로드
+            loadSeasonHitterData();
+            loadSeasonPitcherData();
+            
+            // 특별 기록과 스케줄 데이터 로드
+            loadSpecialData();
+            loadScheduleData();
         });
         
         function showCareerBatters() {
@@ -2424,33 +2402,29 @@
         function showTeamInfo(teamName) {
             console.log(`${teamName} 팀 정보를 표시합니다.`);
             
-            // 팀별 데이터 수집 - teams.csv의 실제 팀명으로 매칭
-            const teamPlayers = playersData.filter(player => {
-                const playerTeam = getTeamName(player.Team);
-                const directMatch = player.Team === teamName;
-                const nameMatch = playerTeam === teamName;
-                
-                console.log(`선수: ${player.Name}, 팀: ${player.Team}, 변환된 팀: ${playerTeam}, 매칭: ${directMatch || nameMatch}`);
-                
-                return directMatch || nameMatch;
-            });
+            // 팀별 데이터 수집 - 시즌 데이터에서 해당 팀 선수들 찾기
+            const teamBatters = seasonHitterData.filter(player => 
+                player.Team && player.Team.trim() === teamName.trim()
+            );
+            const teamPitchers = seasonPitcherData.filter(player => 
+                player.Team && player.Team.trim() === teamName.trim()
+            );
             
-            console.log(`${teamName} 팀 선수 수:`, teamPlayers.length);
-            console.log('팀 선수들:', teamPlayers.map(p => p.Name));
-            
-            // 타자와 투수 분리
-            const batters = teamPlayers.filter(player => player.AB && parseFloat(player.AB) > 0);
-            const pitchers = teamPlayers.filter(player => player.ERA && parseFloat(player.IP || 0) > 0);
-            
-            console.log('타자 수:', batters.length);
-            console.log('투수 수:', pitchers.length);
+            console.log(`${teamName} 팀 타자 수:`, teamBatters.length);
+            console.log(`${teamName} 팀 투수 수:`, teamPitchers.length);
+            console.log('팀 타자들:', teamBatters.map(p => p.Name));
+            console.log('팀 투수들:', teamPitchers.map(p => p.Name));
             
             // 특별 기록에서 해당 팀 선수 찾기
             let specialRecords = [];
             if (window.specialRecordsData) {
+                const teamPlayerNames = [
+                    ...teamBatters.map(p => p.Name),
+                    ...teamPitchers.map(p => p.Name)
+                ];
                 specialRecords = window.specialRecordsData.filter(record => {
                     const playerName = record['닉네임'] || '';
-                    return teamPlayers.some(player => player.Name === playerName);
+                    return teamPlayerNames.includes(playerName);
                 });
             }
             
@@ -2500,7 +2474,7 @@
             }
             
             // 타자 기록
-            if (batters.length > 0) {
+            if (teamBatters.length > 0) {
                 const texts = translations[currentLanguage];
                 html += '<div style="margin-bottom: 30px;">';
                 html += `<h3 style="color: #e91e63; margin-bottom: 15px; border-bottom: 2px solid #e91e63; padding-bottom: 5px;">${texts.batterRecords}</h3>`;
@@ -2520,7 +2494,7 @@
                 html += '</tr></thead>';
                 html += '<tbody>';
                 
-                batters.forEach((player, index) => {
+                teamBatters.forEach((player, index) => {
                     html += '<tr>';
                     html += `<td class="rank">${index + 1}</td>`;
                     html += `<td class="player-name">${player.Name || ''}</td>`;
@@ -2540,7 +2514,7 @@
             }
             
             // 투수 기록
-            if (pitchers.length > 0) {
+            if (teamPitchers.length > 0) {
                 const texts = translations[currentLanguage];
                 html += '<div style="margin-bottom: 30px;">';
                 html += `<h3 style="color: #e91e63; margin-bottom: 15px; border-bottom: 2px solid #e91e63; padding-bottom: 5px;">${texts.pitcherRecords}</h3>`;
@@ -2557,7 +2531,7 @@
                 html += '</tr></thead>';
                 html += '<tbody>';
                 
-                pitchers.forEach((player, index) => {
+                teamPitchers.forEach((player, index) => {
                     html += '<tr>';
                     html += `<td class="rank">${index + 1}</td>`;
                     html += `<td class="player-name">${player.Name || ''}</td>`;
@@ -2574,7 +2548,7 @@
             }
             
             // 선수가 없는 경우
-            if (teamPlayers.length === 0) {
+            if (teamBatters.length === 0 && teamPitchers.length === 0) {
                 html += '<div style="text-align: center; padding: 30px; color: #666;">';
                 html += `<p>${teamName} 팀의 선수 정보가 없습니다.</p>`;
                 html += '</div>';
@@ -2921,6 +2895,152 @@
             
             html += '</div>';
             
+            container.innerHTML = html;
+        }
+        
+        // 시즌 타자 데이터 로드
+        async function loadSeasonHitterData() {
+            try {
+                const response = await fetch('./SeasonHitter.csv');
+                if (!response.ok) {
+                    throw new Error('SeasonHitter.csv 파일을 찾을 수 없습니다.');
+                }
+                
+                const csvText = await response.text();
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    encoding: 'UTF-8',
+                    complete: function(results) {
+                        seasonHitterData = results.data;
+                        console.log('시즌 타자 데이터 로드 완료:', seasonHitterData.length, '개');
+                        updateSeasonRecords();
+                    },
+                    error: function(error) {
+                        console.error('시즌 타자 데이터 파싱 오류:', error);
+                        updateLoadingStatus('시즌 타자 데이터 로드 실패', true);
+                    }
+                });
+            } catch (error) {
+                console.error('시즌 타자 데이터 로드 오류:', error);
+                updateLoadingStatus('시즌 타자 데이터 로드 실패', true);
+            }
+        }
+        
+        // 시즌 투수 데이터 로드
+        async function loadSeasonPitcherData() {
+            try {
+                const response = await fetch('./SeasonPitcher.csv');
+                if (!response.ok) {
+                    throw new Error('SeasonPitcher.csv 파일을 찾을 수 없습니다.');
+                }
+                
+                const csvText = await response.text();
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    encoding: 'UTF-8',
+                    complete: function(results) {
+                        seasonPitcherData = results.data;
+                        console.log('시즌 투수 데이터 로드 완료:', seasonPitcherData.length, '개');
+                        updateSeasonRecords();
+                    },
+                    error: function(error) {
+                        console.error('시즌 투수 데이터 파싱 오류:', error);
+                        updateLoadingStatus('시즌 투수 데이터 로드 실패', true);
+                    }
+                });
+            } catch (error) {
+                console.error('시즌 투수 데이터 로드 오류:', error);
+                updateLoadingStatus('시즌 투수 데이터 로드 실패', true);
+            }
+        }
+        
+        // 시즌 기록 업데이트
+        function updateSeasonRecords() {
+            if (seasonHitterData.length > 0) {
+                displaySeasonBatters();
+            }
+            if (seasonPitcherData.length > 0) {
+                displaySeasonPitchers();
+            }
+        }
+        
+        // 시즌 타자 표시
+        function displaySeasonBatters() {
+            const container = document.getElementById('battersTable');
+            if (!container || seasonHitterData.length === 0) return;
+            
+            const texts = translations[currentLanguage];
+            let html = '<thead><tr>';
+            html += `<th>${texts.rank}</th>`;
+            html += `<th>${texts.playerName}</th>`;
+            html += `<th>${texts.team}</th>`;
+            html += `<th>${texts.atBats}</th>`;
+            html += `<th>${texts.hits}</th>`;
+            html += `<th>${texts.homeRuns}</th>`;
+            html += `<th>${texts.stolenBases}</th>`;
+            html += `<th>${texts.battingAvg}</th>`;
+            html += `<th>${texts.onBasePct}</th>`;
+            html += `<th>${texts.sluggingPct}</th>`;
+            html += `<th>${texts.wrcPlus}</th>`;
+            html += '</tr></thead><tbody>';
+            
+            seasonHitterData.forEach((player, index) => {
+                if (player.Name && player.Name.trim() !== '') {
+                    html += '<tr>';
+                    html += `<td>${index + 1}</td>`;
+                    html += `<td>${player.Name}</td>`;
+                    html += `<td>${getTeamName(player.Team)}</td>`;
+                    html += `<td>${player.AB || 0}</td>`;
+                    html += `<td>${player.H || 0}</td>`;
+                    html += `<td>${player.HR || 0}</td>`;
+                    html += `<td>${player.SB || 0}</td>`;
+                    html += `<td>${player.AVG || '0.000'}</td>`;
+                    html += `<td>${player.OBP || '0.000'}</td>`;
+                    html += `<td>${player.SLG || '0.000'}</td>`;
+                    html += `<td>${player['wRC+'] || 0}</td>`;
+                    html += '</tr>';
+                }
+            });
+            
+            html += '</tbody>';
+            container.innerHTML = html;
+        }
+        
+        // 시즌 투수 표시
+        function displaySeasonPitchers() {
+            const container = document.getElementById('pitchersTable');
+            if (!container || seasonPitcherData.length === 0) return;
+            
+            const texts = translations[currentLanguage];
+            let html = '<thead><tr>';
+            html += `<th>${texts.rank}</th>`;
+            html += `<th>${texts.playerName}</th>`;
+            html += `<th>${texts.team}</th>`;
+            html += `<th>${texts.innings}</th>`;
+            html += `<th>${texts.strikeouts}</th>`;
+            html += `<th>${texts.era}</th>`;
+            html += `<th>${texts.whip}</th>`;
+            html += `<th>${texts.eraPlus}</th>`;
+            html += '</tr></thead><tbody>';
+            
+            seasonPitcherData.forEach((player, index) => {
+                if (player.Name && player.Name.trim() !== '') {
+                    html += '<tr>';
+                    html += `<td>${index + 1}</td>`;
+                    html += `<td>${player.Name}</td>`;
+                    html += `<td>${getTeamName(player.Team)}</td>`;
+                    html += `<td>${player.IP || 0}</td>`;
+                    html += `<td>${player.K || 0}</td>`;
+                    html += `<td>${player.ERA || '0.00'}</td>`;
+                    html += `<td>${player.WHIP || '0.00'}</td>`;
+                    html += `<td>${player['ERA+'] || 0}</td>`;
+                    html += '</tr>';
+                }
+            });
+            
+            html += '</tbody>';
             container.innerHTML = html;
         }
     </script>
