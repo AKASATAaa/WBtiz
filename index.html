@@ -1124,12 +1124,8 @@
             updateFilterOptions();
             
             // 언어 변경 시 특별 기록과 스케줄 데이터 다시 로드
-            if (window.specialRecordsData) {
-                loadSpecialData();
-            }
-            if (window.scheduleData) {
-                loadScheduleData();
-            }
+            loadSpecialData();
+            loadScheduleData();
         }
         
         function showTab(tabName, event) {
@@ -2369,8 +2365,11 @@
             // 분류별로 데이터 그룹화
             const categories = {};
             data.forEach(record => {
-                if (record['분류'] && record['기록 명']) {
-                    const category = record['분류'];
+                // 한국어와 일본어 헤더 모두 지원
+                const category = record['분류'] || record['分類'];
+                const recordName = record['기록 명'] || record['記録名'];
+                
+                if (category && recordName) {
                     if (!categories[category]) {
                         categories[category] = [];
                     }
@@ -2387,10 +2386,10 @@
                 html += `<h3>${category}</h3>`;
                 
                 records.forEach(record => {
-                    const recordName = record['기록 명'] || '';
-                    const date = record['일자'] || '';
-                    const player = record['닉네임'] || '';
-                    const note = record['비고'] || '';
+                    const recordName = record['기록 명'] || record['記録名'] || '';
+                    const date = record['일자'] || record['日付'] || '';
+                    const player = record['닉네임'] || record['ニックネーム'] || '';
+                    const note = record['비고'] || record['備考'] || '';
                     
                     if (recordName.trim() !== '') {
                         html += `<div class="special-record">`;
@@ -2472,15 +2471,16 @@
             // 월별로 데이터 그룹화
             const monthlyData = {};
             data.forEach(row => {
-                const month = row['Month'] || '';
-                const week = row['Week'] || '';
-                const date = parseInt(row['Date']) || 0;
-                const day = row['Day'] || '';
-                const homeTeam = row['HomeTeam'] || '';
-                const awayTeam = row['AwayTeam'] || '';
-                const time = row['Time'] || '';
-                const homeScore = row['HomeScore'] || '';
-                const awayScore = row['AwayScore'] || '';
+                // 한국어와 일본어 헤더 모두 지원
+                const month = row['Month'] || row['月'] || '';
+                const week = row['Week'] || row['週'] || '';
+                const date = parseInt(row['Date'] || row['日付'] || 0);
+                const day = row['Day'] || row['曜日'] || '';
+                const homeTeam = row['HomeTeam'] || row['ホームチーム'] || '';
+                const awayTeam = row['AwayTeam'] || row['ビジターチーム'] || '';
+                const time = row['Time'] || row['時間'] || '';
+                const homeScore = row['HomeScore'] || row['ホームスコア'] || '';
+                const awayScore = row['AwayScore'] || row['ビジタースコア'] || '';
                 
                 if (month && month.trim() !== '' && date > 0) {
                     if (!monthlyData[month]) {
