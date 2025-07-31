@@ -781,16 +781,16 @@
                             <table class="stats-table">
                                 <thead>
                                     <tr>
-                                        <th>순위</th>
-                                        <th>선수명</th>
-                                        <th>팀</th>
-                                        <th>타수</th>
-                                        <th>안타</th>
-                                        <th>홈런</th>
-                                        <th>도루</th>
-                                        <th>타율</th>
-                                        <th>출루율</th>
-                                        <th>장타율</th>
+                                        <th onclick="sortCareerTable('batters', 'rank')" class="sortable">순위</th>
+                                        <th onclick="sortCareerTable('batters', 'Name')" class="sortable">선수명</th>
+                                        <th onclick="sortCareerTable('batters', 'Team')" class="sortable">팀</th>
+                                        <th onclick="sortCareerTable('batters', 'AB')" class="sortable">타수</th>
+                                        <th onclick="sortCareerTable('batters', 'H')" class="sortable">안타</th>
+                                        <th onclick="sortCareerTable('batters', 'HR')" class="sortable">홈런</th>
+                                        <th onclick="sortCareerTable('batters', 'SB')" class="sortable">도루</th>
+                                        <th onclick="sortCareerTable('batters', 'AVG')" class="sortable">타율</th>
+                                        <th onclick="sortCareerTable('batters', 'OBP')" class="sortable">출루율</th>
+                                        <th onclick="sortCareerTable('batters', 'SLG')" class="sortable">장타율</th>
                                     </tr>
                                 </thead>
                                 <tbody id="careerBattersBody">
@@ -805,13 +805,13 @@
                             <table class="stats-table">
                                 <thead>
                                     <tr>
-                                        <th>순위</th>
-                                        <th>선수명</th>
-                                        <th>팀</th>
-                                        <th>이닝</th>
-                                        <th>탈삼진</th>
-                                        <th>평균자책점</th>
-                                        <th>WHIP</th>
+                                        <th onclick="sortCareerTable('pitchers', 'rank')" class="sortable">순위</th>
+                                        <th onclick="sortCareerTable('pitchers', 'Name')" class="sortable">선수명</th>
+                                        <th onclick="sortCareerTable('pitchers', 'Team')" class="sortable">팀</th>
+                                        <th onclick="sortCareerTable('pitchers', 'IP')" class="sortable">이닝</th>
+                                        <th onclick="sortCareerTable('pitchers', 'K')" class="sortable">탈삼진</th>
+                                        <th onclick="sortCareerTable('pitchers', 'ERA')" class="sortable">평균자책점</th>
+                                        <th onclick="sortCareerTable('pitchers', 'WHIP')" class="sortable">WHIP</th>
                                     </tr>
                                 </thead>
                                 <tbody id="careerPitchersBody">
@@ -2492,16 +2492,16 @@
                 html += '<div style="overflow-x: auto;">';
                 html += '<table class="stats-table">';
                 html += '<thead><tr>';
-                html += `<th>${texts.rank}</th>`;
-                html += `<th>${texts.playerName}</th>`;
-                html += `<th>${texts.atBats}</th>`;
-                html += `<th>${texts.hits}</th>`;
-                html += `<th>${texts.homeRuns}</th>`;
-                html += `<th>${texts.stolenBases}</th>`;
-                html += `<th>${texts.battingAvg}</th>`;
-                html += `<th>${texts.onBasePct}</th>`;
-                html += `<th>${texts.sluggingPct}</th>`;
-                html += `<th>${texts.wrcPlus}</th>`;
+                html += `<th onclick="sortTeamTable('batters', 'rank')" class="sortable">${texts.rank}</th>`;
+                html += `<th onclick="sortTeamTable('batters', 'Name')" class="sortable">${texts.playerName}</th>`;
+                html += `<th onclick="sortTeamTable('batters', '타수')" class="sortable">${texts.atBats}</th>`;
+                html += `<th onclick="sortTeamTable('batters', '안타')" class="sortable">${texts.hits}</th>`;
+                html += `<th onclick="sortTeamTable('batters', '홈런')" class="sortable">${texts.homeRuns}</th>`;
+                html += `<th onclick="sortTeamTable('batters', '도루')" class="sortable">${texts.stolenBases}</th>`;
+                html += `<th onclick="sortTeamTable('batters', '타율')" class="sortable">${texts.battingAvg}</th>`;
+                html += `<th onclick="sortTeamTable('batters', '출루율')" class="sortable">${texts.onBasePct}</th>`;
+                html += `<th onclick="sortTeamTable('batters', '장타율')" class="sortable">${texts.sluggingPct}</th>`;
+                html += `<th onclick="sortTeamTable('batters', 'wRC+')" class="sortable">${texts.wrcPlus}</th>`;
                 html += '</tr></thead>';
                 html += '<tbody>';
                 
@@ -2532,13 +2532,13 @@
                 html += '<div style="overflow-x: auto;">';
                 html += '<table class="stats-table">';
                 html += '<thead><tr>';
-                html += `<th>${texts.rank}</th>`;
-                html += `<th>${texts.playerName}</th>`;
-                html += `<th>${texts.innings}</th>`;
-                html += `<th>${texts.strikeouts}</th>`;
-                html += `<th>${texts.era}</th>`;
-                html += `<th>${texts.whip}</th>`;
-                html += `<th>${texts.eraPlus}</th>`;
+                html += `<th onclick="sortTeamTable('pitchers', 'rank')" class="sortable">${texts.rank}</th>`;
+                html += `<th onclick="sortTeamTable('pitchers', 'Name')" class="sortable">${texts.playerName}</th>`;
+                html += `<th onclick="sortTeamTable('pitchers', '이닝')" class="sortable">${texts.innings}</th>`;
+                html += `<th onclick="sortTeamTable('pitchers', '탈삼진')" class="sortable">${texts.strikeouts}</th>`;
+                html += `<th onclick="sortTeamTable('pitchers', '평균자책점')" class="sortable">${texts.era}</th>`;
+                html += `<th onclick="sortTeamTable('pitchers', 'WHIP')" class="sortable">${texts.whip}</th>`;
+                html += `<th onclick="sortTeamTable('pitchers', 'ERA+')" class="sortable">${texts.eraPlus}</th>`;
                 html += '</tr></thead>';
                 html += '<tbody>';
                 
@@ -2985,17 +2985,17 @@
             const texts = translations[currentLanguage];
             let html = '<table class="stats-table">';
             html += '<thead><tr>';
-            html += `<th>${texts.rank}</th>`;
-            html += `<th>${texts.playerName}</th>`;
-            html += `<th>${texts.team}</th>`;
-            html += `<th>${texts.atBats}</th>`;
-            html += `<th>${texts.hits}</th>`;
-            html += `<th>${texts.homeRuns}</th>`;
-            html += `<th>${texts.stolenBases}</th>`;
-            html += `<th>${texts.battingAvg}</th>`;
-            html += `<th>${texts.onBasePct}</th>`;
-            html += `<th>${texts.sluggingPct}</th>`;
-            html += `<th>${texts.wrcPlus}</th>`;
+            html += `<th onclick="sortSeasonTable('batters', 'rank')" class="sortable">${texts.rank}</th>`;
+            html += `<th onclick="sortSeasonTable('batters', 'Name')" class="sortable">${texts.playerName}</th>`;
+            html += `<th onclick="sortSeasonTable('batters', 'Team')" class="sortable">${texts.team}</th>`;
+            html += `<th onclick="sortSeasonTable('batters', '타수')" class="sortable">${texts.atBats}</th>`;
+            html += `<th onclick="sortSeasonTable('batters', '안타')" class="sortable">${texts.hits}</th>`;
+            html += `<th onclick="sortSeasonTable('batters', '홈런')" class="sortable">${texts.homeRuns}</th>`;
+            html += `<th onclick="sortSeasonTable('batters', '도루')" class="sortable">${texts.stolenBases}</th>`;
+            html += `<th onclick="sortSeasonTable('batters', '타율')" class="sortable">${texts.battingAvg}</th>`;
+            html += `<th onclick="sortSeasonTable('batters', '출루율')" class="sortable">${texts.onBasePct}</th>`;
+            html += `<th onclick="sortSeasonTable('batters', '장타율')" class="sortable">${texts.sluggingPct}</th>`;
+            html += `<th onclick="sortSeasonTable('batters', 'wRC+')" class="sortable">${texts.wrcPlus}</th>`;
             html += '</tr></thead><tbody>';
             
             seasonHitterData.forEach((player, index) => {
@@ -3032,14 +3032,14 @@
             const texts = translations[currentLanguage];
             let html = '<table class="stats-table">';
             html += '<thead><tr>';
-            html += `<th>${texts.rank}</th>`;
-            html += `<th>${texts.playerName}</th>`;
-            html += `<th>${texts.team}</th>`;
-            html += `<th>${texts.innings}</th>`;
-            html += `<th>${texts.strikeouts}</th>`;
-            html += `<th>${texts.era}</th>`;
-            html += `<th>${texts.whip}</th>`;
-            html += `<th>${texts.eraPlus}</th>`;
+            html += `<th onclick="sortSeasonTable('pitchers', 'rank')" class="sortable">${texts.rank}</th>`;
+            html += `<th onclick="sortSeasonTable('pitchers', 'Name')" class="sortable">${texts.playerName}</th>`;
+            html += `<th onclick="sortSeasonTable('pitchers', 'Team')" class="sortable">${texts.team}</th>`;
+            html += `<th onclick="sortSeasonTable('pitchers', '이닝')" class="sortable">${texts.innings}</th>`;
+            html += `<th onclick="sortSeasonTable('pitchers', '탈삼진')" class="sortable">${texts.strikeouts}</th>`;
+            html += `<th onclick="sortSeasonTable('pitchers', '평균자책점')" class="sortable">${texts.era}</th>`;
+            html += `<th onclick="sortSeasonTable('pitchers', 'WHIP')" class="sortable">${texts.whip}</th>`;
+            html += `<th onclick="sortSeasonTable('pitchers', 'ERA+')" class="sortable">${texts.eraPlus}</th>`;
             html += '</tr></thead><tbody>';
             
             seasonPitcherData.forEach((player, index) => {
@@ -3063,6 +3063,158 @@
             
             html += '</tbody></table>';
             container.innerHTML = html;
+        }
+        
+        // 시즌 테이블 정렬
+        function sortSeasonTable(tableType, column) {
+            // 기존 정렬 표시 제거
+            document.querySelectorAll('.sortable').forEach(th => {
+                th.classList.remove('asc', 'desc');
+            });
+            
+            if (currentSortColumn === column) {
+                currentSortDirection = currentSortDirection === 'desc' ? 'asc' : 'desc';
+            } else {
+                currentSortColumn = column;
+                currentSortDirection = 'desc';
+            }
+            
+            // 현재 정렬된 컬럼에 방향 표시
+            const clickedHeader = event.target;
+            if (clickedHeader.classList.contains('sortable')) {
+                clickedHeader.classList.add(currentSortDirection);
+            }
+            
+            let data = [];
+            if (tableType === 'batters') {
+                data = [...seasonHitterData];
+            } else if (tableType === 'pitchers') {
+                data = [...seasonPitcherData];
+            }
+            
+            data.sort((a, b) => {
+                let valueA, valueB;
+                
+                if (column === 'rank') {
+                    valueA = 0; // 순위는 정렬하지 않음
+                    valueB = 0;
+                } else if (column === 'Name') {
+                    valueA = (a.Name || '').toString().toLowerCase();
+                    valueB = (b.Name || '').toString().toLowerCase();
+                } else if (column === 'Team') {
+                    const teamA = teamsData.find(team => team.PlayerName === a.Name);
+                    const teamB = teamsData.find(team => team.PlayerName === b.Name);
+                    valueA = (teamA ? teamA.TeamName : '').toString().toLowerCase();
+                    valueB = (teamB ? teamB.TeamName : '').toString().toLowerCase();
+                } else {
+                    // 숫자 데이터 정렬
+                    valueA = parseFloat(a[column]) || 0;
+                    valueB = parseFloat(b[column]) || 0;
+                }
+                
+                if (currentSortDirection === 'desc') { 
+                    return valueB > valueA ? 1 : valueB < valueA ? -1 : 0;
+                } else {
+                    return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+                }
+            });
+            
+            if (tableType === 'batters') {
+                seasonHitterData = data;
+                displaySeasonBatters();
+            } else if (tableType === 'pitchers') {
+                seasonPitcherData = data;
+                displaySeasonPitchers();
+            }
+        }
+        
+        // 통산 기록실 테이블 정렬
+        function sortCareerTable(tableType, column) {
+            // 기존 정렬 표시 제거
+            document.querySelectorAll('.sortable').forEach(th => {
+                th.classList.remove('asc', 'desc');
+            });
+            
+            if (currentSortColumn === column) {
+                currentSortDirection = currentSortDirection === 'desc' ? 'asc' : 'desc';
+            } else {
+                currentSortColumn = column;
+                currentSortDirection = 'desc';
+            }
+            
+            // 현재 정렬된 컬럼에 방향 표시
+            const clickedHeader = event.target;
+            if (clickedHeader.classList.contains('sortable')) {
+                clickedHeader.classList.add(currentSortDirection);
+            }
+            
+            let data = [];
+            if (tableType === 'batters') {
+                data = [...playersData.filter(player => player.AB && parseFloat(player.AB) > 0)];
+            } else if (tableType === 'pitchers') {
+                data = [...playersData.filter(player => player.ERA && parseFloat(player.IP || 0) > 0)];
+            }
+            
+            data.sort((a, b) => {
+                let valueA, valueB;
+                
+                if (column === 'rank') {
+                    valueA = 0; // 순위는 정렬하지 않음
+                    valueB = 0;
+                } else if (column === 'Name') {
+                    valueA = (a.Name || '').toString().toLowerCase();
+                    valueB = (b.Name || '').toString().toLowerCase();
+                } else if (column === 'Team') {
+                    valueA = (getTeamName(a.Team) || '').toString().toLowerCase();
+                    valueB = (getTeamName(b.Team) || '').toString().toLowerCase();
+                } else {
+                    // 숫자 데이터 정렬
+                    valueA = parseFloat(a[column]) || 0;
+                    valueB = parseFloat(b[column]) || 0;
+                }
+                
+                if (currentSortDirection === 'desc') { 
+                    return valueB > valueA ? 1 : valueB < valueA ? -1 : 0;
+                } else {
+                    return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+                }
+            });
+            
+            if (tableType === 'batters') {
+                displayCareerBatters(data);
+            } else if (tableType === 'pitchers') {
+                displayCareerPitchers(data);
+            }
+        }
+        
+        // 팀 정보 테이블 정렬
+        function sortTeamTable(tableType, column) {
+            // 기존 정렬 표시 제거
+            document.querySelectorAll('.sortable').forEach(th => {
+                th.classList.remove('asc', 'desc');
+            });
+            
+            if (currentSortColumn === column) {
+                currentSortDirection = currentSortDirection === 'desc' ? 'asc' : 'desc';
+            } else {
+                currentSortColumn = column;
+                currentSortDirection = 'desc';
+            }
+            
+            // 현재 정렬된 컬럼에 방향 표시
+            const clickedHeader = event.target;
+            if (clickedHeader.classList.contains('sortable')) {
+                clickedHeader.classList.add(currentSortDirection);
+            }
+            
+            // 현재 표시된 팀 정보를 다시 정렬하여 표시
+            const teamInfoContainer = document.getElementById('teamInfoContainer');
+            if (teamInfoContainer) {
+                const currentTeamName = teamInfoContainer.querySelector('h2')?.textContent;
+                if (currentTeamName) {
+                    showTeamInfo(currentTeamName);
+                }
+            }
         }
     </script>
 </body>
