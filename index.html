@@ -1122,6 +1122,14 @@
             
             // 필터 옵션 업데이트
             updateFilterOptions();
+            
+            // 언어 변경 시 특별 기록과 스케줄 데이터 다시 로드
+            if (window.specialRecordsData) {
+                loadSpecialRecords();
+            }
+            if (window.scheduleData) {
+                loadScheduleData();
+            }
         }
         
         function showTab(tabName, event) {
@@ -1145,7 +1153,7 @@
             
             // 특별 기록 탭이 선택되면 데이터 로드
             if (tabName === 'special') {
-                loadSpecialData();
+                loadSpecialRecords();
             }
             
             // 스케줄 탭이 선택되면 데이터 로드
@@ -2310,7 +2318,8 @@
             console.log('특별 기록 데이터 로드 시작...');
             
             try {
-                const response = await fetch('./SeasonSpecial.csv');
+                const fileName = currentLanguage === 'ja' ? './SeasonSpecial_JP.csv' : './SeasonSpecial.csv';
+                const response = await fetch(fileName);
                 if (!response.ok) {
                     throw new Error('SeasonSpecial.csv 파일을 찾을 수 없습니다.');
                 }
@@ -2416,7 +2425,8 @@
             console.log('스케줄 데이터 로드 시작...');
             
             try {
-                const response = await fetch('./schedule.csv');
+                const fileName = currentLanguage === 'ja' ? './schedule_JP.csv' : './schedule.csv';
+                const response = await fetch(fileName);
                 if (!response.ok) {
                     throw new Error('schedule.csv 파일을 찾을 수 없습니다.');
                 }
