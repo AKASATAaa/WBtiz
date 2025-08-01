@@ -3788,16 +3788,33 @@
                     img.alt = player.name;
                     img.className = 'player-profile-picture';
                     
+                    // 이미지 스타일을 placeholder와 동일하게 설정
+                    img.style.cssText = 'width: 220px; height: 220px; border-radius: 50%; background: rgba(255,255,255,0.2); margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; color: white; font-size: 5em; border: 6px solid rgba(255,255,255,0.3); position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); object-fit: cover;';
+                    
                     // PNG 파일 로드 시도
                     img.onload = () => {
                         placeholder.parentNode.replaceChild(img, placeholder);
+                        // 이미지 로드 후 타자 기록 표시
+                        setTimeout(() => {
+                            showPlayerStats(player.name, 'batter');
+                        }, 50);
                     };
                     img.onerror = () => {
                         // 선수 사진이 없으면 Default.png 시도
                         img.src = 'image/PlayerProfile/Default.png';
                         img.onerror = () => {
-                            // Default.png도 없으면 플레이스홀더 유지
+                            // Default.png도 없으면 플레이스홀더 유지하고 타자 기록 표시
                             console.log('Default.png도 없음');
+                            setTimeout(() => {
+                                showPlayerStats(player.name, 'batter');
+                            }, 50);
+                        };
+                        img.onload = () => {
+                            placeholder.parentNode.replaceChild(img, placeholder);
+                            // Default 이미지 로드 후 타자 기록 표시
+                            setTimeout(() => {
+                                showPlayerStats(player.name, 'batter');
+                            }, 50);
                         };
                     };
                     
@@ -3805,10 +3822,10 @@
                 }
             }, 100);
             
-            // 기본적으로 타자 기록 표시
+            // 기본적으로 타자 기록 표시 (이미지 로드와 관계없이)
             setTimeout(() => {
                 showPlayerStats(player.name, 'batter');
-            }, 100);
+            }, 150);
             
             return row;
         }
