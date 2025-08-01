@@ -3744,28 +3744,43 @@
             
             row.innerHTML = `
                 <td colspan="3" style="padding: 0; background: ${bgColor};">
-                    <div class="player-profile-card" style="margin: 0; border-radius: 0; box-shadow: none;">
-                        <div class="player-profile-header" style="background: linear-gradient(135deg, ${teamColor.primary}, ${teamColor.secondary}); color: white; border-radius: 0;">
+                    <div class="player-profile-card" style="margin: 0; border-radius: 0; box-shadow: none; display: flex;">
+                        <div style="flex: 1; background: linear-gradient(135deg, ${teamColor.primary}, ${teamColor.secondary}); color: white; padding: 20px; text-align: center;">
                             <div class="player-profile-picture-placeholder" style="width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.2); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2em;">👤</div>
                             <div class="player-profile-name">${player.name}</div>
                             <div class="player-profile-info">${player.team} | ${details.position} | ${details.throwing}${details.batting}</div>
+                            <div class="player-profile-details" style="background: transparent; padding: 0; margin-top: 15px;">
+                                <div class="player-profile-detail-row" style="border-bottom: 1px solid rgba(255,255,255,0.3);">
+                                    <span class="player-profile-detail-label" style="color: white;">팀</span>
+                                    <span class="player-profile-detail-value" style="color: white;">${player.team}</span>
+                                </div>
+                                <div class="player-profile-detail-row" style="border-bottom: 1px solid rgba(255,255,255,0.3);">
+                                    <span class="player-profile-detail-label" style="color: white;">포지션</span>
+                                    <span class="player-profile-detail-value" style="color: white;">${details.position}</span>
+                                </div>
+                                <div class="player-profile-detail-row" style="border-bottom: 1px solid rgba(255,255,255,0.3);">
+                                    <span class="player-profile-detail-label" style="color: white;">투구손</span>
+                                    <span class="player-profile-detail-value" style="color: white;">${details.throwing}</span>
+                                </div>
+                                <div class="player-profile-detail-row">
+                                    <span class="player-profile-detail-label" style="color: white;">타석손</span>
+                                    <span class="player-profile-detail-value" style="color: white;">${details.batting}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="player-profile-details">
-                            <div class="player-profile-detail-row">
-                                <span class="player-profile-detail-label">팀</span>
-                                <span class="player-profile-detail-value">${player.team}</span>
+                        <div style="flex: 1; background: white; padding: 20px;">
+                            <div style="margin-bottom: 15px;">
+                                <button onclick="showPlayerStats('${player.name}', 'batter')" class="nav-item active" style="margin-right: 10px; font-size: 0.9em;">타자</button>
+                                <button onclick="showPlayerStats('${player.name}', 'pitcher')" class="nav-item" style="margin-right: 10px; font-size: 0.9em;">투수</button>
+                                ${isSeasonPlayer(player.name) ? `
+                                    <button onclick="showPlayerStats('${player.name}', 'season-batter')" class="nav-item" style="margin-right: 10px; font-size: 0.9em;">시즌 타자</button>
+                                    <button onclick="showPlayerStats('${player.name}', 'season-pitcher')" class="nav-item" style="font-size: 0.9em;">시즌 투수</button>
+                                ` : ''}
                             </div>
-                            <div class="player-profile-detail-row">
-                                <span class="player-profile-detail-label">포지션</span>
-                                <span class="player-profile-detail-value">${details.position}</span>
-                            </div>
-                            <div class="player-profile-detail-row">
-                                <span class="player-profile-detail-label">투구손</span>
-                                <span class="player-profile-detail-value">${details.throwing}</span>
-                            </div>
-                            <div class="player-profile-detail-row">
-                                <span class="player-profile-detail-label">타석손</span>
-                                <span class="player-profile-detail-value">${details.batting}</span>
+                            <div id="player-stats-${player.name.replace(/[^a-zA-Z0-9]/g, '')}" class="player-stats-container">
+                                <div style="text-align: center; color: #666; padding: 20px;">
+                                    버튼을 클릭하여 성적을 확인하세요
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3798,6 +3813,127 @@
             }, 100);
             
             return row;
+        }
+        
+        // 시즌 선수인지 확인
+        function isSeasonPlayer(playerName) {
+            return seasonHitterData.some(player => player.Name === playerName) || 
+                   seasonPitcherData.some(player => player.Name === playerName);
+        }
+        
+        // 선수 성적 표시
+        function showPlayerStats(playerName, type) {
+            console.log('선수 성적 표시:', playerName, type);
+            
+            // 버튼 상태 업데이트
+            const container = document.querySelector(`#player-stats-${playerName.replace(/[^a-zA-Z0-9]/g, '')}`);
+            if (!container) return;
+            
+            // 모든 버튼 비활성화
+            container.parentNode.querySelectorAll('button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 클릭된 버튼 활성화
+            event.target.classList.add('active');
+            
+            let stats = null;
+            let html = '';
+            
+            if (type === 'batter') {
+                // 통산 타자 기록
+                const player = playersData.find(p => p.Name === playerName);
+                if (player) {
+                    stats = {
+                        타수: player.AB || 0,
+                        안타: player.H || 0,
+                        홈런: player.HR || 0,
+                        도루: player.SB || 0,
+                        출루율: parseFloat(player.OBP || 0).toFixed(3),
+                        WAR: 'N/A', // 계산 필요
+                        'wRC+': player['wRC+'] || 'N/A',
+                        wOBA: 'N/A', // 계산 필요
+                        HR: player.HR || 0,
+                        RBI: 'N/A', // 타점 정보 없음
+                        FPCT: 'N/A' // 수비율 정보 없음
+                    };
+                }
+            } else if (type === 'pitcher') {
+                // 통산 투수 기록
+                const player = playersData.find(p => p.Name === playerName);
+                if (player) {
+                    stats = {
+                        '평균자책점': parseFloat(player.ERA || 0).toFixed(2),
+                        이닝: player.IP || 0,
+                        승: 'N/A', // 승수 정보 없음
+                        패: 'N/A', // 패수 정보 없음
+                        세이브: 'N/A', // 세이브 정보 없음
+                        홀드: 'N/A', // 홀드 정보 없음
+                        탈삼진: player.K || 0,
+                        '피홈런': 'N/A', // 피홈런 정보 없음
+                        자책점: 'N/A', // 자책점 정보 없음
+                        'ERA+': player['ERA+'] || 'N/A',
+                        WHIP: parseFloat(player.WHIP || 0).toFixed(2),
+                        'K/9': 'N/A', // 계산 필요
+                        'B/9': 'N/A' // 계산 필요
+                    };
+                }
+            } else if (type === 'season-batter') {
+                // 시즌 타자 기록
+                const player = seasonHitterData.find(p => p.Name === playerName);
+                if (player) {
+                    stats = {
+                        타수: player.타수 || 0,
+                        안타: player.안타 || 0,
+                        홈런: player.홈런 || 0,
+                        도루: player.도루 || 0,
+                        출루율: parseFloat(player.출루율 || 0).toFixed(3),
+                        WAR: 'N/A',
+                        'wRC+': player['wRC+'] || 'N/A',
+                        wOBA: parseFloat(player.wOBA || 0).toFixed(3),
+                        HR: player.홈런 || 0,
+                        RBI: player.타점 || 0,
+                        FPCT: parseFloat(player.FPCT || 0).toFixed(3)
+                    };
+                }
+            } else if (type === 'season-pitcher') {
+                // 시즌 투수 기록
+                const player = seasonPitcherData.find(p => p.Name === playerName);
+                if (player) {
+                    stats = {
+                        '평균자책점': parseFloat(player.평균자책점 || 0).toFixed(2),
+                        이닝: player.이닝 || 0,
+                        승: player.승 || 0,
+                        패: player.패 || 0,
+                        세이브: player.세이브 || 0,
+                        홀드: player.홀드 || 0,
+                        탈삼진: player.탈삼진 || 0,
+                        '피홈런': player.피홈런 || 0,
+                        자책점: player.자책점 || 0,
+                        'ERA+': player['ERA+'] || 'N/A',
+                        WHIP: parseFloat(player.WHIP || 0).toFixed(2),
+                        'K/9': parseFloat(player['K/9'] || 0).toFixed(1),
+                        'B/9': parseFloat(player['B/9'] || 0).toFixed(1)
+                    };
+                }
+            }
+            
+            if (stats) {
+                html = '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">';
+                Object.entries(stats).forEach(([key, value]) => {
+                    html += `
+                        <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; text-align: center;">
+                            <div style="font-size: 0.8em; color: #666; margin-bottom: 5px;">${key}</div>
+                            <div style="font-size: 1.1em; font-weight: bold; color: #333;">${value}</div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            } else {
+                html = '<div style="text-align: center; color: #666; padding: 20px;">해당 성적 정보가 없습니다.</div>';
+            }
+            
+            container.innerHTML = html;
         }
         
 
