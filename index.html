@@ -3743,9 +3743,9 @@
             const bgColor = teamColor.primary;
             
             row.innerHTML = `
-                <td colspan="3" style="padding: 0; background: ${bgColor};">
-                    <div class="player-profile-card" style="margin: 0; border-radius: 0; box-shadow: none; display: flex; min-height: 400px;">
-                        <div style="flex: 1; background: linear-gradient(135deg, ${teamColor.primary}, ${teamColor.secondary}); color: white; padding: 30px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                <td colspan="3" style="padding: 0; background: ${bgColor}; width: 100vw; margin-left: calc(-50vw + 50%);">
+                    <div class="player-profile-card" style="margin: 0; border-radius: 0; box-shadow: none; display: flex; min-height: 400px; width: 100%;">
+                        <div style="width: 50%; background: linear-gradient(135deg, ${teamColor.primary}, ${teamColor.secondary}); color: white; padding: 30px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
                             <div class="player-profile-picture-placeholder" style="width: 150px; height: 150px; border-radius: 50%; background: rgba(255,255,255,0.2); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3em;">👤</div>
                             <div class="player-profile-name" style="font-size: 1.8em; margin-bottom: 10px;">${player.name}</div>
                             <div class="player-profile-info" style="font-size: 1.1em; margin-bottom: 20px;">${player.team} | ${details.position} | ${details.throwing}${details.batting}</div>
@@ -3768,7 +3768,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="flex: 1; background: white; padding: 30px; display: flex; flex-direction: column;">
+                        <div style="width: 50%; background: white; padding: 30px; display: flex; flex-direction: column;">
                             <div style="margin-bottom: 20px;">
                                 <button onclick="showPlayerStats('${player.name}', 'batter')" class="nav-item active" style="margin-right: 15px; font-size: 1em; padding: 8px 15px;">타자</button>
                                 <button onclick="showPlayerStats('${player.name}', 'pitcher')" class="nav-item" style="margin-right: 15px; font-size: 1em; padding: 8px 15px;">투수</button>
