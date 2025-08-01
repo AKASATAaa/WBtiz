@@ -3777,32 +3777,28 @@
                 const placeholder = row.querySelector('.player-profile-picture-placeholder');
                 if (placeholder) {
                     const img = document.createElement('img');
-                    img.src = `image/PlayerProfile/${player.name}.jpg`;
                     img.alt = player.name;
                     img.className = 'player-profile-picture';
-                    img.onerror = () => handlePlayerImageError(img, player.name);
-                    placeholder.parentNode.replaceChild(img, placeholder);
+                    
+                    // 이미지 로드 시도 (한 번만)
+                    img.onload = () => {
+                        placeholder.parentNode.replaceChild(img, placeholder);
+                    };
+                    img.onerror = () => {
+                        // 이미지가 없으면 플레이스홀더 유지
+                        console.log('이미지 없음:', player.name);
+                    };
+                    
+                    img.src = `image/PlayerProfile/${player.name}.jpg`;
                 }
             }, 100);
             
             return row;
         }
         
-        // 선수 이미지 에러 처리
+        // 선수 이미지 에러 처리 (사용하지 않음 - 단순화됨)
         function handlePlayerImageError(img, playerName) {
-            // 현재 src가 .jpg인지 .png인지 확인
-            const currentSrc = img.src;
-            
-            if (currentSrc.includes('.jpg')) {
-                // .jpg가 실패했으면 .png 시도
-                img.src = `image/PlayerProfile/${playerName}.png`;
-            } else if (currentSrc.includes('.png')) {
-                // .png도 실패했으면 기본 이미지 사용
-                img.src = 'image/PlayerProfile/default.jpg';
-            } else {
-                // 기본 이미지도 실패하면 빈 이미지 또는 기본 아이콘
-                img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik02MCA2MEM2MCA2MCA2MCA2MCA2MCA2MEM2MCA2MCA2MCA2MCA2MCA2MFoiIGZpbGw9IiNENkQ2RDYiLz4KPC9zdmc+';
-            }
+            console.log('이미지 로드 실패:', playerName);
         }
     </script>
 </body>
