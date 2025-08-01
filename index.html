@@ -831,8 +831,42 @@
                         
                         <!-- 새로운 블록 -->
                         <div class="new-section" style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                            <img src="image/AD/1.png" alt="광고" style="max-width: 100%; max-height: 200px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            <img id="testImage" src="image/AD/1.png" alt="광고" style="max-width: 100%; max-height: 200px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" onerror="tryAlternativePath(this)">
                         </div>
+                        
+                        <script>
+                        function tryAlternativePath(img) {
+                            console.log('이미지 로드 실패, 다른 경로 시도 중...');
+                            const paths = [
+                                'image/AD/1.png',
+                                './image/AD/1.png',
+                                '../image/AD/1.png',
+                                '/WBtiz/image/AD/1.png',
+                                '/image/AD/1.png'
+                            ];
+                            
+                            let currentIndex = 0;
+                            
+                            function tryNextPath() {
+                                if (currentIndex < paths.length) {
+                                    console.log('경로 시도:', paths[currentIndex]);
+                                    img.src = paths[currentIndex];
+                                    currentIndex++;
+                                } else {
+                                    console.log('모든 경로 실패');
+                                    img.style.display = 'none';
+                                    img.parentElement.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">이미지를 불러올 수 없습니다</div>';
+                                }
+                            }
+                            
+                            img.onerror = tryNextPath;
+                            img.onload = function() {
+                                console.log('이미지 로드 성공:', img.src);
+                            };
+                            
+                            tryNextPath();
+                        }
+                        </script>
                     </div>
                 </div>
             </div>
