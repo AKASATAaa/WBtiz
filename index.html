@@ -3521,7 +3521,7 @@
                 return;
             }
             
-            let html = '<table class="stats-table">';
+            let html = '<table class="stats-table" style="width: 100%;">';
             html += '<thead><tr>';
             html += `<th onclick="sortPlayerList('number')" class="sortable">번호</th>`;
             html += `<th onclick="sortPlayerList('name')" class="sortable">${texts.playerName}</th>`;
@@ -3743,7 +3743,7 @@
             const bgColor = teamColor.primary;
             
             row.innerHTML = `
-                <td colspan="3" style="padding: 0; background: ${bgColor}; width: 100%;">
+                <td colspan="3" style="padding: 0; background: ${bgColor}; width: 100vw; margin-left: calc(-50vw + 50%);">
                     <div class="player-profile-card" style="margin: 0; border-radius: 0; box-shadow: none; display: flex; min-height: 400px;">
                         <div style="width: 400px; background: linear-gradient(135deg, ${teamColor.primary}, ${teamColor.secondary}); color: white; padding: 30px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
                             <div class="player-profile-picture-placeholder" style="width: 150px; height: 150px; border-radius: 50%; background: rgba(255,255,255,0.2); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3em;">👤</div>
