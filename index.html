@@ -839,42 +839,37 @@
                         document.addEventListener('DOMContentLoaded', function() {
                             const img = document.getElementById('testImage');
                             if (img) {
-                                // GitHub Pages 경로로 설정
-                                img.src = './image/AD/1.png';
+                                // 여러 경로 시도
+                                const paths = [
+                                    'image/AD/1.png',
+                                    './image/AD/1.png',
+                                    '../image/AD/1.png',
+                                    '/WBtiz/image/AD/1.png',
+                                    '/image/AD/1.png',
+                                    'https://akasataaa.github.io/WBtiz/image/AD/1.png'
+                                ];
                                 
+                                let currentIndex = 0;
+                                
+                                function tryNextPath() {
+                                    if (currentIndex < paths.length) {
+                                        console.log('경로 시도:', paths[currentIndex]);
+                                        img.src = paths[currentIndex];
+                                        currentIndex++;
+                                    } else {
+                                        console.log('모든 경로 실패');
+                                        img.style.display = 'none';
+                                        img.parentElement.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">이미지를 불러올 수 없습니다</div>';
+                                    }
+                                }
+                                
+                                img.onerror = tryNextPath;
                                 img.onload = function() {
                                     console.log('이미지 로드 성공:', img.src);
                                 };
                                 
-                                img.onerror = function() {
-                                    console.log('이미지 로드 실패:', img.src);
-                                    // 다른 경로 시도
-                                    const alternativePaths = [
-                                        'image/AD/1.png',
-                                        '../image/AD/1.png',
-                                        '/WBtiz/image/AD/1.png'
-                                    ];
-                                    
-                                    let currentIndex = 0;
-                                    function tryNextPath() {
-                                        if (currentIndex < alternativePaths.length) {
-                                            console.log('다른 경로 시도:', alternativePaths[currentIndex]);
-                                            img.src = alternativePaths[currentIndex];
-                                            currentIndex++;
-                                        } else {
-                                            console.log('모든 경로 실패');
-                                            img.style.display = 'none';
-                                            img.parentElement.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">이미지를 불러올 수 없습니다</div>';
-                                        }
-                                    }
-                                    
-                                    img.onerror = tryNextPath;
-                                    img.onload = function() {
-                                        console.log('이미지 로드 성공:', img.src);
-                                    };
-                                    
-                                    tryNextPath();
-                                };
+                                // 첫 번째 경로로 시작
+                                tryNextPath();
                             }
                         });
                         </script>
