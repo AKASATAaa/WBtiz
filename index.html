@@ -3780,26 +3780,27 @@
                     img.alt = player.name;
                     img.className = 'player-profile-picture';
                     
-                    // 이미지 로드 시도 (한 번만)
+                    // PNG 파일 로드 시도
                     img.onload = () => {
                         placeholder.parentNode.replaceChild(img, placeholder);
                     };
                     img.onerror = () => {
-                        // 이미지가 없으면 플레이스홀더 유지
-                        console.log('이미지 없음:', player.name);
+                        // 선수 사진이 없으면 Default.png 시도
+                        img.src = 'image/PlayerProfile/Default.png';
+                        img.onerror = () => {
+                            // Default.png도 없으면 플레이스홀더 유지
+                            console.log('Default.png도 없음');
+                        };
                     };
                     
-                    img.src = `image/PlayerProfile/${player.name}.jpg`;
+                    img.src = `image/PlayerProfile/${player.name}.png`;
                 }
             }, 100);
             
             return row;
         }
         
-        // 선수 이미지 에러 처리 (사용하지 않음 - 단순화됨)
-        function handlePlayerImageError(img, playerName) {
-            console.log('이미지 로드 실패:', playerName);
-        }
+
     </script>
 </body>
 </html>
