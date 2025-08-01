@@ -4170,8 +4170,8 @@
         
         // 광고 이미지 배열
         const adImages = [
-            './image/AD/WBD.png',
-            './image/AD/WBDALLSTAR.png'
+            'image/AD/WBD.png',
+            'image/AD/WBDALLSTAR.png'
         ];
         
         // 랜덤 광고 이미지 표시 함수
@@ -4230,6 +4230,14 @@
                 console.log('페이지 로드 완료 후 광고 재초기화');
                 initializeAds();
             }, 2000);
+        });
+        
+        // DOMContentLoaded 이벤트에서도 광고 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                console.log('DOM 로드 완료 후 광고 초기화');
+                initializeAds();
+            }, 1000);
         });
         
         // 기존 데이터 설정
