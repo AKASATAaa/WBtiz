@@ -3867,17 +3867,35 @@
                 // 통산 타자 기록
                 const player = playersData.find(p => p.Name === playerName);
                 if (player) {
+                    // wOBA 계산 (간소화된 버전)
+                    const ab = parseInt(player.AB) || 0;
+                    const bb = parseInt(player.BB) || 0;
+                    const hbp = parseInt(player.HBP) || 0;
+                    const h = parseInt(player.H) || 0;
+                    const hr = parseInt(player.HR) || 0;
+                    const sf = parseInt(player.SF) || 0;
+                    
+                    // 1루타, 2루타, 3루타 추정 (정확한 데이터가 없으므로 추정)
+                    const singles = Math.max(0, h - hr); // 홈런을 제외한 안타를 1루타로 가정
+                    const doubles = 0; // 2루타 데이터 없음
+                    const triples = 0; // 3루타 데이터 없음
+                    
+                    let woba = 0;
+                    if (ab + bb + sf + hbp > 0) {
+                        woba = (0.69 * bb + 0.72 * hbp + 0.89 * singles + 1.27 * doubles + 1.62 * triples + 2.10 * hr) / (ab + bb + sf + hbp);
+                    }
+                    
                     stats = {
-                        타수: player.AB || 0,
-                        안타: player.H || 0,
-                        홈런: player.HR || 0,
+                        타수: ab,
+                        안타: h,
+                        홈런: hr,
                         도루: player.SB || 0,
                         출루율: parseFloat(player.OBP || 0).toFixed(3),
-                        WAR: 'N/A', // 계산 필요
+                        WAR: 'N/A', // 복잡한 계산 필요
                         'wRC+': player['wRC+'] || 'N/A',
-                        wOBA: 'N/A', // 계산 필요
-                        HR: player.HR || 0,
-                        RBI: 'N/A', // 타점 정보 없음
+                        wOBA: woba > 0 ? woba.toFixed(3) : 'N/A',
+                        HR: hr,
+                        RBI: 'N/A', // 타점 상황 데이터 없음
                         FPCT: 'N/A' // 수비율 정보 없음
                     };
                 }
@@ -3885,36 +3903,62 @@
                 // 통산 투수 기록
                 const player = playersData.find(p => p.Name === playerName);
                 if (player) {
+                    // K/9, B/9 계산
+                    const ip = parseFloat(player.IP) || 0;
+                    const k = parseInt(player.K) || 0;
+                    const bb = parseInt(player.BB) || 0;
+                    
+                    const k9 = ip > 0 ? (k * 9) / ip : 0;
+                    const b9 = ip > 0 ? (bb * 9) / ip : 0;
+                    
                     stats = {
                         '평균자책점': parseFloat(player.ERA || 0).toFixed(2),
-                        이닝: player.IP || 0,
+                        이닝: ip,
                         승: 'N/A', // 승수 정보 없음
                         패: 'N/A', // 패수 정보 없음
                         세이브: 'N/A', // 세이브 정보 없음
                         홀드: 'N/A', // 홀드 정보 없음
-                        탈삼진: player.K || 0,
+                        탈삼진: k,
                         '피홈런': 'N/A', // 피홈런 정보 없음
                         자책점: 'N/A', // 자책점 정보 없음
                         'ERA+': player['ERA+'] || 'N/A',
                         WHIP: parseFloat(player.WHIP || 0).toFixed(2),
-                        'K/9': 'N/A', // 계산 필요
-                        'B/9': 'N/A' // 계산 필요
+                        'K/9': k9.toFixed(1),
+                        'B/9': b9.toFixed(1)
                     };
                 }
             } else if (type === 'season-batter') {
                 // 시즌 타자 기록
                 const player = seasonHitterData.find(p => p.Name === playerName);
                 if (player) {
+                    // wOBA 계산 (시즌 데이터)
+                    const ab = parseInt(player.타수) || 0;
+                    const bb = parseInt(player.볼넷) || 0;
+                    const hbp = parseInt(player.사구) || 0;
+                    const h = parseInt(player.안타) || 0;
+                    const hr = parseInt(player.홈런) || 0;
+                    const sf = parseInt(player.희생플라이) || 0;
+                    
+                    // 1루타, 2루타, 3루타 추정
+                    const singles = Math.max(0, h - hr);
+                    const doubles = 0; // 2루타 데이터 없음
+                    const triples = 0; // 3루타 데이터 없음
+                    
+                    let woba = 0;
+                    if (ab + bb + sf + hbp > 0) {
+                        woba = (0.69 * bb + 0.72 * hbp + 0.89 * singles + 1.27 * doubles + 1.62 * triples + 2.10 * hr) / (ab + bb + sf + hbp);
+                    }
+                    
                     stats = {
-                        타수: player.타수 || 0,
-                        안타: player.안타 || 0,
-                        홈런: player.홈런 || 0,
+                        타수: ab,
+                        안타: h,
+                        홈런: hr,
                         도루: player.도루 || 0,
                         출루율: parseFloat(player.출루율 || 0).toFixed(3),
                         WAR: 'N/A',
                         'wRC+': player['wRC+'] || 'N/A',
-                        wOBA: parseFloat(player.wOBA || 0).toFixed(3),
-                        HR: player.홈런 || 0,
+                        wOBA: woba > 0 ? woba.toFixed(3) : 'N/A',
+                        HR: hr,
                         RBI: player.타점 || 0,
                         FPCT: parseFloat(player.FPCT || 0).toFixed(3)
                     };
@@ -3923,20 +3967,28 @@
                 // 시즌 투수 기록
                 const player = seasonPitcherData.find(p => p.Name === playerName);
                 if (player) {
+                    // K/9, B/9 계산
+                    const ip = parseFloat(player.이닝) || 0;
+                    const k = parseInt(player.탈삼진) || 0;
+                    const bb = parseInt(player.볼넷) || 0;
+                    
+                    const k9 = ip > 0 ? (k * 9) / ip : 0;
+                    const b9 = ip > 0 ? (bb * 9) / ip : 0;
+                    
                     stats = {
                         '평균자책점': parseFloat(player.평균자책점 || 0).toFixed(2),
-                        이닝: player.이닝 || 0,
+                        이닝: ip,
                         승: player.승 || 0,
                         패: player.패 || 0,
                         세이브: player.세이브 || 0,
                         홀드: player.홀드 || 0,
-                        탈삼진: player.탈삼진 || 0,
+                        탈삼진: k,
                         '피홈런': player.피홈런 || 0,
                         자책점: player.자책점 || 0,
                         'ERA+': player['ERA+'] || 'N/A',
                         WHIP: parseFloat(player.WHIP || 0).toFixed(2),
-                        'K/9': parseFloat(player['K/9'] || 0).toFixed(1),
-                        'B/9': parseFloat(player['B/9'] || 0).toFixed(1)
+                        'K/9': k9.toFixed(1),
+                        'B/9': b9.toFixed(1)
                     };
                 }
             }
@@ -3944,8 +3996,89 @@
             if (stats) {
                 html = '<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; height: 100%; padding: 15px; max-height: 380px;">';
                 Object.entries(stats).forEach(([key, value]) => {
+                    // 툴팁 텍스트 정의
+                    let tooltipText = '';
+                    switch(key) {
+                        case '타수':
+                            tooltipText = '타석에서 공을 치는 횟수';
+                            break;
+                        case '안타':
+                            tooltipText = '타자가 안전하게 베이스에 도달한 타구';
+                            break;
+                        case '홈런':
+                            tooltipText = '한 번의 타구로 홈까지 돌아온 안타';
+                            break;
+                        case '도루':
+                            tooltipText = '타자가 베이스를 훔쳐서 다음 베이스로 진루';
+                            break;
+                        case '출루율':
+                            tooltipText = '타석에서 출루할 확률 (안타+볼넷+사구)/(타수+볼넷+사구+희생플라이)';
+                            break;
+                        case 'WAR':
+                            tooltipText = '대체 선수 대비 승수 차이 (Wins Above Replacement)';
+                            break;
+                        case 'wRC+':
+                            tooltipText = '조정된 가중 런 생성 (Weighted Runs Created Plus)';
+                            break;
+                        case 'wOBA':
+                            tooltipText = '가중 출루율 (Weighted On-Base Average)';
+                            break;
+                        case 'HR':
+                            tooltipText = '홈런 (Home Run)';
+                            break;
+                        case 'RBI':
+                            tooltipText = '타점 (Runs Batted In)';
+                            break;
+                        case 'FPCT':
+                            tooltipText = '수비율 (Fielding Percentage)';
+                            break;
+                        case '평균자책점':
+                            tooltipText = '9이닝당 평균 자책점 (Earned Run Average)';
+                            break;
+                        case '이닝':
+                            tooltipText = '투구한 이닝 수';
+                            break;
+                        case '승':
+                            tooltipText = '승리 수';
+                            break;
+                        case '패':
+                            tooltipText = '패배 수';
+                            break;
+                        case '세이브':
+                            tooltipText = '세이브 횟수';
+                            break;
+                        case '홀드':
+                            tooltipText = '홀드 횟수';
+                            break;
+                        case '탈삼진':
+                            tooltipText = '삼진 아웃시킨 횟수';
+                            break;
+                        case '피홈런':
+                            tooltipText = '상대 타자에게 허용한 홈런 수';
+                            break;
+                        case '자책점':
+                            tooltipText = '투수 책임의 실점';
+                            break;
+                        case 'ERA+':
+                            tooltipText = '조정 평균자책점 (리그 평균 대비)';
+                            break;
+                        case 'WHIP':
+                            tooltipText = '이닝당 출루 허용률 (Walks + Hits per Inning Pitched)';
+                            break;
+                        case 'K/9':
+                            tooltipText = '9이닝당 탈삼진 수';
+                            break;
+                        case 'B/9':
+                            tooltipText = '9이닝당 볼넷 수';
+                            break;
+                        default:
+                            tooltipText = key;
+                    }
+                    
                     html += `
-                        <div style="background: linear-gradient(135deg, #ffffff, #f8f9fa); padding: 15px; border-radius: 10px; text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 80px; border: 2px solid #e9ecef; box-shadow: 0 3px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 6px 15px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 3px 8px rgba(0,0,0,0.1)'">
+                        <div style="background: linear-gradient(135deg, #ffffff, #f8f9fa); padding: 15px; border-radius: 10px; text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 80px; border: 2px solid #e9ecef; box-shadow: 0 3px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; cursor: help;" 
+                         onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 6px 15px rgba(0,0,0,0.15)'; showTooltip(event, '${tooltipText.replace(/'/g, "\\'")}')" 
+                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 3px 8px rgba(0,0,0,0.1)'; hideTooltip()">
                             <div style="font-size: 0.9em; color: #666; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">${key}</div>
                             <div style="font-size: 1.3em; font-weight: bold; color: #333; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">${value}</div>
                         </div>
@@ -3959,7 +4092,58 @@
             container.innerHTML = html;
         }
         
-
+        // 선수 로딩 상태 업데이트
+        function updatePlayerLoadingStatus(message, isError = false) {
+            const loadingElement = document.getElementById('playerLoading');
+            if (loadingElement) {
+                loadingElement.textContent = message;
+                if (isError) {
+                    loadingElement.style.color = '#f44336';
+                }
+            }
+        }
+        
+        // 툴팁 표시 함수
+        function showTooltip(event, text) {
+            // 기존 툴팁 제거
+            hideTooltip();
+            
+            // 툴팁 요소 생성
+            const tooltip = document.createElement('div');
+            tooltip.id = 'tooltip';
+            tooltip.style.cssText = `
+                position: fixed;
+                background: rgba(0, 0, 0, 0.9);
+                color: white;
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-size: 12px;
+                max-width: 250px;
+                z-index: 10000;
+                pointer-events: none;
+                white-space: nowrap;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                font-family: 'Arial', sans-serif;
+            `;
+            tooltip.textContent = text;
+            
+            // 툴팁 위치 설정
+            const x = event.clientX + 10;
+            const y = event.clientY - 30;
+            tooltip.style.left = x + 'px';
+            tooltip.style.top = y + 'px';
+            
+            // 툴팁을 body에 추가
+            document.body.appendChild(tooltip);
+        }
+        
+        // 툴팁 숨기기 함수
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            if (tooltip) {
+                tooltip.remove();
+            }
+        }
     </script>
 </body>
 </html>
