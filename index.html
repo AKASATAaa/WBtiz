@@ -976,7 +976,29 @@
         <div id="players" class="tab-content">
             <div class="stats-section">
                 <div class="section-title">선수정보</div>
-                <p>선수정보 페이지 준비 중...</p>
+                
+                <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <select id="playerTeamFilter" onchange="applyPlayerFilters()" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+                            <option value="" data-ko="전체 팀" data-ja="全チーム">전체 팀</option>
+                        </select>
+                        
+                        <input type="text" id="playerNameFilter" placeholder="선수명 검색" onkeyup="applyPlayerFilters()" 
+                               style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; width: 150px;">
+                        
+                        <button onclick="resetPlayerFilters()" style="padding: 8px 15px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer;" data-ko="초기화" data-ja="リセット">초기화</button>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="sortPlayerList('number')" id="sortNumberBtn" class="nav-item active" style="font-size: 0.9em;">번호순</button>
+                        <button onclick="sortPlayerList('name')" id="sortNameBtn" class="nav-item" style="font-size: 0.9em;">이름순</button>
+                        <button onclick="sortPlayerList('team')" id="sortTeamBtn" class="nav-item" style="font-size: 0.9em;">팀순</button>
+                    </div>
+                </div>
+                
+                <div id="playerList">
+                    <div class="loading" id="playerLoading">선수 정보를 불러오는 중...</div>
+                </div>
             </div>
         </div>
         
@@ -1385,6 +1407,11 @@
             // 스케줄 탭이 선택되면 데이터 로드
             if (tabName === 'schedule') {
                 loadScheduleData();
+            }
+            
+            // 선수정보 탭이 선택되면 데이터 로드
+            if (tabName === 'players') {
+                showPlayersTab();
             }
         }
         
@@ -1924,6 +1951,9 @@
             // 시즌 데이터 로드
             loadSeasonHitterData();
             loadSeasonPitcherData();
+            
+            // 선수 목록 로드
+            loadPlayersList();
             
             // 기존 데이터 설정
             setupTeamFilter();
@@ -3294,7 +3324,230 @@
                 });
             }
         }
+        
+        // 선수정보 관련 변수들
+        let allPlayersList = [];
+        let filteredPlayersList = [];
+        let currentPlayerSort = 'team';
+        let currentPlayerSortDirection = 'asc';
+        
+        // 선수 목록 로드
+        async function loadPlayersList() {
+            try {
+                const response = await fetch('./teams.csv');
+                if (!response.ok) {
+                    throw new Error('teams.csv 파일을 찾을 수 없습니다.');
+                }
+                
+                const csvText = await response.text();
+                Papa.parse(csvText, {
+                    header: false,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        console.log('선수 목록 파싱 완료:', results.data.length, '개');
+                        
+                        allPlayersList = [];
+                        let playerNumber = 1;
+                        
+                        results.data.forEach((row, index) => {
+                            if (row && row.length >= 3) {
+                                const playerName = row[0];
+                                const category = row[1];
+                                const teamName = row[2];
+                                
+                                if (playerName && playerName.trim() !== '' && category === 'Team') {
+                                    allPlayersList.push({
+                                        number: playerNumber++,
+                                        name: playerName.trim(),
+                                        team: teamName.trim()
+                                    });
+                                }
+                            }
+                        });
+                        
+                        console.log('선수 목록 생성 완료:', allPlayersList.length, '개');
+                        setupPlayerFilters();
+                        displayPlayersList();
+                    },
+                    error: function(error) {
+                        console.error('선수 목록 파싱 오류:', error);
+                        updatePlayerLoadingStatus('선수 목록 로드 실패', true);
+                    }
+                });
+            } catch (error) {
+                console.error('선수 목록 로드 오류:', error);
+                updatePlayerLoadingStatus('선수 목록 로드 실패', true);
+            }
+        }
+        
+        // 선수 필터 설정
+        function setupPlayerFilters() {
+            const teamFilter = document.getElementById('playerTeamFilter');
+            if (!teamFilter) return;
+            
+            // 기존 옵션 제거 (전체 팀 제외)
+            const options = teamFilter.querySelectorAll('option:not([value=""])');
+            options.forEach(option => option.remove());
+            
+            // 팀 목록 생성
+            const teams = [...new Set(allPlayersList.map(player => player.team))].sort();
+            teams.forEach(team => {
+                const option = document.createElement('option');
+                option.value = team;
+                option.textContent = team;
+                teamFilter.appendChild(option);
+            });
+        }
+        
+        // 선수 목록 표시
+        function displayPlayersList() {
+            const container = document.getElementById('playerList');
+            if (!container) return;
+            
+            const texts = translations[currentLanguage];
+            const players = filteredPlayersList.length > 0 ? filteredPlayersList : allPlayersList;
+            
+            if (players.length === 0) {
+                container.innerHTML = `<div class="no-data">${texts.noData}</div>`;
+                return;
+            }
+            
+            let html = '<table class="stats-table">';
+            html += '<thead><tr>';
+            html += `<th onclick="sortPlayerList('number')" class="sortable">번호</th>`;
+            html += `<th onclick="sortPlayerList('name')" class="sortable">${texts.playerName}</th>`;
+            html += `<th onclick="sortPlayerList('team')" class="sortable">${texts.team}</th>`;
+            html += '</tr></thead><tbody>';
+            
+            players.forEach(player => {
+                html += '<tr>';
+                html += `<td class="rank">${player.number}</td>`;
+                html += `<td class="player-name">${player.name}</td>`;
+                html += `<td>${player.team}</td>`;
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+            
+            // 정렬 버튼 상태 업데이트
+            updatePlayerSortButtons();
+        }
+        
+        // 선수 목록 정렬
+        function sortPlayerList(sortType) {
+            // 정렬 버튼 상태 업데이트
+            document.querySelectorAll('#sortNumberBtn, #sortNameBtn, #sortTeamBtn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (sortType === 'number') {
+                document.getElementById('sortNumberBtn').classList.add('active');
+            } else if (sortType === 'name') {
+                document.getElementById('sortNameBtn').classList.add('active');
+            } else if (sortType === 'team') {
+                document.getElementById('sortTeamBtn').classList.add('active');
+            }
+            
+            // 정렬 방향 결정
+            if (currentPlayerSort === sortType) {
+                currentPlayerSortDirection = currentPlayerSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentPlayerSort = sortType;
+                currentPlayerSortDirection = 'asc';
+            }
+            
+            // 데이터 정렬
+            const players = [...allPlayersList];
+            players.sort((a, b) => {
+                let valueA, valueB;
+                
+                if (sortType === 'number') {
+                    valueA = a.number;
+                    valueB = b.number;
+                } else if (sortType === 'name') {
+                    valueA = a.name.toLowerCase();
+                    valueB = b.name.toLowerCase();
+                } else if (sortType === 'team') {
+                    valueA = a.team.toLowerCase();
+                    valueB = b.team.toLowerCase();
+                }
+                
+                if (currentPlayerSortDirection === 'asc') {
+                    return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+                } else {
+                    return valueB > valueA ? 1 : valueB < valueA ? -1 : 0;
+                }
+            });
+            
+            allPlayersList = players;
+            displayPlayersList();
+        }
+        
+        // 선수 필터 적용
+        function applyPlayerFilters() {
+            const teamFilter = document.getElementById('playerTeamFilter');
+            const nameFilter = document.getElementById('playerNameFilter');
+            
+            const selectedTeam = teamFilter ? teamFilter.value : '';
+            const searchName = nameFilter ? nameFilter.value.toLowerCase() : '';
+            
+            filteredPlayersList = allPlayersList.filter(player => {
+                const teamMatch = !selectedTeam || player.team === selectedTeam;
+                const nameMatch = !searchName || player.name.toLowerCase().includes(searchName);
+                
+                return teamMatch && nameMatch;
+            });
+            
+            displayPlayersList();
+        }
+        
+        // 선수 필터 초기화
+        function resetPlayerFilters() {
+            const teamFilter = document.getElementById('playerTeamFilter');
+            const nameFilter = document.getElementById('playerNameFilter');
+            
+            if (teamFilter) teamFilter.value = '';
+            if (nameFilter) nameFilter.value = '';
+            
+            filteredPlayersList = [];
+            displayPlayersList();
+        }
+        
+        // 정렬 버튼 상태 업데이트
+        function updatePlayerSortButtons() {
+            document.querySelectorAll('#sortNumberBtn, #sortNameBtn, #sortTeamBtn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (currentPlayerSort === 'number') {
+                document.getElementById('sortNumberBtn').classList.add('active');
+            } else if (currentPlayerSort === 'name') {
+                document.getElementById('sortNameBtn').classList.add('active');
+            } else if (currentPlayerSort === 'team') {
+                document.getElementById('sortTeamBtn').classList.add('active');
+            }
+        }
+        
+        // 선수 로딩 상태 업데이트
+        function updatePlayerLoadingStatus(message, isError = false) {
+            const loadingElement = document.getElementById('playerLoading');
+            if (loadingElement) {
+                loadingElement.textContent = message;
+                if (isError) {
+                    loadingElement.style.color = '#f44336';
+                }
+            }
+        }
+        
+        // 선수정보 탭 표시 시 선수 목록 로드
+        function showPlayersTab() {
+            if (allPlayersList.length === 0) {
+                loadPlayersList();
+            } else {
+                displayPlayersList();
+            }
+        }
     </script>
 </body>
-</html>
 </html>
