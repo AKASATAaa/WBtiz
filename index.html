@@ -566,6 +566,72 @@
             color: white;
         }
         
+        /* 선수 정보 카드 스타일 */
+        .player-profile-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            margin: 20px 0;
+            overflow: hidden;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .player-profile-header {
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .player-profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            margin-bottom: 15px;
+        }
+        
+        .player-profile-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .player-profile-info {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .player-profile-details {
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .player-profile-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .player-profile-detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .player-profile-detail-label {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .player-profile-detail-value {
+            color: #666;
+        }
+        
         .vs {
             margin: 2px 0;
             color: #666;
@@ -3354,6 +3420,8 @@
                                 const playerName = row[0];
                                 const category = row[1];
                                 const teamName = row[2];
+                                const position = row[3] || '';
+                                const throwingBatting = row[4] || '';
                                 
                                 if (playerName && playerName.trim() !== '') {
                                     let displayTeam = '';
@@ -3369,10 +3437,33 @@
                                         displayTeam = '무소속';
                                     }
                                     
+                                    // 투구/타석 정보 파싱
+                                    let throwing = '미정';
+                                    let batting = '미정';
+                                    
+                                    if (throwingBatting) {
+                                        if (throwingBatting.includes('우투우타')) {
+                                            throwing = '우투';
+                                            batting = '우타';
+                                        } else if (throwingBatting.includes('좌투좌타')) {
+                                            throwing = '좌투';
+                                            batting = '좌타';
+                                        } else if (throwingBatting.includes('우투좌타')) {
+                                            throwing = '우투';
+                                            batting = '좌타';
+                                        } else if (throwingBatting.includes('좌투우타')) {
+                                            throwing = '좌투';
+                                            batting = '우타';
+                                        }
+                                    }
+                                    
                                     allPlayersList.push({
                                         number: playerNumber++,
                                         name: playerName.trim(),
-                                        team: displayTeam
+                                        team: displayTeam,
+                                        position: position || '미정',
+                                        throwing: throwing,
+                                        batting: batting
                                     });
                                 }
                             }
@@ -3440,7 +3531,7 @@
             players.forEach(player => {
                 html += '<tr>';
                 html += `<td class="rank">${player.number}</td>`;
-                html += `<td class="player-name">${player.name}</td>`;
+                html += `<td class="player-name" onclick="showPlayerProfile('${player.name}')" style="cursor: pointer; color: #e91e63; text-decoration: underline;">${player.name}</td>`;
                 html += `<td>${player.team}</td>`;
                 html += '</tr>';
             });
@@ -3564,6 +3655,128 @@
                 loadPlayersList();
             } else {
                 displayPlayersList();
+            }
+        }
+        
+        // 팀별 색상 정보
+        const teamColors = {
+            'LEROLEROS': { primary: '#e91e63', secondary: '#ad1457' },
+            'BUBBLE STARS': { primary: '#2196f3', secondary: '#1976d2' },
+            'MoonShot Spirits': { primary: '#9c27b0', secondary: '#7b1fa2' },
+            'FLORIAN T-SHIRTS': { primary: '#ff9800', secondary: '#f57c00' },
+            'Ishikawa Fighting Folks': { primary: '#4caf50', secondary: '#388e3c' },
+            'Nyanko AVENGERS': { primary: '#795548', secondary: '#5d4037' },
+            'KR': { primary: '#f44336', secondary: '#d32f2f' },
+            'JP': { primary: '#ff5722', secondary: '#d84315' },
+            '무소속': { primary: '#607d8b', secondary: '#455a64' }
+        };
+        
+        // 선수 정보 표시
+        function showPlayerProfile(playerName) {
+            console.log('선수 정보 표시:', playerName);
+            
+            // 기존 선수 정보 카드 제거
+            const existingCard = document.querySelector('.player-profile-card');
+            if (existingCard) {
+                existingCard.remove();
+            }
+            
+            // 선수 정보 찾기
+            const player = allPlayersList.find(p => p.name === playerName);
+            if (!player) {
+                console.error('선수 정보를 찾을 수 없습니다:', playerName);
+                return;
+            }
+            
+            // teams.csv에서 추가 정보 찾기
+            const playerDetails = findPlayerDetails(playerName);
+            
+            // 선수 정보 카드 생성
+            const card = createPlayerProfileCard(player, playerDetails);
+            
+            // 카드를 선수 목록 아래에 추가
+            const playerList = document.getElementById('playerList');
+            if (playerList) {
+                playerList.appendChild(card);
+                
+                // 카드가 보이도록 스크롤
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+        
+        // teams.csv에서 선수 상세 정보 찾기
+        function findPlayerDetails(playerName) {
+            const player = allPlayersList.find(p => p.name === playerName);
+            if (player) {
+                return {
+                    position: player.position,
+                    throwing: player.throwing,
+                    batting: player.batting
+                };
+            }
+            return {
+                position: '포지션 미정',
+                throwing: '투구손 미정',
+                batting: '타석손 미정'
+            };
+        }
+        
+        // 선수 정보 카드 생성
+        function createPlayerProfileCard(player, details) {
+            const teamColor = teamColors[player.team] || teamColors['무소속'];
+            
+            const card = document.createElement('div');
+            card.className = 'player-profile-card';
+            
+            // 팀별 배경색 적용
+            const headerStyle = `background: linear-gradient(135deg, ${teamColor.primary}, ${teamColor.secondary}); color: white;`;
+            
+            card.innerHTML = `
+                <div class="player-profile-header" style="${headerStyle}">
+                    <img src="image/PlayerProfile/${player.name}.jpg" 
+                         alt="${player.name}" 
+                         class="player-profile-picture"
+                         onerror="handlePlayerImageError(this, '${player.name}')">
+                    <div class="player-profile-name">${player.name}</div>
+                    <div class="player-profile-info">${player.team} | ${details.position} | ${details.throwing}${details.batting}</div>
+                </div>
+                <div class="player-profile-details">
+                    <div class="player-profile-detail-row">
+                        <span class="player-profile-detail-label">팀</span>
+                        <span class="player-profile-detail-value">${player.team}</span>
+                    </div>
+                    <div class="player-profile-detail-row">
+                        <span class="player-profile-detail-label">포지션</span>
+                        <span class="player-profile-detail-value">${details.position}</span>
+                    </div>
+                    <div class="player-profile-detail-row">
+                        <span class="player-profile-detail-label">투구손</span>
+                        <span class="player-profile-detail-value">${details.throwing}</span>
+                    </div>
+                    <div class="player-profile-detail-row">
+                        <span class="player-profile-detail-label">타석손</span>
+                        <span class="player-profile-detail-value">${details.batting}</span>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        // 선수 이미지 에러 처리
+        function handlePlayerImageError(img, playerName) {
+            // 현재 src가 .jpg인지 .png인지 확인
+            const currentSrc = img.src;
+            
+            if (currentSrc.includes('.jpg')) {
+                // .jpg가 실패했으면 .png 시도
+                img.src = `image/PlayerProfile/${playerName}.png`;
+            } else if (currentSrc.includes('.png')) {
+                // .png도 실패했으면 기본 이미지 사용
+                img.src = 'image/PlayerProfile/default.jpg';
+            } else {
+                // 기본 이미지도 실패하면 빈 이미지 또는 기본 아이콘
+                img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik02MCA2MEM2MCA2MCA2MCA2MCA2MCA2MEM2MCA2MCA2MCA2MCA2MCA2MFoiIGZpbGw9IiNENkQ2RDYiLz4KPC9zdmc+';
             }
         }
     </script>
