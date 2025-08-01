@@ -817,6 +817,22 @@
                             <img id="seasonAdImage" src="" alt="광고" style="max-width: 100%; max-height: 200px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                         </div>
                     </div>
+                    
+                    <div class="sidebar">
+                        <div class="top-performers">
+                            <div class="section-title">Top Performers</div>
+                            
+                            <div style="margin-bottom: 15px; font-weight: bold; color: #666;">타격 부문</div>
+                            <div id="topBatters">
+                                <div class="loading" id="topBattersLoading">데이터 로딩 중...</div>
+                            </div>
+                            
+                            <div style="margin: 20px 0 15px 0; font-weight: bold; color: #666;" id="pitchingSectionTitle">투수 부문</div>
+                            <div id="topPitchers">
+                                <div class="loading" id="topPitchersLoading">데이터 로딩 중...</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -880,6 +896,22 @@
                         <div id="careerAdContainer" style="margin-top: 30px; text-align: center; padding: 20px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                             <div style="font-size: 0.9em; color: #666; margin-bottom: 10px; font-weight: 500;">SPONSORED</div>
                             <img id="careerAdImage" src="" alt="광고" style="max-width: 100%; max-height: 200px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar">
+                        <div class="top-performers">
+                            <div class="section-title">통산 기록 리더</div>
+                            
+                            <div style="margin-bottom: 15px; font-weight: bold; color: #666;" id="careerBattingSectionTitle">타격 기록</div>
+                            <div id="careerTopBatters">
+                                <div class="loading" id="careerTopBattersLoading">계산 중...</div>
+                            </div>
+                            
+                            <div style="margin: 20px 0 15px 0; font-weight: bold; color: #666;" id="careerPitchingSectionTitle">투수 기록</div>
+                            <div id="careerTopPitchers">
+                                <div class="loading" id="careerTopPitchersLoading">계산 중...</div>
+                            </div>
                         </div>
                     </div>
                 </div>
