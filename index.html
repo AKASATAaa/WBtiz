@@ -3746,10 +3746,7 @@
                 <td colspan="3" style="padding: 0; background: ${bgColor};">
                     <div class="player-profile-card" style="margin: 0; border-radius: 0; box-shadow: none;">
                         <div class="player-profile-header" style="background: linear-gradient(135deg, ${teamColor.primary}, ${teamColor.secondary}); color: white; border-radius: 0;">
-                            <img src="image/PlayerProfile/${player.name}.jpg" 
-                                 alt="${player.name}" 
-                                 class="player-profile-picture"
-                                 onerror="handlePlayerImageError(this, '${player.name}')">
+                            <div class="player-profile-picture-placeholder" style="width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.2); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2em;">👤</div>
                             <div class="player-profile-name">${player.name}</div>
                             <div class="player-profile-info">${player.team} | ${details.position} | ${details.throwing}${details.batting}</div>
                         </div>
@@ -3774,6 +3771,19 @@
                     </div>
                 </td>
             `;
+            
+            // 이미지를 지연 로드
+            setTimeout(() => {
+                const placeholder = row.querySelector('.player-profile-picture-placeholder');
+                if (placeholder) {
+                    const img = document.createElement('img');
+                    img.src = `image/PlayerProfile/${player.name}.jpg`;
+                    img.alt = player.name;
+                    img.className = 'player-profile-picture';
+                    img.onerror = () => handlePlayerImageError(img, player.name);
+                    placeholder.parentNode.replaceChild(img, placeholder);
+                }
+            }, 100);
             
             return row;
         }
