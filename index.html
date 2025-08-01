@@ -747,61 +747,74 @@
                 <div class="main-content">
                     <div class="stats-section">
                         <div class="section-title">시즌 기록실</div>
-                        <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-                            <div style="display: flex; gap: 15px; align-items: center;">
-                                <select id="seasonTeamFilter" onchange="applySeasonFilters()" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
-                                    <option value="" data-ko="전체 팀" data-ja="全チーム">전체 팀</option>
-                                </select>
-                                
-                                <input type="text" id="seasonNameFilter" placeholder="선수명 검색" onkeyup="applySeasonFilters()" 
-                                       style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; width: 150px;">
-                                
-                                <button onclick="resetSeasonFilters()" style="padding: 8px 15px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer;" data-ko="초기화" data-ja="リセット">초기화</button>
-                            </div>
-                            
-                            <div style="display: flex; gap: 10px;">
-                                <button onclick="sortSeasonTable('team')" id="sortSeasonTeamBtn" class="nav-item active" style="font-size: 0.9em;">팀순</button>
-                                <button onclick="sortSeasonTable('name')" id="sortSeasonNameBtn" class="nav-item" style="font-size: 0.9em;">이름순</button>
-                                <button onclick="sortSeasonTable('avg')" id="sortSeasonAvgBtn" class="nav-item" style="font-size: 0.9em;">타율순</button>
-                            </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <button onclick="showBatters()" id="battersBtn" class="nav-item active" style="margin-right: 10px;" data-ko="타자" data-ja="打者">타자</button>
+                            <button onclick="showPitchers()" id="pitchersBtn" class="nav-item" data-ko="투수" data-ja="投手">투수</button>
                         </div>
                         
-                        <div style="display: flex; gap: 20px;">
-                            <div style="flex: 1;">
-                                <div class="section-subtitle">타자</div>
-                                <div id="seasonBattersTable" class="stats-table-container">
-                                    <div class="loading" id="seasonBattersLoading">타자 기록을 불러오는 중...</div>
-                                </div>
-                            </div>
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            <select id="teamFilter" onchange="applyFilters()" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+                                <option value="" data-ko="전체 팀" data-ja="全チーム">전체 팀</option>
+                            </select>
                             
-                            <div style="flex: 1;">
-                                <div class="section-subtitle">투수</div>
-                                <div id="seasonPitchersTable" class="stats-table-container">
-                                    <div class="loading" id="seasonPitchersLoading">투수 기록을 불러오는 중...</div>
-                                </div>
-                            </div>
+                            <input type="text" id="nameFilter" placeholder="선수명 검색" onkeyup="applyFilters()" 
+                                   style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; width: 120px;">
+                            
+                            <button onclick="resetFilters()" style="padding: 8px 15px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer;" data-ko="초기화" data-ja="リセット">초기화</button>
+                        </div>
+                        
+                        <div id="battersTable">
+                            <table class="stats-table">
+                                <thead>
+                                    <tr>
+                                        <th>순위</th>
+                                        <th onclick="sortTable('batters', 'Name')" class="sortable" style="cursor: pointer;">선수명</th>
+                                        <th onclick="sortTable('batters', 'Team')" class="sortable" style="cursor: pointer;">팀</th>
+                                        <th onclick="sortTable('batters', 'AB')" class="sortable" style="cursor: pointer;">타수</th>
+                                        <th onclick="sortTable('batters', 'H')" class="sortable" style="cursor: pointer;">안타</th>
+                                        <th onclick="sortTable('batters', 'HR')" class="sortable" style="cursor: pointer;">홈런</th>
+                                        <th onclick="sortTable('batters', 'SB')" class="sortable" style="cursor: pointer;">도루</th>
+                                        <th onclick="sortTable('batters', 'AVG')" class="sortable" style="cursor: pointer;">타율</th>
+                                        <th onclick="sortTable('batters', 'OBP')" class="sortable" style="cursor: pointer;">출루율</th>
+                                        <th onclick="sortTable('batters', 'SLG')" class="sortable" style="cursor: pointer;">장타율</th>
+                                        <th onclick="sortTable('batters', 'wRC+')" class="sortable" style="cursor: pointer;">wRC+</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="battersBody">
+                                    <tr>
+                                        <td colspan="11" class="loading" id="battersLoading">데이터를 불러오는 중...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div id="pitchersTable" style="display: none;">
+                            <table class="stats-table">
+                                <thead>
+                                    <tr>
+                                        <th>순위</th>
+                                        <th onclick="sortTable('pitchers', 'Name')" class="sortable" style="cursor: pointer;">선수명</th>
+                                        <th onclick="sortTable('pitchers', 'Team')" class="sortable" style="cursor: pointer;">팀</th>
+                                        <th onclick="sortTable('pitchers', 'ERA')" class="sortable" style="cursor: pointer;">평균자책점</th>
+                                        <th onclick="sortTable('pitchers', 'IP')" class="sortable" style="cursor: pointer;">이닝</th>
+                                        <th onclick="sortTable('pitchers', 'K')" class="sortable" style="cursor: pointer;">탈삼진</th>
+                                        <th onclick="sortTable('pitchers', 'WHIP')" class="sortable" style="cursor: pointer;">WHIP</th>
+                                        <th onclick="sortTable('pitchers', 'ERA+')" class="sortable" style="cursor: pointer;">ERA+</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pitchersBody">
+                                    <tr>
+                                        <td colspan="8" class="loading" id="pitchersLoading">데이터를 불러오는 중...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                         
                         <!-- 광고 이미지 영역 -->
                         <div id="seasonAdContainer" style="margin-top: 30px; text-align: center; padding: 20px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                             <div style="font-size: 0.9em; color: #666; margin-bottom: 10px; font-weight: 500;">SPONSORED</div>
                             <img id="seasonAdImage" src="" alt="광고" style="max-width: 100%; max-height: 200px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                        </div>
-                    </div>
-                    
-                    <div class="sidebar">
-                        <div class="top-performers">
-                            <div class="section-title">Top Performers</div>
-                            
-                            <div style="margin-bottom: 15px; font-weight: bold; color: #666;">타격 부문</div>
-                            <div id="topBatters">
-                                <div class="loading" id="topBattersLoading">데이터 로딩 중...</div>
-                            </div>
-                            
-                            <div style="margin: 20px 0 15px 0; font-weight: bold; color: #666;" id="pitchingSectionTitle">투수 부문</div>
-                            <div id="topPitchers">
-                                <div class="loading" id="topPitchersLoading">데이터 로딩 중...</div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -812,61 +825,61 @@
                 <div class="main-content">
                     <div class="stats-section">
                         <div class="section-title">통산 기록실</div>
-                        <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-                            <div style="display: flex; gap: 15px; align-items: center;">
-                                <select id="careerTeamFilter" onchange="applyCareerFilters()" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
-                                    <option value="" data-ko="전체 팀" data-ja="全チーム">전체 팀</option>
-                                </select>
-                                
-                                <input type="text" id="careerNameFilter" placeholder="선수명 검색" onkeyup="applyCareerFilters()" 
-                                       style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; width: 150px;">
-                                
-                                <button onclick="resetCareerFilters()" style="padding: 8px 15px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer;" data-ko="초기화" data-ja="リセット">초기화</button>
-                            </div>
-                            
-                            <div style="display: flex; gap: 10px;">
-                                <button onclick="sortCareerTable('team')" id="sortCareerTeamBtn" class="nav-item active" style="font-size: 0.9em;">팀순</button>
-                                <button onclick="sortCareerTable('name')" id="sortCareerNameBtn" class="nav-item" style="font-size: 0.9em;">이름순</button>
-                                <button onclick="sortCareerTable('avg')" id="sortCareerAvgBtn" class="nav-item" style="font-size: 0.9em;">타율순</button>
-                            </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <button onclick="showCareerBatters()" id="careerBattersBtn" class="nav-item active" style="margin-right: 10px;">타자</button>
+                            <button onclick="showCareerPitchers()" id="careerPitchersBtn" class="nav-item">투수</button>
                         </div>
                         
-                        <div style="display: flex; gap: 20px;">
-                            <div style="flex: 1;">
-                                <div class="section-subtitle">타자</div>
-                                <div id="careerBattersTable" class="stats-table-container">
-                                    <div class="loading" id="careerBattersLoading">타자 기록을 불러오는 중...</div>
-                                </div>
-                            </div>
-                            
-                            <div style="flex: 1;">
-                                <div class="section-subtitle">투수</div>
-                                <div id="careerPitchersTable" class="stats-table-container">
-                                    <div class="loading" id="careerPitchersLoading">투수 기록을 불러오는 중...</div>
-                                </div>
-                            </div>
+                        <div id="careerBattersTable">
+                            <table class="stats-table">
+                                <thead>
+                                    <tr>
+                                        <th onclick="sortCareerTable('batters', 'rank')" class="sortable">순위</th>
+                                        <th onclick="sortCareerTable('batters', 'Name')" class="sortable">선수명</th>
+                                        <th onclick="sortCareerTable('batters', 'Team')" class="sortable">팀</th>
+                                        <th onclick="sortCareerTable('batters', 'AB')" class="sortable">타수</th>
+                                        <th onclick="sortCareerTable('batters', 'H')" class="sortable">안타</th>
+                                        <th onclick="sortCareerTable('batters', 'HR')" class="sortable">홈런</th>
+                                        <th onclick="sortCareerTable('batters', 'SB')" class="sortable">도루</th>
+                                        <th onclick="sortCareerTable('batters', 'AVG')" class="sortable">타율</th>
+                                        <th onclick="sortCareerTable('batters', 'OBP')" class="sortable">출루율</th>
+                                        <th onclick="sortCareerTable('batters', 'SLG')" class="sortable">장타율</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="careerBattersBody">
+                                    <tr>
+                                        <td colspan="10" class="loading" id="careerBattersLoading">통산 기록 계산 중...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div id="careerPitchersTable" style="display: none;">
+                            <table class="stats-table">
+                                <thead>
+                                    <tr>
+                                        <th onclick="sortCareerTable('pitchers', 'rank')" class="sortable">순위</th>
+                                        <th onclick="sortCareerTable('pitchers', 'Name')" class="sortable">선수명</th>
+                                        <th onclick="sortCareerTable('pitchers', 'Team')" class="sortable">팀</th>
+                                        <th onclick="sortCareerTable('pitchers', 'IP')" class="sortable">이닝</th>
+                                        <th onclick="sortCareerTable('pitchers', 'K')" class="sortable">탈삼진</th>
+                                        <th onclick="sortCareerTable('pitchers', 'ERA')" class="sortable">평균자책점</th>
+                                        <th onclick="sortCareerTable('pitchers', 'WHIP')" class="sortable">WHIP</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="careerPitchersBody">
+                                    <tr>
+                                        <td colspan="7" class="loading" id="careerPitchersLoading">통산 기록 계산 중...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                         
                         <!-- 광고 이미지 영역 -->
                         <div id="careerAdContainer" style="margin-top: 30px; text-align: center; padding: 20px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                             <div style="font-size: 0.9em; color: #666; margin-bottom: 10px; font-weight: 500;">SPONSORED</div>
                             <img id="careerAdImage" src="" alt="광고" style="max-width: 100%; max-height: 200px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                        </div>
-                    </div>
-                    
-                    <div class="sidebar">
-                        <div class="top-performers">
-                            <div class="section-title">통산 기록 리더</div>
-                            
-                            <div style="margin-bottom: 15px; font-weight: bold; color: #666;" id="careerBattingSectionTitle">타격 기록</div>
-                            <div id="careerTopBatters">
-                                <div class="loading" id="careerTopBattersLoading">계산 중...</div>
-                            </div>
-                            
-                            <div style="margin: 20px 0 15px 0; font-weight: bold; color: #666;" id="careerPitchingSectionTitle">투수 기록</div>
-                            <div id="careerTopPitchers">
-                                <div class="loading" id="careerTopPitchersLoading">계산 중...</div>
-                            </div>
                         </div>
                     </div>
                 </div>
