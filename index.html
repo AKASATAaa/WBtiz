@@ -3744,41 +3744,41 @@
             
             row.innerHTML = `
                 <td colspan="3" style="padding: 0; background: ${bgColor};">
-                    <div class="player-profile-card" style="margin: 0; border-radius: 0; box-shadow: none; display: flex;">
-                        <div style="flex: 1; background: linear-gradient(135deg, ${teamColor.primary}, ${teamColor.secondary}); color: white; padding: 20px; text-align: center;">
-                            <div class="player-profile-picture-placeholder" style="width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.2); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2em;">👤</div>
-                            <div class="player-profile-name">${player.name}</div>
-                            <div class="player-profile-info">${player.team} | ${details.position} | ${details.throwing}${details.batting}</div>
-                            <div class="player-profile-details" style="background: transparent; padding: 0; margin-top: 15px;">
-                                <div class="player-profile-detail-row" style="border-bottom: 1px solid rgba(255,255,255,0.3);">
-                                    <span class="player-profile-detail-label" style="color: white;">팀</span>
-                                    <span class="player-profile-detail-value" style="color: white;">${player.team}</span>
+                    <div class="player-profile-card" style="margin: 0; border-radius: 0; box-shadow: none; display: flex; min-height: 400px;">
+                        <div style="flex: 1; background: linear-gradient(135deg, ${teamColor.primary}, ${teamColor.secondary}); color: white; padding: 30px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                            <div class="player-profile-picture-placeholder" style="width: 150px; height: 150px; border-radius: 50%; background: rgba(255,255,255,0.2); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3em;">👤</div>
+                            <div class="player-profile-name" style="font-size: 1.8em; margin-bottom: 10px;">${player.name}</div>
+                            <div class="player-profile-info" style="font-size: 1.1em; margin-bottom: 20px;">${player.team} | ${details.position} | ${details.throwing}${details.batting}</div>
+                            <div class="player-profile-details" style="background: transparent; padding: 0; margin-top: 20px;">
+                                <div class="player-profile-detail-row" style="border-bottom: 1px solid rgba(255,255,255,0.3); padding: 8px 0;">
+                                    <span class="player-profile-detail-label" style="color: white; font-size: 1.1em;">팀</span>
+                                    <span class="player-profile-detail-value" style="color: white; font-size: 1.1em;">${player.team}</span>
                                 </div>
-                                <div class="player-profile-detail-row" style="border-bottom: 1px solid rgba(255,255,255,0.3);">
-                                    <span class="player-profile-detail-label" style="color: white;">포지션</span>
-                                    <span class="player-profile-detail-value" style="color: white;">${details.position}</span>
+                                <div class="player-profile-detail-row" style="border-bottom: 1px solid rgba(255,255,255,0.3); padding: 8px 0;">
+                                    <span class="player-profile-detail-label" style="color: white; font-size: 1.1em;">포지션</span>
+                                    <span class="player-profile-detail-value" style="color: white; font-size: 1.1em;">${details.position}</span>
                                 </div>
-                                <div class="player-profile-detail-row" style="border-bottom: 1px solid rgba(255,255,255,0.3);">
-                                    <span class="player-profile-detail-label" style="color: white;">투구손</span>
-                                    <span class="player-profile-detail-value" style="color: white;">${details.throwing}</span>
+                                <div class="player-profile-detail-row" style="border-bottom: 1px solid rgba(255,255,255,0.3); padding: 8px 0;">
+                                    <span class="player-profile-detail-label" style="color: white; font-size: 1.1em;">투구손</span>
+                                    <span class="player-profile-detail-value" style="color: white; font-size: 1.1em;">${details.throwing}</span>
                                 </div>
-                                <div class="player-profile-detail-row">
-                                    <span class="player-profile-detail-label" style="color: white;">타석손</span>
-                                    <span class="player-profile-detail-value" style="color: white;">${details.batting}</span>
+                                <div class="player-profile-detail-row" style="padding: 8px 0;">
+                                    <span class="player-profile-detail-label" style="color: white; font-size: 1.1em;">타석손</span>
+                                    <span class="player-profile-detail-value" style="color: white; font-size: 1.1em;">${details.batting}</span>
                                 </div>
                             </div>
                         </div>
-                        <div style="flex: 1; background: white; padding: 20px;">
-                            <div style="margin-bottom: 15px;">
-                                <button onclick="showPlayerStats('${player.name}', 'batter')" class="nav-item active" style="margin-right: 10px; font-size: 0.9em;">타자</button>
-                                <button onclick="showPlayerStats('${player.name}', 'pitcher')" class="nav-item" style="margin-right: 10px; font-size: 0.9em;">투수</button>
+                        <div style="flex: 1; background: white; padding: 30px; display: flex; flex-direction: column;">
+                            <div style="margin-bottom: 20px;">
+                                <button onclick="showPlayerStats('${player.name}', 'batter')" class="nav-item active" style="margin-right: 15px; font-size: 1em; padding: 8px 15px;">타자</button>
+                                <button onclick="showPlayerStats('${player.name}', 'pitcher')" class="nav-item" style="margin-right: 15px; font-size: 1em; padding: 8px 15px;">투수</button>
                                 ${isSeasonPlayer(player.name) ? `
-                                    <button onclick="showPlayerStats('${player.name}', 'season-batter')" class="nav-item" style="margin-right: 10px; font-size: 0.9em;">시즌 타자</button>
-                                    <button onclick="showPlayerStats('${player.name}', 'season-pitcher')" class="nav-item" style="font-size: 0.9em;">시즌 투수</button>
+                                    <button onclick="showPlayerStats('${player.name}', 'season-batter')" class="nav-item" style="margin-right: 15px; font-size: 1em; padding: 8px 15px;">시즌 타자</button>
+                                    <button onclick="showPlayerStats('${player.name}', 'season-pitcher')" class="nav-item" style="font-size: 1em; padding: 8px 15px;">시즌 투수</button>
                                 ` : ''}
                             </div>
-                            <div id="player-stats-${player.name.replace(/[^a-zA-Z0-9]/g, '')}" class="player-stats-container">
-                                <div style="text-align: center; color: #666; padding: 20px;">
+                            <div id="player-stats-${player.name.replace(/[^a-zA-Z0-9]/g, '')}" class="player-stats-container" style="flex: 1; display: flex; align-items: center; justify-content: center;">
+                                <div style="text-align: center; color: #666; padding: 40px; font-size: 1.1em;">
                                     버튼을 클릭하여 성적을 확인하세요
                                 </div>
                             </div>
@@ -3919,18 +3919,18 @@
             }
             
             if (stats) {
-                html = '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">';
+                html = '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; height: 100%;">';
                 Object.entries(stats).forEach(([key, value]) => {
                     html += `
-                        <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; text-align: center;">
-                            <div style="font-size: 0.8em; color: #666; margin-bottom: 5px;">${key}</div>
-                            <div style="font-size: 1.1em; font-weight: bold; color: #333;">${value}</div>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 80px;">
+                            <div style="font-size: 0.9em; color: #666; margin-bottom: 8px;">${key}</div>
+                            <div style="font-size: 1.3em; font-weight: bold; color: #333;">${value}</div>
                         </div>
                     `;
                 });
                 html += '</div>';
             } else {
-                html = '<div style="text-align: center; color: #666; padding: 20px;">해당 성적 정보가 없습니다.</div>';
+                html = '<div style="text-align: center; color: #666; padding: 40px; font-size: 1.2em;">해당 성적 정보가 없습니다.</div>';
             }
             
             container.innerHTML = html;
