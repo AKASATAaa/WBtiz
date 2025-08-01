@@ -3355,11 +3355,24 @@
                                 const category = row[1];
                                 const teamName = row[2];
                                 
-                                if (playerName && playerName.trim() !== '' && category === 'Team') {
+                                if (playerName && playerName.trim() !== '') {
+                                    let displayTeam = '';
+                                    
+                                    if (category === 'Team') {
+                                        displayTeam = teamName.trim();
+                                    } else if (category === 'KR') {
+                                        displayTeam = 'KR';
+                                    } else if (category === 'JP') {
+                                        displayTeam = 'JP';
+                                    } else {
+                                        // 팀이 없는 선수들
+                                        displayTeam = '무소속';
+                                    }
+                                    
                                     allPlayersList.push({
                                         number: playerNumber++,
                                         name: playerName.trim(),
-                                        team: teamName.trim()
+                                        team: displayTeam
                                     });
                                 }
                             }
@@ -3389,8 +3402,13 @@
             const options = teamFilter.querySelectorAll('option:not([value=""])');
             options.forEach(option => option.remove());
             
-            // 팀 목록 생성
-            const teams = [...new Set(allPlayersList.map(player => player.team))].sort();
+            // 팀 목록 생성 (무소속을 맨 뒤로 정렬)
+            const teams = [...new Set(allPlayersList.map(player => player.team))].sort((a, b) => {
+                if (a === '무소속') return 1;
+                if (b === '무소속') return -1;
+                return a.localeCompare(b);
+            });
+            
             teams.forEach(team => {
                 const option = document.createElement('option');
                 option.value = team;
