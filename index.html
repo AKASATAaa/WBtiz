@@ -830,8 +830,8 @@
                         </div>
                         
                         <!-- 새로운 블록 -->
-                        <div class="new-section" style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                            <img id="testImage" alt="광고" style="max-width: 100%; max-height: 200px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        <div class="new-section" style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center;">
+                            <img id="testImage" alt="VRC 야구 포스터" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
                         </div>
                         
                         <script>
@@ -839,7 +839,7 @@
                         document.addEventListener('DOMContentLoaded', function() {
                             const img = document.getElementById('testImage');
                             if (img) {
-                                img.src = 'image/AD/1.png';
+                                img.src = './image/ADFIR.png';
                                 
                                 img.onload = function() {
                                     console.log('이미지 로드 성공:', img.src);
@@ -928,6 +928,31 @@
                                 <div class="loading" id="careerTopPitchersLoading">계산 중...</div>
                             </div>
                         </div>
+
+                         <!-- 새로운 블록 -->
+                         <div class="new-section2" style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center;">
+                            <img id="testImage2" alt="VRC 야구 포스터" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                        </div>
+                        
+                        <script>
+                        // 이미지 로드
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const img = document.getElementById('testImage2');
+                            if (img) {
+                                img.src = './image/ADSEC.png';
+                                
+                                img.onload = function() {
+                                    console.log('이미지 로드 성공:', img.src);
+                                };
+                                
+                                img.onerror = function() {
+                                    console.log('이미지 로드 실패:', img.src);
+                                    img.style.display = 'none';
+                                    img.parentElement.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">이미지를 불러올 수 없습니다</div>';
+                                };
+                            }
+                        });
+                        </script>
                     </div>
                 </div>
             </div>
