@@ -1062,7 +1062,7 @@
                     </div>
                 </div>
                 
-                <div id="playerList">
+                <div id="playerList" style="width: 100%;">
                     <div class="loading" id="playerLoading">선수 정보를 불러오는 중...</div>
                 </div>
             </div>
@@ -3743,7 +3743,7 @@
             const bgColor = teamColor.primary;
             
             row.innerHTML = `
-                <td colspan="3" style="padding: 0; background: ${bgColor};">
+                <td colspan="3" style="padding: 0; background: ${bgColor}; width: 100%;">
                     <div class="player-profile-card" style="margin: 0; border-radius: 0; box-shadow: none; display: flex; min-height: 400px;">
                         <div style="width: 400px; background: linear-gradient(135deg, ${teamColor.primary}, ${teamColor.secondary}); color: white; padding: 30px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
                             <div class="player-profile-picture-placeholder" style="width: 150px; height: 150px; border-radius: 50%; background: rgba(255,255,255,0.2); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3em;">👤</div>
