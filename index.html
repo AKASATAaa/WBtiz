@@ -1579,8 +1579,8 @@
             if (battersBtn) battersBtn.classList.add('active');
             if (pitchersBtn) pitchersBtn.classList.remove('active');
             
-            // 필터 적용 후 타자 데이터 표시
-            applyFilters();
+            // 시즌 타자 데이터 표시
+            displaySeasonBatters();
         }
         
         // 투수 표시
@@ -1595,8 +1595,8 @@
             if (battersBtn) battersBtn.classList.remove('active');
             if (pitchersBtn) pitchersBtn.classList.add('active');
             
-            // 필터 적용 후 투수 데이터 표시
-            applyFilters();
+            // 시즌 투수 데이터 표시
+            displaySeasonPitchers();
         }
         
         function sortTable(tableType, column) {
@@ -2126,19 +2126,26 @@
             const teamValue = teamFilter ? teamFilter.value : '';
             const nameValue = nameFilter ? nameFilter.value.toLowerCase() : '';
             
-
+            console.log('필터 적용:', { teamValue, nameValue });
+            console.log('시즌 타자 데이터:', seasonHitterData ? seasonHitterData.length : 0);
+            console.log('시즌 투수 데이터:', seasonPitcherData ? seasonPitcherData.length : 0);
             
             // 시즌 기록실: 시즌 데이터 사용
             if (seasonHitterData && seasonHitterData.length > 0) {
+                console.log('시즌 타자 데이터로 필터링');
                 filteredBatters = seasonHitterData.filter(player => {
                     const hasHittingStats = player.타수 && parseFloat(player.타수) > 0;
                     const hasTeam = player.팀 && player.팀.trim() !== '';
                     const teamMatch = !teamValue || player.팀 === teamValue;
                     const nameMatch = !nameValue || player.Name.toLowerCase().includes(nameValue);
                     
+                    console.log('선수 필터링:', player.Name, { hasHittingStats, hasTeam, teamMatch, nameMatch });
+                    
                     return hasHittingStats && hasTeam && teamMatch && nameMatch;
                 });
+                console.log('필터링된 타자 수:', filteredBatters.length);
             } else {
+                console.log('기존 타자 데이터로 필터링');
                 // 시즌 데이터가 없으면 기존 playersData 사용
                 filteredBatters = playersData.filter(player => {
                     const hasHittingStats = player.AB && parseFloat(player.AB) > 0;
@@ -2148,6 +2155,7 @@
                     
                     return hasHittingStats && hasTeam && teamMatch && nameMatch;
                 });
+                console.log('필터링된 타자 수:', filteredBatters.length);
             }
             
             if (seasonPitcherData && seasonPitcherData.length > 0) {
@@ -3166,6 +3174,13 @@
         
         // 시즌 기록 업데이트
         function updateSeasonRecords() {
+            if (seasonHitterData.length > 0) {
+                displaySeasonBatters();
+            }
+            if (seasonPitcherData.length > 0) {
+                displaySeasonPitchers();
+            }
+            
             // 시즌 데이터 로드 후 필터 다시 적용
             setupTeamFilter();
             applyFilters();
