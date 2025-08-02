@@ -1811,6 +1811,102 @@
                 const teamsTitle = teamsTab.querySelector('.section-title');
                 if (teamsTitle) teamsTitle.textContent = texts.teamInfo;
             }
+            
+            // 선수 정보 페이지 업데이트
+            updatePlayerInfoTexts();
+        }
+        
+        function updatePlayerInfoTexts() {
+            const texts = translations[currentLanguage];
+            
+            // 선수 정보 페이지 제목
+            const playerInfoTitle = document.querySelector('#players .section-title');
+            if (playerInfoTitle) playerInfoTitle.textContent = texts.navPlayers;
+            
+            // 선수 정보 로딩 메시지
+            const playerLoading = document.getElementById('playerLoading');
+            if (playerLoading) {
+                const dataKo = playerLoading.getAttribute('data-ko');
+                const dataJa = playerLoading.getAttribute('data-ja');
+                if (currentLanguage === 'ko' && dataKo) {
+                    playerLoading.textContent = dataKo;
+                } else if (currentLanguage === 'ja' && dataJa) {
+                    playerLoading.textContent = dataJa;
+                }
+            }
+            
+            // 선수 정보 필터 옵션들
+            const playerTeamFilter = document.getElementById('playerTeamFilter');
+            if (playerTeamFilter) {
+                const firstOption = playerTeamFilter.querySelector('option[value=""]');
+                if (firstOption) {
+                    const dataKo = firstOption.getAttribute('data-ko');
+                    const dataJa = firstOption.getAttribute('data-ja');
+                    if (currentLanguage === 'ko' && dataKo) {
+                        firstOption.textContent = dataKo;
+                    } else if (currentLanguage === 'ja' && dataJa) {
+                        firstOption.textContent = dataJa;
+                    }
+                }
+            }
+            
+            // 선수명 검색 플레이스홀더
+            const playerNameFilter = document.getElementById('playerNameFilter');
+            if (playerNameFilter) {
+                const dataKo = playerNameFilter.getAttribute('data-ko');
+                const dataJa = playerNameFilter.getAttribute('data-ja');
+                if (currentLanguage === 'ko' && dataKo) {
+                    playerNameFilter.placeholder = dataKo;
+                } else if (currentLanguage === 'ja' && dataJa) {
+                    playerNameFilter.placeholder = dataJa;
+                }
+            }
+            
+            // 초기화 버튼
+            const resetPlayerBtn = document.querySelector('button[onclick="resetPlayerFilters()"]');
+            if (resetPlayerBtn) {
+                const dataKo = resetPlayerBtn.getAttribute('data-ko');
+                const dataJa = resetPlayerBtn.getAttribute('data-ja');
+                if (currentLanguage === 'ko' && dataKo) {
+                    resetPlayerBtn.textContent = dataKo;
+                } else if (currentLanguage === 'ja' && dataJa) {
+                    resetPlayerBtn.textContent = dataJa;
+                }
+            }
+            
+            // 정렬 버튼들
+            const sortButtons = ['sortNumberBtn', 'sortNameBtn', 'sortTeamBtn'];
+            sortButtons.forEach(id => {
+                const button = document.getElementById(id);
+                if (button) {
+                    const dataKo = button.getAttribute('data-ko');
+                    const dataJa = button.getAttribute('data-ja');
+                    if (currentLanguage === 'ko' && dataKo) {
+                        button.textContent = dataKo;
+                    } else if (currentLanguage === 'ja' && dataJa) {
+                        button.textContent = dataJa;
+                    }
+                }
+            });
+            
+            // 선수 카드 버튼들 업데이트
+            updatePlayerCardButtons();
+        }
+        
+        function updatePlayerCardButtons() {
+            const texts = translations[currentLanguage];
+            
+            // 선수 카드의 버튼들 업데이트
+            const playerCardButtons = document.querySelectorAll('.player-profile-card button');
+            playerCardButtons.forEach(button => {
+                const dataKo = button.getAttribute('data-ko');
+                const dataJa = button.getAttribute('data-ja');
+                if (currentLanguage === 'ko' && dataKo) {
+                    button.textContent = dataKo;
+                } else if (currentLanguage === 'ja' && dataJa) {
+                    button.textContent = dataJa;
+                }
+            });
         }
         
         function updateTeamNames() {
@@ -4001,6 +4097,11 @@
             setTimeout(() => {
                 showPlayerStats(player.name, 'batter');
             }, 150);
+            
+            // 선수 카드 생성 후 버튼 번역 적용
+            setTimeout(() => {
+                updatePlayerCardButtons();
+            }, 200);
             
             return row;
         }
