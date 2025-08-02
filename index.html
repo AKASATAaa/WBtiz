@@ -1316,7 +1316,14 @@
                     "이름순": "이름순",
                     "팀순": "팀순",
                     "시즌 타자": "시즌 타자",
-                    "시즌 투수": "시즌 투수"
+                    "시즌 투수": "시즌 투수",
+                    "평균자책점": "평균자책점",
+                    "승": "승",
+                    "패": "패",
+                    "세이브": "세이브",
+                    "홀드": "홀드",
+                    "피홈런": "피홈런",
+                    "자책점": "자책점"
                 }
             },
             ja: {
@@ -1494,6 +1501,13 @@
                     "팀순": "チーム順",
                     "시즌 타자": "シーズン打者",
                     "시즌 투수": "シーズン投手",
+                    "평균자책점": "防御率",
+                    "승": "勝",
+                    "패": "敗",
+                    "세이브": "セーブ",
+                    "홀드": "ホールド",
+                    "피홈런": "被本塁打",
+                    "자책점": "自責点",
                     "스코어": "スコア",
                     "결과": "結果",
                     "일정 없음": "日程なし",
@@ -4114,6 +4128,7 @@
         
         // 선수 성적 표시
         function showPlayerStats(playerName, type) {
+            const texts = translations[currentLanguage];
             console.log('선수 성적 표시:', playerName, type);
             
             // 버튼 상태 업데이트
@@ -4162,17 +4177,17 @@
                     }
                     
                     stats = {
-                        타수: ab,
-                        안타: h,
-                        홈런: hr,
-                        도루: player.SB || 0,
-                        출루율: parseFloat(player.OBP || 0).toFixed(3),
-                        WAR: 'N/A', // 복잡한 계산 필요
+                        [texts.units['타수']]: ab,
+                        [texts.units['안타']]: h,
+                        [texts.units['홈런']]: hr,
+                        [texts.units['도루']]: player.SB || 0,
+                        [texts.units['출루율']]: parseFloat(player.OBP || 0).toFixed(3),
+                        'WAR': 'N/A', // 복잡한 계산 필요
                         'wRC+': player['wRC+'] || 'N/A',
-                        wOBA: woba > 0 ? woba.toFixed(3) : 'N/A',
-                        HR: hr,
-                        RBI: 'N/A', // 타점 상황 데이터 없음
-                        FPCT: 'N/A' // 수비율 정보 없음
+                        'wOBA': woba > 0 ? woba.toFixed(3) : 'N/A',
+                        'HR': hr,
+                        'RBI': 'N/A', // 타점 상황 데이터 없음
+                        'FPCT': 'N/A' // 수비율 정보 없음
                     };
                 }
             } else if (type === 'pitcher') {
@@ -4188,17 +4203,17 @@
                     const b9 = ip > 0 ? (bb * 9) / ip : 0;
                     
                     stats = {
-                        '평균자책점': parseFloat(player.ERA || 0).toFixed(2),
-                        이닝: ip,
-                        승: 'N/A', // 승수 정보 없음
-                        패: 'N/A', // 패수 정보 없음
-                        세이브: 'N/A', // 세이브 정보 없음
-                        홀드: 'N/A', // 홀드 정보 없음
-                        탈삼진: k,
-                        '피홈런': 'N/A', // 피홈런 정보 없음
-                        자책점: 'N/A', // 자책점 정보 없음
+                        [texts.units['평균자책점']]: parseFloat(player.ERA || 0).toFixed(2),
+                        [texts.units['이닝']]: ip,
+                        [texts.units['승']]: 'N/A', // 승수 정보 없음
+                        [texts.units['패']]: 'N/A', // 패수 정보 없음
+                        [texts.units['세이브']]: 'N/A', // 세이브 정보 없음
+                        [texts.units['홀드']]: 'N/A', // 홀드 정보 없음
+                        [texts.units['탈삼진']]: k,
+                        [texts.units['피홈런']]: 'N/A', // 피홈런 정보 없음
+                        [texts.units['자책점']]: 'N/A', // 자책점 정보 없음
                         'ERA+': player['ERA+'] || 'N/A',
-                        WHIP: parseFloat(player.WHIP || 0).toFixed(2),
+                        'WHIP': parseFloat(player.WHIP || 0).toFixed(2),
                         'K/9': k9.toFixed(1),
                         'B/9': b9.toFixed(1)
                     };
@@ -4226,17 +4241,17 @@
                     }
                     
                     stats = {
-                        타수: ab,
-                        안타: h,
-                        홈런: hr,
-                        도루: player.도루 || 0,
-                        출루율: parseFloat(player.출루율 || 0).toFixed(3),
-                        WAR: 'N/A',
+                        [texts.units['타수']]: ab,
+                        [texts.units['안타']]: h,
+                        [texts.units['홈런']]: hr,
+                        [texts.units['도루']]: player.도루 || 0,
+                        [texts.units['출루율']]: parseFloat(player.출루율 || 0).toFixed(3),
+                        'WAR': 'N/A',
                         'wRC+': player['wRC+'] || 'N/A',
-                        wOBA: woba > 0 ? woba.toFixed(3) : 'N/A',
-                        HR: hr,
-                        RBI: player.타점 || 0,
-                        FPCT: parseFloat(player.FPCT || 0).toFixed(3)
+                        'wOBA': woba > 0 ? woba.toFixed(3) : 'N/A',
+                        'HR': hr,
+                        'RBI': player.타점 || 0,
+                        'FPCT': parseFloat(player.FPCT || 0).toFixed(3)
                     };
                 }
             } else if (type === 'season-pitcher') {
@@ -4252,17 +4267,17 @@
                     const b9 = ip > 0 ? (bb * 9) / ip : 0;
                     
                     stats = {
-                        '평균자책점': parseFloat(player.평균자책점 || 0).toFixed(2),
-                        이닝: ip,
-                        승: player.승 || 0,
-                        패: player.패 || 0,
-                        세이브: player.세이브 || 0,
-                        홀드: player.홀드 || 0,
-                        탈삼진: k,
-                        '피홈런': player.피홈런 || 0,
-                        자책점: player.자책점 || 0,
+                        [texts.units['평균자책점']]: parseFloat(player.평균자책점 || 0).toFixed(2),
+                        [texts.units['이닝']]: ip,
+                        [texts.units['승']]: player.승 || 0,
+                        [texts.units['패']]: player.패 || 0,
+                        [texts.units['세이브']]: player.세이브 || 0,
+                        [texts.units['홀드']]: player.홀드 || 0,
+                        [texts.units['탈삼진']]: k,
+                        [texts.units['피홈런']]: player.피홈런 || 0,
+                        [texts.units['자책점']]: player.자책점 || 0,
                         'ERA+': player['ERA+'] || 'N/A',
-                        WHIP: parseFloat(player.WHIP || 0).toFixed(2),
+                        'WHIP': parseFloat(player.WHIP || 0).toFixed(2),
                         'K/9': k9.toFixed(1),
                         'B/9': b9.toFixed(1)
                     };
