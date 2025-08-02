@@ -3817,18 +3817,21 @@
             }
         }
         
-        // 팀별 색상 정보
-        const teamColors = {
-            'LEROLEROS': { primary: '#e91e63', secondary: '#ad1457' },
-            'BUBBLE STARS': { primary: '#2196f3', secondary: '#1976d2' },
-            'MoonShot Spirits': { primary: '#9c27b0', secondary: '#7b1fa2' },
-            'FLORIAN T-SHIRTS': { primary: '#ff9800', secondary: '#f57c00' },
-            'Ishikawa Fighting Folks': { primary: '#4caf50', secondary: '#388e3c' },
-            'Nyanko AVENGERS': { primary: '#795548', secondary: '#5d4037' },
-            'KR': { primary: '#f44336', secondary: '#d32f2f' },
-            'JP': { primary: '#ff5722', secondary: '#d84315' },
-            [texts.units['무소속']]: { primary: '#607d8b', secondary: '#455a64' }
-        };
+        // 팀별 색상 정보 가져오기
+        function getTeamColors() {
+            const texts = translations[currentLanguage];
+            return {
+                'LEROLEROS': { primary: '#e91e63', secondary: '#ad1457' },
+                'BUBBLE STARS': { primary: '#2196f3', secondary: '#1976d2' },
+                'MoonShot Spirits': { primary: '#9c27b0', secondary: '#7b1fa2' },
+                'FLORIAN T-SHIRTS': { primary: '#ff9800', secondary: '#f57c00' },
+                'Ishikawa Fighting Folks': { primary: '#4caf50', secondary: '#388e3c' },
+                'Nyanko AVENGERS': { primary: '#795548', secondary: '#5d4037' },
+                'KR': { primary: '#f44336', secondary: '#d32f2f' },
+                'JP': { primary: '#ff5722', secondary: '#d84315' },
+                [texts.units['무소속']]: { primary: '#607d8b', secondary: '#455a64' }
+            };
+        }
         
         // 선수 정보 표시
         function showPlayerProfile(playerName) {
@@ -3895,6 +3898,7 @@
         // 선수 정보 행 생성
         function createPlayerProfileRow(player, details) {
             const texts = translations[currentLanguage];
+            const teamColors = getTeamColors();
             const teamColor = teamColors[player.team] || teamColors[texts.units['무소속']];
             
             const row = document.createElement('tr');
