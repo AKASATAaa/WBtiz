@@ -2092,7 +2092,16 @@
                 teamFilter.removeChild(teamFilter.lastChild);
             }
             
-            const teams = [...new Set(playersData.map(player => player.Team).filter(team => team))];
+            // 시즌 데이터가 있으면 시즌 데이터에서 팀 목록 생성
+            let teams = [];
+            if (seasonHitterData && seasonHitterData.length > 0) {
+                teams = [...new Set(seasonHitterData.map(player => player.팀).filter(team => team))];
+            } else if (seasonPitcherData && seasonPitcherData.length > 0) {
+                teams = [...new Set(seasonPitcherData.map(player => player.팀).filter(team => team))];
+            } else {
+                // 기존 데이터 사용
+                teams = [...new Set(playersData.map(player => player.Team).filter(team => team))];
+            }
             
             teams.forEach(teamId => {
                 const option = document.createElement('option');
@@ -2117,24 +2126,48 @@
             const teamValue = teamFilter ? teamFilter.value : '';
             const nameValue = nameFilter ? nameFilter.value.toLowerCase() : '';
             
-            // 시즌 기록실: 팀이 있는 선수만 필터링
-            filteredBatters = playersData.filter(player => {
-                const hasHittingStats = player.AB && parseFloat(player.AB) > 0;
-                const hasTeam = player.Team && player.Team.trim() !== '';
-                const teamMatch = !teamValue || player.Team === teamValue;
-                const nameMatch = !nameValue || player.Name.toLowerCase().includes(nameValue);
-                
-                return hasHittingStats && hasTeam && teamMatch && nameMatch;
-            });
+            // 시즌 기록실: 시즌 데이터 사용
+            if (seasonHitterData && seasonHitterData.length > 0) {
+                filteredBatters = seasonHitterData.filter(player => {
+                    const hasHittingStats = player.타수 && parseFloat(player.타수) > 0;
+                    const hasTeam = player.팀 && player.팀.trim() !== '';
+                    const teamMatch = !teamValue || player.팀 === teamValue;
+                    const nameMatch = !nameValue || player.Name.toLowerCase().includes(nameValue);
+                    
+                    return hasHittingStats && hasTeam && teamMatch && nameMatch;
+                });
+            } else {
+                // 시즌 데이터가 없으면 기존 playersData 사용
+                filteredBatters = playersData.filter(player => {
+                    const hasHittingStats = player.AB && parseFloat(player.AB) > 0;
+                    const hasTeam = player.Team && player.Team.trim() !== '';
+                    const teamMatch = !teamValue || player.Team === teamValue;
+                    const nameMatch = !nameValue || player.Name.toLowerCase().includes(nameValue);
+                    
+                    return hasHittingStats && hasTeam && teamMatch && nameMatch;
+                });
+            }
             
-            filteredPitchers = playersData.filter(player => {
-                const hasPitchingStats = player.ERA && parseFloat(player.IP || 0) > 0;
-                const hasTeam = player.Team && player.Team.trim() !== '';
-                const teamMatch = !teamValue || player.Team === teamValue;
-                const nameMatch = !nameValue || player.Name.toLowerCase().includes(nameValue);
-                
-                return hasPitchingStats && hasTeam && teamMatch && nameMatch;
-            });
+            if (seasonPitcherData && seasonPitcherData.length > 0) {
+                filteredPitchers = seasonPitcherData.filter(player => {
+                    const hasPitchingStats = player.이닝 && parseFloat(player.이닝) > 0;
+                    const hasTeam = player.팀 && player.팀.trim() !== '';
+                    const teamMatch = !teamValue || player.팀 === teamValue;
+                    const nameMatch = !nameValue || player.Name.toLowerCase().includes(nameValue);
+                    
+                    return hasPitchingStats && hasTeam && teamMatch && nameMatch;
+                });
+            } else {
+                // 시즌 데이터가 없으면 기존 playersData 사용
+                filteredPitchers = playersData.filter(player => {
+                    const hasPitchingStats = player.ERA && parseFloat(player.IP || 0) > 0;
+                    const hasTeam = player.Team && player.Team.trim() !== '';
+                    const teamMatch = !teamValue || player.Team === teamValue;
+                    const nameMatch = !nameValue || player.Name.toLowerCase().includes(nameValue);
+                    
+                    return hasPitchingStats && hasTeam && teamMatch && nameMatch;
+                });
+            }
             
             const battersTable = document.getElementById('battersTable');
             const pitchersTable = document.getElementById('pitchersTable');
@@ -2192,19 +2225,41 @@
             
             filteredBatters.forEach((player, index) => {
                 const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="rank">${index + 1}</td>
-                    <td class="player-name">${player.Name || ''}</td>
-                    <td>${getTeamName(player.Team)}</td>
-                    <td>${player.AB || '-'}</td>
-                    <td>${player.H || '-'}</td>
-                    <td>${player.HR || '-'}</td>
-                    <td>${player.SB || '-'}</td>
-                    <td><strong>${parseFloat(player.AVG || 0).toFixed(3)}</strong></td>
-                    <td>${parseFloat(player.OBP || 0).toFixed(3)}</td>
-                    <td>${parseFloat(player.SLG || 0).toFixed(3)}</td>
-                    <td>${player['wRC+'] || '-'}</td>
-                `;
+                
+                // 시즌 데이터인지 확인
+                const isSeasonData = player.hasOwnProperty('타수');
+                
+                if (isSeasonData) {
+                    // 시즌 데이터 (SeasonHitter.csv)
+                    row.innerHTML = `
+                        <td class="rank">${index + 1}</td>
+                        <td class="player-name">${player.Name || ''}</td>
+                        <td>${getTeamName(player.팀)}</td>
+                        <td>${player.타수 || '-'}</td>
+                        <td>${player.안타 || '-'}</td>
+                        <td>${player.홈런 || '-'}</td>
+                        <td>${player.도루 || '-'}</td>
+                        <td><strong>${parseFloat(player.타율 || 0).toFixed(3)}</strong></td>
+                        <td>${parseFloat(player.출루율 || 0).toFixed(3)}</td>
+                        <td>${parseFloat(player.장타율 || 0).toFixed(3)}</td>
+                        <td>${player['wRC+'] || '-'}</td>
+                    `;
+                } else {
+                    // 기존 데이터 (player.csv)
+                    row.innerHTML = `
+                        <td class="rank">${index + 1}</td>
+                        <td class="player-name">${player.Name || ''}</td>
+                        <td>${getTeamName(player.Team)}</td>
+                        <td>${player.AB || '-'}</td>
+                        <td>${player.H || '-'}</td>
+                        <td>${player.HR || '-'}</td>
+                        <td>${player.SB || '-'}</td>
+                        <td><strong>${parseFloat(player.AVG || 0).toFixed(3)}</strong></td>
+                        <td>${parseFloat(player.OBP || 0).toFixed(3)}</td>
+                        <td>${parseFloat(player.SLG || 0).toFixed(3)}</td>
+                        <td>${player['wRC+'] || '-'}</td>
+                    `;
+                }
                 tbody.appendChild(row);
             });
         }
@@ -2225,16 +2280,35 @@
             
             filteredPitchers.forEach((pitcher, index) => {
                 const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="rank">${index + 1}</td>
-                    <td class="player-name">${pitcher.Name || ''}</td>
-                    <td>${getTeamName(pitcher.Team)}</td>
-                    <td><strong>${parseFloat(pitcher.ERA || 0).toFixed(2)}</strong></td>
-                    <td>${pitcher.IP || '-'}</td>
-                    <td>${pitcher.K || '-'}</td>
-                    <td>${parseFloat(pitcher.WHIP || 0).toFixed(2)}</td>
-                    <td>${pitcher['ERA+'] || '-'}</td>
-                `;
+                
+                // 시즌 데이터인지 확인
+                const isSeasonData = pitcher.hasOwnProperty('이닝');
+                
+                if (isSeasonData) {
+                    // 시즌 데이터 (SeasonPitcher.csv)
+                    row.innerHTML = `
+                        <td class="rank">${index + 1}</td>
+                        <td class="player-name">${pitcher.Name || ''}</td>
+                        <td>${getTeamName(pitcher.팀)}</td>
+                        <td><strong>${parseFloat(pitcher.평균자책점 || 0).toFixed(2)}</strong></td>
+                        <td>${pitcher.이닝 || '-'}</td>
+                        <td>${pitcher.탈삼진 || '-'}</td>
+                        <td>${parseFloat(pitcher.WHIP || 0).toFixed(2)}</td>
+                        <td>${pitcher['ERA+'] || '-'}</td>
+                    `;
+                } else {
+                    // 기존 데이터 (player.csv)
+                    row.innerHTML = `
+                        <td class="rank">${index + 1}</td>
+                        <td class="player-name">${pitcher.Name || ''}</td>
+                        <td>${getTeamName(pitcher.Team)}</td>
+                        <td><strong>${parseFloat(pitcher.ERA || 0).toFixed(2)}</strong></td>
+                        <td>${pitcher.IP || '-'}</td>
+                        <td>${pitcher.K || '-'}</td>
+                        <td>${parseFloat(pitcher.WHIP || 0).toFixed(2)}</td>
+                        <td>${pitcher['ERA+'] || '-'}</td>
+                    `;
+                }
                 tbody.appendChild(row);
             });
         }
@@ -4110,10 +4184,10 @@
                             tooltipText = '투수 책임의 실점';
                             break;
                         case 'ERA+':
-                            tooltipText = '조정 평균자책점 (리그 평균 대비)';
+                            tooltipText = '조정 평균자책점';
                             break;
                         case 'WHIP':
-                            tooltipText = '이닝당 출루 허용률 (Walks + Hits per Inning Pitched)';
+                            tooltipText = '이닝당 출루 허용률';
                             break;
                         case 'K/9':
                             tooltipText = '9이닝당 탈삼진 수';
