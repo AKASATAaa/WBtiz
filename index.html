@@ -1089,20 +1089,20 @@
                         </select>
                         
                         <input type="text" id="playerNameFilter" placeholder="선수명 검색" onkeyup="applyPlayerFilters()" 
-                               style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; width: 150px;">
+                               style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; width: 150px;" data-ko="선수명 검색" data-ja="選手名検索">
                         
                         <button onclick="resetPlayerFilters()" style="padding: 8px 15px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer;" data-ko="초기화" data-ja="リセット">초기화</button>
                     </div>
                     
                     <div style="display: flex; gap: 10px;">
-                        <button onclick="sortPlayerList('number')" id="sortNumberBtn" class="nav-item active" style="font-size: 0.9em;">번호순</button>
-                        <button onclick="sortPlayerList('name')" id="sortNameBtn" class="nav-item" style="font-size: 0.9em;">이름순</button>
-                        <button onclick="sortPlayerList('team')" id="sortTeamBtn" class="nav-item" style="font-size: 0.9em;">팀순</button>
+                        <button onclick="sortPlayerList('number')" id="sortNumberBtn" class="nav-item active" style="font-size: 0.9em;" data-ko="번호순" data-ja="番号順">번호순</button>
+                        <button onclick="sortPlayerList('name')" id="sortNameBtn" class="nav-item" style="font-size: 0.9em;" data-ko="이름순" data-ja="名前順">이름순</button>
+                        <button onclick="sortPlayerList('team')" id="sortTeamBtn" class="nav-item" style="font-size: 0.9em;" data-ko="팀순" data-ja="チーム順">팀순</button>
                     </div>
                 </div>
                 
                 <div id="playerList" style="width: 100%;">
-                    <div class="loading" id="playerLoading">선수 정보를 불러오는 중...</div>
+                    <div class="loading" id="playerLoading" data-ko="선수 정보를 불러오는 중..." data-ja="選手情報を読み込み中...">선수 정보를 불러오는 중...</div>
                 </div>
             </div>
         </div>
@@ -1311,7 +1311,12 @@
                     "선수 기록": "선수 기록",
                     "포지션": "포지션",
                     "투구손": "투구손",
-                    "타석손": "타석손"
+                    "타석손": "타석손",
+                    "번호순": "번호순",
+                    "이름순": "이름순",
+                    "팀순": "팀순",
+                    "시즌 타자": "시즌 타자",
+                    "시즌 투수": "시즌 투수"
                 }
             },
             ja: {
@@ -1484,6 +1489,11 @@
                     "포지션": "ポジション",
                     "투구손": "投球手",
                     "타석손": "打席手",
+                    "번호순": "番号順",
+                    "이름순": "名前順",
+                    "팀순": "チーム順",
+                    "시즌 타자": "シーズン打者",
+                    "시즌 투수": "シーズン投手",
                     "스코어": "スコア",
                     "결과": "結果",
                     "일정 없음": "日程なし",
@@ -3927,11 +3937,11 @@
                         </div>
                         <div style="width: 67%; background: white; padding: 40px; display: flex; flex-direction: column; border-left: 3px solid ${teamColor.primary};">
                             <div style="margin-bottom: 25px; display: flex; flex-wrap: wrap; gap: 15px; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">
-                                <button onclick="showPlayerStats('${player.name}', 'batter')" class="nav-item active" style="font-size: 1.1em; padding: 12px 20px; border-radius: 8px; font-weight: 500; transition: all 0.3s ease;">타자</button>
-                                <button onclick="showPlayerStats('${player.name}', 'pitcher')" class="nav-item" style="font-size: 1.1em; padding: 12px 20px; border-radius: 8px; font-weight: 500; transition: all 0.3s ease;">투수</button>
+                                <button onclick="showPlayerStats('${player.name}', 'batter')" class="nav-item active" style="font-size: 1.1em; padding: 12px 20px; border-radius: 8px; font-weight: 500; transition: all 0.3s ease;" data-ko="타자" data-ja="打者">타자</button>
+                                <button onclick="showPlayerStats('${player.name}', 'pitcher')" class="nav-item" style="font-size: 1.1em; padding: 12px 20px; border-radius: 8px; font-weight: 500; transition: all 0.3s ease;" data-ko="투수" data-ja="投手">투수</button>
                                 ${isSeasonPlayer(player.name) ? `
-                                    <button onclick="showPlayerStats('${player.name}', 'season-batter')" class="nav-item" style="font-size: 1.1em; padding: 12px 20px; border-radius: 8px; font-weight: 500; transition: all 0.3s ease;">시즌 타자</button>
-                                    <button onclick="showPlayerStats('${player.name}', 'season-pitcher')" class="nav-item" style="font-size: 1.1em; padding: 12px 20px; border-radius: 8px; font-weight: 500; transition: all 0.3s ease;">시즌 투수</button>
+                                    <button onclick="showPlayerStats('${player.name}', 'season-batter')" class="nav-item" style="font-size: 1.1em; padding: 12px 20px; border-radius: 8px; font-weight: 500; transition: all 0.3s ease;" data-ko="시즌 타자" data-ja="シーズン打者">시즌 타자</button>
+                                    <button onclick="showPlayerStats('${player.name}', 'season-pitcher')" class="nav-item" style="font-size: 1.1em; padding: 12px 20px; border-radius: 8px; font-weight: 500; transition: all 0.3s ease;" data-ko="시즌 투수" data-ja="シーズン投手">시즌 투수</button>
                                 ` : ''}
                             </div>
                             <div id="player-stats-${player.name.replace(/[^a-zA-Z0-9]/g, '')}" class="player-stats-container" style="flex: 1; display: flex; align-items: center; justify-content: center; min-height: 400px; background: #fafafa; border-radius: 12px; margin: 10px 0;">
