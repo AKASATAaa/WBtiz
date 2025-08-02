@@ -1308,7 +1308,10 @@
                     "해당 성적 정보가 없습니다": "해당 성적 정보가 없습니다",
                     "무소속": "무소속",
                     "선수 정보": "선수 정보",
-                    "선수 기록": "선수 기록"
+                    "선수 기록": "선수 기록",
+                    "포지션": "포지션",
+                    "투구손": "투구손",
+                    "타석손": "타석손"
                 }
             },
             ja: {
@@ -1478,6 +1481,9 @@
                     "무소속": "無所属",
                     "선수 정보": "選手情報",
                     "선수 기록": "選手記録",
+                    "포지션": "ポジション",
+                    "투구손": "投球手",
+                    "타석손": "打席手",
                     "스코어": "スコア",
                     "결과": "結果",
                     "일정 없음": "日程なし",
@@ -3550,6 +3556,7 @@
         
         // 선수 목록 로드
         async function loadPlayersList() {
+            const texts = translations[currentLanguage];
             try {
                 const response = await fetch('./teams.csv');
                 if (!response.ok) {
@@ -3637,6 +3644,7 @@
         
         // 선수 필터 설정
         function setupPlayerFilters() {
+            const texts = translations[currentLanguage];
             const teamFilter = document.getElementById('playerTeamFilter');
             if (!teamFilter) return;
             
@@ -3868,6 +3876,7 @@
         
         // teams.csv에서 선수 상세 정보 찾기
         function findPlayerDetails(playerName) {
+            const texts = translations[currentLanguage];
             const player = allPlayersList.find(p => p.name === playerName);
             if (player) {
                 return {
@@ -3877,14 +3886,15 @@
                 };
             }
             return {
-                position: '포지션 미정',
-                throwing: '투구손 미정',
-                batting: '타석손 미정'
+                position: texts.units['포지션'] + ' 미정',
+                throwing: texts.units['투구손'] + ' 미정',
+                batting: texts.units['타석손'] + ' 미정'
             };
         }
         
         // 선수 정보 행 생성
         function createPlayerProfileRow(player, details) {
+            const texts = translations[currentLanguage];
             const teamColor = teamColors[player.team] || teamColors[texts.units['무소속']];
             
             const row = document.createElement('tr');
