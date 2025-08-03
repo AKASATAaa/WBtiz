@@ -1118,8 +1118,10 @@
         
         <div id="prediction" class="tab-content">
             <div class="stats-section">
-                <div class="section-title">승부 예측</div>
-                <p>승부 예측 페이지 준비 중...</p>
+                <div class="section-title" data-ko="썸머리그 순위" data-ja="サマーリーグ順位">썸머리그 순위</div>
+                <div id="standingsContainer">
+                    <div class="loading" id="standingsLoading" data-ko="순위 계산 중..." data-ja="順位計算中...">순위 계산 중...</div>
+                </div>
             </div>
         </div>
     </div>
@@ -1130,10 +1132,11 @@
         let teamsData = [];
         let seasonHitterData = [];
         let seasonPitcherData = [];
-        let filteredBatters = [];
-        let filteredPitchers = [];
-        let currentSortColumn = '';
-        let currentSortDirection = 'asc';
+        let seasonSpecialData = [];
+        let scheduleData = [];
+        let standingsData = [];
+        
+        // 현재 언어 설정
         let currentLanguage = 'ko';
         
         // 다국어 텍스트 객체
@@ -1323,7 +1326,29 @@
                     "세이브": "세이브",
                     "홀드": "홀드",
                     "피홈런": "피홈런",
-                    "자책점": "자책점"
+                    "자책점": "자책점",
+                    "자책점": "자책점",
+                    "썸머리그 순위": "썸머리그 순위",
+                    "순위 계산 중": "순위 계산 중",
+                    "순위": "순위",
+                    "팀명": "팀명",
+                    "승": "승",
+                    "무": "무",
+                    "패": "패",
+                    "승률": "승률",
+                    "게임차": "게임차",
+                    "순위 데이터가 없습니다": "순위 데이터가 없습니다",
+                    "자책점": "自責点",
+                    "썸머리그 순위": "サマーリーグ順位",
+                    "순위 계산 중": "順位計算中",
+                    "순위": "順位",
+                    "팀명": "チーム名",
+                    "승": "勝",
+                    "무": "分",
+                    "패": "敗",
+                    "승률": "勝率",
+                    "게임차": "ゲーム差",
+                    "순위 데이터가 없습니다": "順位データがありません"
                 }
             },
             ja: {
@@ -1511,7 +1536,29 @@
                     "스코어": "スコア",
                     "결과": "結果",
                     "일정 없음": "日程なし",
-                    "경기 준비 중": "試合準備中"
+                    "경기 준비 중": "試合準備中",
+                    "자책점": "자책점",
+                    "썸머리그 순위": "썸머리그 순위",
+                    "순위 계산 중": "순위 계산 중",
+                    "순위": "순위",
+                    "팀명": "팀명",
+                    "승": "승",
+                    "무": "무",
+                    "패": "패",
+                    "승률": "승률",
+                    "게임차": "게임차",
+                    "순위 데이터가 없습니다": "순위 데이터가 없습니다",
+                    "자책점": "自責点",
+                    "썸머리그 순위": "サマーリーグ順位",
+                    "순위 계산 중": "順位計算中",
+                    "순위": "順位",
+                    "팀명": "チーム名",
+                    "승": "勝",
+                    "무": "分",
+                    "패": "敗",
+                    "승률": "勝率",
+                    "게임차": "ゲーム差",
+                    "순위 데이터가 없습니다": "順位データがありません"
                 }
             }
         };
@@ -1828,6 +1875,11 @@
             
             // 선수 정보 페이지 업데이트
             updatePlayerInfoTexts();
+            
+            // 순위 표시 업데이트
+            if (standingsData && standingsData.length > 0) {
+                displayStandings();
+            }
         }
         
         function updatePlayerInfoTexts() {
@@ -2290,12 +2342,12 @@
             } else {
                 console.log('기존 타자 데이터로 필터링');
                 // 시즌 데이터가 없으면 기존 playersData 사용
-                filteredBatters = playersData.filter(player => {
-                    const hasHittingStats = player.AB && parseFloat(player.AB) > 0;
+            filteredBatters = playersData.filter(player => {
+                const hasHittingStats = player.AB && parseFloat(player.AB) > 0;
                     const hasTeam = player.Team && player.Team.trim() !== '';
-                    const teamMatch = !teamValue || player.Team === teamValue;
-                    const nameMatch = !nameValue || player.Name.toLowerCase().includes(nameValue);
-                    
+                const teamMatch = !teamValue || player.Team === teamValue;
+                const nameMatch = !nameValue || player.Name.toLowerCase().includes(nameValue);
+                
                     return hasHittingStats && hasTeam && teamMatch && nameMatch;
                 });
                 console.log('필터링된 타자 수:', filteredBatters.length);
@@ -2312,14 +2364,14 @@
                 });
             } else {
                 // 시즌 데이터가 없으면 기존 playersData 사용
-                filteredPitchers = playersData.filter(player => {
-                    const hasPitchingStats = player.ERA && parseFloat(player.IP || 0) > 0;
+            filteredPitchers = playersData.filter(player => {
+                const hasPitchingStats = player.ERA && parseFloat(player.IP || 0) > 0;
                     const hasTeam = player.Team && player.Team.trim() !== '';
-                    const teamMatch = !teamValue || player.Team === teamValue;
-                    const nameMatch = !nameValue || player.Name.toLowerCase().includes(nameValue);
-                    
+                const teamMatch = !teamValue || player.Team === teamValue;
+                const nameMatch = !nameValue || player.Name.toLowerCase().includes(nameValue);
+                
                     return hasPitchingStats && hasTeam && teamMatch && nameMatch;
-                });
+            });
             }
             
             const battersTable = document.getElementById('battersTable');
@@ -2399,19 +2451,19 @@
                     `;
                 } else {
                     // 기존 데이터 (player.csv)
-                    row.innerHTML = `
-                        <td class="rank">${index + 1}</td>
-                        <td class="player-name">${player.Name || ''}</td>
-                        <td>${getTeamName(player.Team)}</td>
-                        <td>${player.AB || '-'}</td>
-                        <td>${player.H || '-'}</td>
-                        <td>${player.HR || '-'}</td>
-                        <td>${player.SB || '-'}</td>
-                        <td><strong>${parseFloat(player.AVG || 0).toFixed(3)}</strong></td>
-                        <td>${parseFloat(player.OBP || 0).toFixed(3)}</td>
-                        <td>${parseFloat(player.SLG || 0).toFixed(3)}</td>
-                        <td>${player['wRC+'] || '-'}</td>
-                    `;
+                row.innerHTML = `
+                    <td class="rank">${index + 1}</td>
+                    <td class="player-name">${player.Name || ''}</td>
+                    <td>${getTeamName(player.Team)}</td>
+                    <td>${player.AB || '-'}</td>
+                    <td>${player.H || '-'}</td>
+                    <td>${player.HR || '-'}</td>
+                    <td>${player.SB || '-'}</td>
+                    <td><strong>${parseFloat(player.AVG || 0).toFixed(3)}</strong></td>
+                    <td>${parseFloat(player.OBP || 0).toFixed(3)}</td>
+                    <td>${parseFloat(player.SLG || 0).toFixed(3)}</td>
+                    <td>${player['wRC+'] || '-'}</td>
+                `;
                 }
                 tbody.appendChild(row);
             });
@@ -2451,16 +2503,16 @@
                     `;
                 } else {
                     // 기존 데이터 (player.csv)
-                    row.innerHTML = `
-                        <td class="rank">${index + 1}</td>
-                        <td class="player-name">${pitcher.Name || ''}</td>
-                        <td>${getTeamName(pitcher.Team)}</td>
-                        <td><strong>${parseFloat(pitcher.ERA || 0).toFixed(2)}</strong></td>
-                        <td>${pitcher.IP || '-'}</td>
-                        <td>${pitcher.K || '-'}</td>
-                        <td>${parseFloat(pitcher.WHIP || 0).toFixed(2)}</td>
-                        <td>${pitcher['ERA+'] || '-'}</td>
-                    `;
+                row.innerHTML = `
+                    <td class="rank">${index + 1}</td>
+                    <td class="player-name">${pitcher.Name || ''}</td>
+                    <td>${getTeamName(pitcher.Team)}</td>
+                    <td><strong>${parseFloat(pitcher.ERA || 0).toFixed(2)}</strong></td>
+                    <td>${pitcher.IP || '-'}</td>
+                    <td>${pitcher.K || '-'}</td>
+                    <td>${parseFloat(pitcher.WHIP || 0).toFixed(2)}</td>
+                    <td>${pitcher['ERA+'] || '-'}</td>
+                `;
                 }
                 tbody.appendChild(row);
             });
@@ -2572,7 +2624,7 @@
         function displayCategoryLeaders() {
             const texts = translations[currentLanguage];
             
-            // 홈런왕
+                // 홈런왕
             const homerunLeader = seasonHitterData.length > 0 ? 
                 seasonHitterData.reduce((max, player) => 
                     (parseInt(player.홈런) || 0) > (parseInt(max.홈런) || 0) ? player : max
@@ -2613,10 +2665,10 @@
                         <small>${teamName}</small><br>
                         <span style="font-size: 1.2em; color: #e91e63;">${rbiCount}${texts.units['타점']}</span>
                     </div>
-                `;
-            }
-            
-            // 도루왕
+                    `;
+                }
+                
+                // 도루왕
             const stealLeader = seasonHitterData.length > 0 ? 
                 seasonHitterData.reduce((max, player) => 
                     (parseInt(player.도루) || 0) > (parseInt(max.도루) || 0) ? player : max
@@ -2632,10 +2684,10 @@
                         <small>${teamName}</small><br>
                         <span style="font-size: 1.2em; color: #e91e63;">${stealLeader.도루 || 0}${texts.units['개']}</span>
                     </div>
-                `;
-            }
-            
-            // 탈삼진왕
+                    `;
+                }
+                
+                // 탈삼진왕
             const strikeoutLeader = seasonPitcherData.length > 0 ? 
                 seasonPitcherData.reduce((max, player) => 
                     (parseInt(player.탈삼진) || 0) > (parseInt(max.탈삼진) || 0) ? player : max
@@ -4435,6 +4487,133 @@
                 tooltip.remove();
             }
         }
+        
+        // 순위 데이터 로드
+        async function loadStandingsData() {
+            try {
+                const response = await fetch('./SeasonTeamsRecords.csv');
+                const csvText = await response.text();
+                const results = Papa.parse(csvText, { header: true });
+                
+                if (results.data && results.data.length > 0) {
+                    standingsData = results.data.filter(row => row.팀 && row.팀.trim() !== '');
+                    console.log('순위 데이터 로드 성공:', standingsData.length, '팀');
+                    displayStandings();
+                } else {
+                    console.log('순위 데이터가 비어있습니다.');
+                }
+            } catch (error) {
+                console.error('순위 데이터 로드 오류:', error);
+            }
+        }
+        
+        // 순위 표시
+        function displayStandings() {
+            const container = document.getElementById('standingsContainer');
+            if (!container) return;
+            
+            const texts = translations[currentLanguage];
+            
+            if (!standingsData || standingsData.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: #666; padding: 40px;">${texts.units['순위 데이터가 없습니다']}.</div>`;
+                return;
+            }
+            
+            // 승률 계산 및 정렬
+            const teamsWithStats = standingsData.map(team => {
+                const wins = parseInt(team.승 || 0);
+                const draws = parseInt(team.무 || 0);
+                const losses = parseInt(team.패 || 0);
+                const totalGames = wins + draws + losses;
+                const winPercentage = totalGames > 0 ? (wins + draws * 0.5) / totalGames : 0;
+                
+                return {
+                    ...team,
+                    wins,
+                    draws,
+                    losses,
+                    totalGames,
+                    winPercentage
+                };
+            }).sort((a, b) => b.winPercentage - a.winPercentage);
+            
+            // 게임차 계산
+            const leader = teamsWithStats[0];
+            teamsWithStats.forEach(team => {
+                if (team === leader) {
+                    team.gamesBehind = 0;
+                } else {
+                    const leaderGames = leader.totalGames;
+                    const teamGames = team.totalGames;
+                    const leaderWins = leader.wins;
+                    const teamWins = team.wins;
+                    
+                    // 게임차 = (리더 승수 - 팀 승수) + (팀 패수 - 리더 패수) / 2
+                    team.gamesBehind = ((leaderWins - teamWins) + (team.losses - leader.losses)) / 2;
+                }
+            });
+            
+            // HTML 생성
+            let html = '<table class="stats-table" style="width: 100%; margin-top: 20px;">';
+            html += '<thead><tr>';
+            html += `<th style="text-align: center; width: 60px;">${texts.units['순위']}</th>`;
+            html += `<th style="text-align: left;">${texts.units['팀명']}</th>`;
+            html += `<th style="text-align: center;">${texts.units['승']}</th>`;
+            html += `<th style="text-align: center;">${texts.units['무']}</th>`;
+            html += `<th style="text-align: center;">${texts.units['패']}</th>`;
+            html += `<th style="text-align: center;">${texts.units['승률']}</th>`;
+            html += `<th style="text-align: center;">${texts.units['게임차']}</th>`;
+            html += '</tr></thead>';
+            html += '<tbody>';
+            
+            teamsWithStats.forEach((team, index) => {
+                const rank = index + 1;
+                const winRate = team.totalGames > 0 ? ((team.wins + team.draws * 0.5) / team.totalGames).toFixed(3) : '0.000';
+                const gamesBehind = team.gamesBehind === 0 ? '-' : team.gamesBehind.toFixed(1);
+                
+                html += '<tr>';
+                html += `<td style="text-align: center; font-weight: bold; color: ${rank <= 3 ? '#e91e63' : '#666'};">${rank}</td>`;
+                html += `<td style="text-align: left; font-weight: 500;">${team.팀}</td>`;
+                html += `<td style="text-align: center;">${team.wins}</td>`;
+                html += `<td style="text-align: center;">${team.draws}</td>`;
+                html += `<td style="text-align: center;">${team.losses}</td>`;
+                html += `<td style="text-align: center;">${winRate}</td>`;
+                html += `<td style="text-align: center;">${gamesBehind}</td>`;
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+    </script>
+    
+    <script>
+        // 페이지 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('페이지 로드 시작');
+            
+            // 데이터 로드
+            Promise.all([
+                loadData(),
+                loadTeamsData(),
+                loadSeasonHitterData(),
+                loadSeasonPitcherData(),
+                loadSpecialData(),
+                loadScheduleData(),
+                loadStandingsData()
+            ]).then(() => {
+                console.log('모든 데이터 로드 완료');
+                
+                // 초기 표시
+                showRecordsSection();
+                showTab('batters');
+                
+                // 광고 초기화
+                initializeAds();
+            }).catch(error => {
+                console.error('데이터 로드 중 오류:', error);
+            });
+        });
     </script>
 </body>
 </html>
