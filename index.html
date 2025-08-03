@@ -1135,6 +1135,10 @@
         let seasonSpecialData = [];
         let scheduleData = [];
         let standingsData = [];
+        let filteredBatters = [];
+        let filteredPitchers = [];
+        let currentSortColumn = '';
+        let currentSortDirection = 'asc';
         
         // 현재 언어 설정
         let currentLanguage = 'ko';
@@ -4585,9 +4589,38 @@
             html += '</tbody></table>';
             container.innerHTML = html;
         }
-    </script>
-    
-    <script>
+        
+        // 광고 초기화
+        function initializeAds() {
+            console.log('광고 초기화 시작');
+            
+            // 첫 번째 광고 (ADFIR.png)
+            const firstAd = document.getElementById('testImage');
+            if (firstAd) {
+                firstAd.src = './image/ADFIR.png';
+                firstAd.onload = function() {
+                    console.log('첫 번째 광고 로드 성공');
+                };
+                firstAd.onerror = function() {
+                    console.log('첫 번째 광고 로드 실패');
+                    firstAd.style.display = 'none';
+                };
+            }
+            
+            // 두 번째 광고 (ADSEC.png)
+            const secondAd = document.getElementById('testImage2');
+            if (secondAd) {
+                secondAd.src = './image/ADSEC.png';
+                secondAd.onload = function() {
+                    console.log('두 번째 광고 로드 성공');
+                };
+                secondAd.onerror = function() {
+                    console.log('두 번째 광고 로드 실패');
+                    secondAd.style.display = 'none';
+                };
+            }
+        }
+        
         // 페이지 초기화
         document.addEventListener('DOMContentLoaded', function() {
             console.log('페이지 로드 시작');
