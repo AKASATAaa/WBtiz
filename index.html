@@ -709,10 +709,283 @@
                 font-size: 0.9em;
             }
         }
+        
+        /* 새로운 달력 스타일 */
+        .new-calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .new-calendar-header {
+            display: contents;
+        }
+        
+        .new-calendar-day-header {
+            background: linear-gradient(135deg, #e91e63, #ad1457);
+            color: white;
+            padding: 15px 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
+        .new-calendar-body {
+            display: contents;
+        }
+        
+        .new-calendar-day {
+            background: white;
+            min-height: 120px;
+            padding: 10px;
+            border: 1px solid #f0f0f0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .new-calendar-day:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .new-calendar-day.empty {
+            background: #fafafa;
+        }
+        
+        .new-calendar-date {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+            text-align: center;
+        }
+        
+        .new-game-box {
+            background: #f8f9fa;
+            border-radius: 4px;
+            padding: 8px;
+            margin: 4px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+        
+        .new-game-box:hover {
+            background: #e3f2fd;
+            transform: scale(1.02);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .new-game-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        
+        .new-team {
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-align: center;
+            flex: 1;
+            margin: 0 2px;
+        }
+        
+        .new-team.winner {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .new-team.loser {
+            background: #f44336;
+            color: white;
+        }
+        
+        .new-team.draw {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .new-team.scheduled {
+            background: #607d8b;
+            color: white;
+        }
+        
+        .new-vs {
+            font-size: 0.7em;
+            color: #666;
+            font-weight: bold;
+            margin: 0 4px;
+        }
+        
+        .new-game-score {
+            font-size: 0.9em;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 2px;
+        }
+        
+        .new-game-time {
+            font-size: 0.7em;
+            color: #666;
+            text-align: center;
+            margin-top: 2px;
+        }
+        
+        .new-game-scheduled {
+            font-size: 0.8em;
+            color: #666;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        /* 박스스코어 스타일 */
+        .box-score-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+        
+        .box-score-team {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 0 10px;
+        }
+        
+        .box-score-team.winner {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .box-score-team.loser {
+            background: #f44336;
+            color: white;
+        }
+        
+        .box-score-team.draw {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .box-score-team.scheduled {
+            background: #607d8b;
+            color: white;
+        }
+        
+        .box-score-vs {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin: 0 20px;
+        }
+        
+        .box-score-team-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .box-score-team-score {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .box-score-game-time {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+        
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .new-calendar-grid {
+                display: block;
+                background: none;
+                border-radius: 0;
+                overflow: visible;
+            }
+            
+            .new-calendar-header {
+                display: none;
+            }
+            
+            .new-calendar-body {
+                display: block;
+            }
+            
+            .new-calendar-day {
+                display: block;
+                min-height: auto;
+                padding: 15px;
+                margin-bottom: 10px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                background: white;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            
+            .new-calendar-day.empty {
+                display: none;
+            }
+            
+            .new-calendar-date {
+                font-size: 1.2em;
+                margin-bottom: 10px;
+                color: #e91e63;
+                font-weight: bold;
+            }
+            
+            .new-game-box {
+                background: #f8f9fa;
+                padding: 10px;
+                margin: 5px 0;
+                border-radius: 6px;
+                font-size: 0.9em;
+            }
+            
+            .new-game-teams {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .new-team {
+                font-size: 0.9em;
+                padding: 6px 10px;
+            }
+            
+            .box-score-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .box-score-team {
+                margin: 0;
+                width: 100%;
+            }
+            
+            .box-score-vs {
+                margin: 10px 0;
+            }
+        }
     </style>
 </head>
+
 <body>
-    <div class="header">
+    <div class="header"> <!-- 제목 -->
         <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 20px;">
             <h1 id="mainTitle">WBD 선수 기록실</h1>
             <div class="language-selector">
@@ -722,7 +995,7 @@
         </div>
     </div>
     
-    <div class="nav">
+    <div class="nav"> <!-- 상단 메뉴 -->
         <div class="nav-container">
             <div class="nav-item active" onclick="showTab('records', event)" id="navRecords">기록실</div>
             <div class="nav-item" onclick="showTab('teams', event)" id="navTeams">팀 정보</div>
@@ -818,13 +1091,12 @@
                             </div>
                         </div>
                         
-                        <!-- 새로운 블록 -->
+                        
                         <div class="new-section" style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center;">
                             <img id="testImage" alt="VRC 야구 포스터" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
                         </div>
                         
                         <script>
-                        // 이미지 로드
                         document.addEventListener('DOMContentLoaded', function() {
                             const img = document.getElementById('testImage');
                             if (img) {
@@ -1110,8 +1382,30 @@
         <div id="schedule" class="tab-content">
             <div class="stats-section">
                 <div class="section-title">경기 일정</div>
-                <div id="schedule">
-                    <div class="loading">스케줄 데이터가 없습니다.</div>
+                
+                <!-- 달력 네비게이션 -->
+                <div class="calendar-navigation" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                    <button id="prevMonth" class="nav-item" style="padding: 8px 15px; border: none; background: #e91e63; color: white; border-radius: 5px; cursor: pointer; font-size: 1.2em;">&lt;</button>
+                    <h3 id="currentMonth" style="margin: 0; color: #333; font-size: 1.5em;">2025년 8월</h3>
+                    <button id="nextMonth" class="nav-item" style="padding: 8px 15px; border: none; background: #e91e63; color: white; border-radius: 5px; cursor: pointer; font-size: 1.2em;">&gt;</button>
+                </div>
+                
+                <!-- 달력 컨테이너 -->
+                <div id="calendarContainer" style="margin-bottom: 30px;">
+                    <!-- 달력이 여기에 동적으로 생성됩니다 -->
+                </div>
+                
+                <!-- 박스스코어 모달 -->
+                <div id="boxScoreModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+                    <div id="boxScoreContent" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; max-width: 1200px; width: 95%; max-height: 90vh; overflow-y: auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 id="boxScoreTitle" style="margin: 0; color: #333; font-size: 1.3em;"></h3>
+                            <button id="closeBoxScore" style="background: none; border: none; font-size: 2em; cursor: pointer; color: #666;">×</button>
+                        </div>
+                        <div id="boxScoreDetails" style="text-align: center;">
+                            <!-- 박스스코어 내용이 여기에 표시됩니다 -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1317,13 +1611,39 @@
                     "팀순": "팀순",
                     "시즌 타자": "시즌 타자",
                     "시즌 투수": "시즌 투수",
+                    "타격정보": "타격정보",
+                    "투구정보": "투구정보",
                     "평균자책점": "평균자책점",
                     "승": "승",
                     "패": "패",
                     "세이브": "세이브",
                     "홀드": "홀드",
                     "피홈런": "피홈런",
-                    "자책점": "자책점"
+                    "자책점": "자책점",
+                    "calendarNavigation": "달력 네비게이션",
+                    "previousMonth": "이전 월",
+                    "nextMonth": "다음 월",
+                    "scheduled": "예정",
+                    "vs": "vs",
+                    "winner": "승리",
+                    "loser": "패배",
+                    "draw": "무승부",
+                    "gameTime": "경기 시간",
+                    "boxScore": "박스스코어",
+                    "close": "닫기",
+                    "noGamesToday": "오늘 경기 없음",
+                    "calendarYear": "년",
+                    "calendarMonth": "월",
+                    "calendarDay": "일",
+                    "daysOfWeek": {
+                        "sunday": "일",
+                        "monday": "월",
+                        "tuesday": "화",
+                        "wednesday": "수",
+                        "thursday": "목",
+                        "friday": "금",
+                        "saturday": "토"
+                    }
                 }
             },
             ja: {
@@ -1501,6 +1821,8 @@
                     "팀순": "チーム順",
                     "시즌 타자": "シーズン打者",
                     "시즌 투수": "シーズン投手",
+                    "타격정보": "打撃情報",
+                    "투구정보": "投球情報",
                     "평균자책점": "防御率",
                     "승": "勝",
                     "패": "敗",
@@ -1511,7 +1833,31 @@
                     "스코어": "スコア",
                     "결과": "結果",
                     "일정 없음": "日程なし",
-                    "경기 준비 중": "試合準備中"
+                    "경기 준비 중": "試合準備中",
+                    "calendarNavigation": "カレンダーナビゲーション",
+                    "previousMonth": "前月",
+                    "nextMonth": "翌月",
+                    "scheduled": "予定",
+                    "vs": "vs",
+                    "winner": "勝利",
+                    "loser": "敗北",
+                    "draw": "引き分け",
+                    "gameTime": "試合時間",
+                    "boxScore": "ボックススコア",
+                    "close": "閉じる",
+                    "noGamesToday": "今日の試合なし",
+                    "calendarYear": "年",
+                    "calendarMonth": "月",
+                    "calendarDay": "日",
+                    "daysOfWeek": {
+                        "sunday": "日",
+                        "monday": "月",
+                        "tuesday": "火",
+                        "wednesday": "水",
+                        "thursday": "木",
+                        "friday": "金",
+                        "saturday": "土"
+                    }
                 }
             }
         };
@@ -3020,13 +3366,37 @@
             container.innerHTML = html;
         }
         
+        // 새로운 달력 시스템 변수들
+        let scheduleData = [];
+        let currentCalendarDate = new Date(); // 현재 월부터 시작
+        let teamNameMapping = {
+            'Bubble Stars': 'BUBB',
+            'MoonShot Spirits': 'MOON',
+            'Nyanko Avengers': 'NYAN',
+            'Ishikawa Fighting Folks': 'ISHI',
+            'Leroleros': 'LERO',
+            'Florian T-Shirts': 'FLOR',
+            'ALLSTARS': 'ALL',
+            'PostSeason': 'POST'
+        };
+        
+        let fullTeamNames = {
+            'BUBB': 'Bubble Stars',
+            'MOON': 'MoonShot Spirits',
+            'NYAN': 'Nyanko Avengers',
+            'ISHI': 'Ishikawa Fighting Folks',
+            'LERO': 'Leroleros',
+            'FLOR': 'Florian T-Shirts',
+            'ALL': 'ALLSTARS',
+            'POST': 'PostSeason'
+        };
+        
         // 스케줄 데이터 로드 함수
         async function loadScheduleData() {
-            console.log('스케줄 데이터 로드 시작...');
+            console.log('새로운 스케줄 데이터 로드 시작...');
             
             try {
-                const fileName = currentLanguage === 'ja' ? './schedule_JP.csv' : './schedule.csv';
-                const response = await fetch(fileName);
+                const response = await fetch('./schedule.csv');
                 if (!response.ok) {
                     throw new Error('schedule.csv 파일을 찾을 수 없습니다.');
                 }
@@ -3042,209 +3412,337 @@
                         console.log('데이터 행 수:', results.data.length);
                         
                         if (results.data && results.data.length > 0) {
-                            displayScheduleData(results.data);
+                            scheduleData = results.data;
+                            initializeCalendar();
                         } else {
-                            displayScheduleData([]);
+                            scheduleData = [];
+                            initializeCalendar();
                         }
                     },
                     error: function(error) {
                         console.error('스케줄 CSV 파싱 오류:', error);
-                        displayScheduleData([]);
+                        scheduleData = [];
+                        initializeCalendar();
                     }
                 });
             } catch (error) {
                 console.error('스케줄 데이터 로드 오류:', error.message);
-                displayScheduleData([]);
+                scheduleData = [];
+                initializeCalendar();
             }
         }
         
-        function displayScheduleData(data) {
-            const container = document.getElementById('schedule');
-            if (!container) return;
-            
-            const texts = translations[currentLanguage];
-            
-            if (!data || data.length === 0) {
-                const texts = translations[currentLanguage];
-                container.innerHTML = `<div class="stats-section"><div class="section-title">${texts.schedule}</div><div class="loading">${texts.noScheduleData}</div></div>`;
+        // 달력 초기화
+        function initializeCalendar() {
+            updateCalendarNavigation();
+            renderCalendar();
+            setupCalendarEventListeners();
+        }
+        
+        // 달력 네비게이션 업데이트
+        function updateCalendarNavigation() {
+            const currentMonthElement = document.getElementById('currentMonth');
+            if (currentMonthElement) {
+                const year = currentCalendarDate.getFullYear();
+                const month = currentCalendarDate.getMonth() + 1;
+                currentMonthElement.textContent = `${year}년 ${month}월`;
+            }
+        }
+        
+        // 달력 렌더링
+        function renderCalendar() {
+            const container = document.getElementById('calendarContainer');
+            if (!container) {
+                console.error('calendarContainer를 찾을 수 없습니다.');
                 return;
             }
             
-            // 월별로 데이터 그룹화
-            const monthlyData = {};
-            data.forEach(row => {
-                // 한국어와 일본어 헤더 모두 지원
-                const month = row['Month'] || row['月'] || '';
-                const week = row['Week'] || row['週'] || '';
-                const date = parseInt(row['Date'] || row['日付'] || 0);
-                const day = row['Day'] || row['曜日'] || '';
-                const homeTeam = row['HomeTeam'] || row['ホームチーム'] || '';
-                const awayTeam = row['AwayTeam'] || row['ビジターチーム'] || '';
-                const time = row['Time'] || row['時間'] || '';
-                const homeScore = row['HomeScore'] || row['ホームスコア'] || '';
-                const awayScore = row['AwayScore'] || row['ビジタースコア'] || '';
-                
-                if (month && month.trim() !== '' && date > 0) {
-                    if (!monthlyData[month]) {
-                        monthlyData[month] = [];
-                    }
-                    
-                    // 해당 날짜의 기존 데이터 찾기
-                    let existingDay = monthlyData[month].find(d => d.date === date);
-                    if (!existingDay) {
-                        existingDay = {
-                            date: date,
-                            day: day,
-                            week: week,
-                            games: []
-                        };
-                        monthlyData[month].push(existingDay);
-                    }
-                    
-                    // 경기 정보 추가 (경기가 있는 경우만)
-                    if (homeTeam && awayTeam) {
-                        existingDay.games.push({
-                            home: homeTeam,
-                            away: awayTeam,
-                            time: time,
-                            homeScore: homeScore,
-                            awayScore: awayScore
-                        });
-                    }
-                }
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+            
+            // 해당 월의 첫 번째 날과 마지막 날 계산
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            
+            // 달력 시작일 (이전 달의 날짜들 포함)
+            const calendarStart = new Date(firstDay);
+            calendarStart.setDate(calendarStart.getDate() - firstDay.getDay());
+            
+            let html = '<div class="new-calendar-grid">';
+            
+            // 요일 헤더
+            html += '<div class="new-calendar-header">';
+            const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+            daysOfWeek.forEach(day => {
+                html += `<div class="new-calendar-day-header">${day}</div>`;
             });
+            html += '</div>';
             
-            let html = '<div class="stats-section">';
-                            html += `<div class="section-title">${texts.schedule}</div>`;
+            // 달력 바디
+            html += '<div class="new-calendar-body">';
             
-            // 월별 달력 생성
-            Object.keys(monthlyData).forEach(month => {
-                const monthData = monthlyData[month];
-                monthData.sort((a, b) => a.date - b.date);
+            const currentDate = new Date(calendarStart);
+            const totalDays = 42; // 6주 x 7일
+            
+            for (let i = 0; i < totalDays; i++) {
+                const isCurrentMonth = currentDate.getMonth() === month;
+                const isToday = currentDate.toDateString() === new Date().toDateString();
                 
-                html += `<div style="margin-bottom: 40px;">`;
-                html += `<h3 style="color: #e91e63; margin-bottom: 20px; text-align: center;">${month}${texts.units['월']}</h3>`;
+                html += `<div class="new-calendar-day ${!isCurrentMonth ? 'empty' : ''}">`;
+                html += `<div class="new-calendar-date" style="${isToday ? 'color: #e91e63; font-weight: bold;' : ''}">${currentDate.getDate()}</div>`;
                 
-                // 달력 그리드 시작
-                html += '<div class="calendar-grid">';
+                // 해당 날짜의 경기들 찾기
+                if (isCurrentMonth) {
+                    const gamesForDate = getGamesForDate(currentDate);
+                    gamesForDate.forEach(game => {
+                        html += createGameBoxHTML(game, currentDate);
+                    });
+                }
                 
-                // 요일 헤더
-                html += '<div class="calendar-header">';
-                html += `<div class="calendar-day-header">${texts.units['일']}</div>`;
-                html += `<div class="calendar-day-header">${texts.units['월']}</div>`;
-                html += `<div class="calendar-day-header">${texts.units['화']}</div>`;
-                html += `<div class="calendar-day-header">${texts.units['수']}</div>`;
-                html += `<div class="calendar-day-header">${texts.units['목']}</div>`;
-                html += `<div class="calendar-day-header">${texts.units['금']}</div>`;
-                html += `<div class="calendar-day-header">${texts.units['토']}</div>`;
                 html += '</div>';
                 
-                // 달력 바디
-                html += '<div class="calendar-body">';
-                
-                // 7월 13일부터 시작하는 달력 생성
-                const startDate = month == 7 ? 13 : 1;
-                const daysInMonth = month == 7 ? 31 : 31;
-                const monthGames = {};
-                
-                // CSV 데이터를 날짜별로 정리
-                monthData.forEach(dayData => {
-                    monthGames[dayData.date] = dayData;
-                });
-                
-                // 7월 13일은 일요일이므로 첫 주의 빈 셀들 추가
-                if (month == 7) {
-                    // 7월 13일(일요일) 이전의 빈 셀들 - 없음 (일요일이 첫날이므로)
-                } else if (month == 8) {
-                    // 8월 1일은 금요일이므로 첫 주의 빈 셀들 추가 (일,월,화,수,목)
-                    for (let i = 0; i < 5; i++) {
-                        html += '<div class="calendar-day empty"></div>';
-                    }
-                }
-                
-                // 날짜별 셀 생성
-                for (let day = startDate; day <= daysInMonth; day++) {
-                    const dayData = monthGames[day];
-                    
-                    // 주가 바뀌는지 확인 (7일마다)
-                    if (day > startDate && (day - startDate) % 7 === 0) {
-                        // 새로운 주 시작
-                    }
-                    
-                    if (dayData) {
-                        // 경기가 있는 날
-                        html += '<div class="calendar-day">';
-                        html += `<div class="calendar-date">${dayData.date}</div>`;
-                        
-                        if (dayData.games.length > 0) {
-                            html += '<div class="calendar-games">';
-                            dayData.games.forEach(game => {
-                                html += `<div class="game-item">`;
-                                
-                                // 팀명과 점수 표시
-                                if (game.homeScore && game.awayScore) {
-                                    // 경기 결과가 있는 경우
-                                    const homeWon = parseInt(game.homeScore) > parseInt(game.awayScore);
-                                    html += `<div class="game-teams">`;
-                                    html += `<div class="team ${homeWon ? 'loser' : 'winner'}">${game.away} ${game.awayScore}</div>`;
-                                    html += `<div class="vs">${texts.units['VS']}</div>`;
-                                    html += `<div class="team ${homeWon ? 'winner' : 'loser'}">${game.home} ${game.homeScore}</div>`;
-                                    html += `</div>`;
-                                } else {
-                                    // 경기 예정인 경우
-                                    html += `<div class="game-teams">`;
-                                    html += `<div class="team">${game.away}</div>`;
-                                    html += `<div class="vs">${texts.units['VS']}</div>`;
-                                    html += `<div class="team">${game.home}</div>`;
-                                    html += `</div>`;
-                                }
-                                
-                                if (game.time) {
-                                    html += `<div class="game-time">${game.time}</div>`;
-                                }
-                                html += `</div>`;
-                            });
-                            html += '</div>';
-                        }
-                        
-                        html += '</div>';
-                    } else {
-                        // 경기가 없는 날
-                        html += '<div class="calendar-day">';
-                        html += `<div class="calendar-date">${day}</div>`;
-                        html += '</div>';
-                    }
-                }
-                
-                // 마지막 주의 빈 셀들 (필요한 경우)
-                const totalDays = daysInMonth - startDate + 1;
-                const remainingCells = 7 - (totalDays % 7);
-                if (remainingCells < 7) {
-                    for (let i = 0; i < remainingCells; i++) {
-                        html += '<div class="calendar-day empty"></div>';
-                    }
-                }
-                
-                html += '</div>'; // calendar-body
-                html += '</div>'; // calendar-grid
-                html += '</div>'; // month container
-            });
+                // 다음 날로 이동
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
             
-            // 팀 정보 요약 추가
-            html += '<div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">';
-                            html += `<h3 style="color: #e91e63; margin-bottom: 15px;">${texts.teamInfo}</h3>`;
-            html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">';
-            html += `<div><strong>${texts.teamNames['Nyanko AVENGERS']}</strong> (Nyanko Avengers)<br><small>${texts.captain}: ゆっち一</small></div>`;
-            html += `<div><strong>${texts.teamNames['Ishikawa Fighting Folks']}</strong> (Ishikawa Fighting Folks)<br><small>${texts.captain}: 甲斐野柊太</small></div>`;
-            html += `<div><strong>${texts.teamNames['BUBBLE STARS']}</strong> (Bubble Starts)<br><small>${texts.captain}: 장덕춘_</small></div>`;
-            html += `<div><strong>${texts.teamNames['FLORIAN T-SHIRTS']}</strong> (FLORIAN T-SHIRTS)<br><small>${texts.captain}: Floră</small></div>`;
-            html += `<div><strong>${texts.teamNames['LEROLEROS']}</strong> (LEROLEROS)<br><small>${texts.captain}: ke ro</small></div>`;
-            html += `<div><strong>${texts.teamNames['MoonShot Spirits']}</strong> (MoonShot Spirits)<br><small>${texts.captain}: HANA_ARASHI</small></div>`;
-            html += '</div></div>';
-            
+            html += '</div>';
             html += '</div>';
             
             container.innerHTML = html;
+        }
+        
+        // 특정 날짜의 경기들 가져오기
+        function getGamesForDate(date) {
+            const dateString = formatDate(date);
+            
+            const games = scheduleData.filter(game => {
+                const gameDate = new Date(game.date);
+                return gameDate.toDateString() === date.toDateString();
+            });
+            
+            return games;
+        }
+        
+        // 날짜 포맷팅
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        // 경기 박스 HTML 생성
+        function createGameBoxHTML(game, date) {
+            const homeTeam = game.home_team;
+            const awayTeam = game.away_team;
+            const homeScore = game.home_score;
+            const awayScore = game.away_score;
+            const gameTime = game.time;
+            
+            // 특별한 경기들 처리
+            if (homeTeam === 'ALLSTARS' || homeTeam === 'PostSeason') {
+                let html = `<div class="new-game-box" style="background: #ff9800; color: white;">`;
+                html += '<div class="new-game-teams">';
+                html += `<div class="new-team" style="background: #ff9800; color: white; width: 100%; text-align: center;">${homeTeam}</div>`;
+                html += '</div>';
+                html += '<div class="new-game-scheduled" style="color: white;">특별 이벤트</div>';
+                html += '</div>';
+                return html;
+            }
+            
+            // 팀명 축약
+            const homeTeamShort = teamNameMapping[homeTeam] || homeTeam.substring(0, 4);
+            const awayTeamShort = teamNameMapping[awayTeam] || awayTeam.substring(0, 4);
+            
+            let html = `<div class="new-game-box" onclick="showBoxScore('${homeTeam}', '${awayTeam}', '${homeScore}', '${awayScore}', '${gameTime}', '${formatDate(date)}')">`;
+            
+            if (homeScore && awayScore) {
+                // 경기 결과가 있는 경우
+                const homeScoreNum = parseInt(homeScore);
+                const awayScoreNum = parseInt(awayScore);
+                const homeWon = homeScoreNum > awayScoreNum;
+                const isDraw = homeScoreNum === awayScoreNum;
+                
+                html += '<div class="new-game-teams">';
+                html += `<div class="new-team ${homeWon ? 'winner' : isDraw ? 'draw' : 'loser'}">${homeTeamShort}</div>`;
+                html += '<div class="new-vs">vs</div>';
+                html += `<div class="new-team ${homeWon ? 'loser' : isDraw ? 'draw' : 'winner'}">${awayTeamShort}</div>`;
+                html += '</div>';
+                html += `<div class="new-game-score">${homeScore}:${awayScore}</div>`;
+            } else {
+                // 예정 경기
+                html += '<div class="new-game-teams">';
+                html += `<div class="new-team scheduled">${homeTeamShort}</div>`;
+                html += '<div class="new-vs">vs</div>';
+                html += `<div class="new-team scheduled">${awayTeamShort}</div>`;
+                html += '</div>';
+                html += '<div class="new-game-scheduled">예정</div>';
+            }
+            
+            if (gameTime) {
+                html += `<div class="new-game-time">${gameTime}</div>`;
+            }
+            
+            html += '</div>';
+            return html;
+        }
+        
+        // 달력 이벤트 리스너 설정
+        function setupCalendarEventListeners() {
+            const prevMonthBtn = document.getElementById('prevMonth');
+            const nextMonthBtn = document.getElementById('nextMonth');
+            const closeBoxScoreBtn = document.getElementById('closeBoxScore');
+            
+            // 기존 이벤트 리스너 제거
+            if (prevMonthBtn) {
+                prevMonthBtn.replaceWith(prevMonthBtn.cloneNode(true));
+            }
+            if (nextMonthBtn) {
+                nextMonthBtn.replaceWith(nextMonthBtn.cloneNode(true));
+            }
+            if (closeBoxScoreBtn) {
+                closeBoxScoreBtn.replaceWith(closeBoxScoreBtn.cloneNode(true));
+            }
+            
+            // 새로운 요소들 가져오기
+            const newPrevMonthBtn = document.getElementById('prevMonth');
+            const newNextMonthBtn = document.getElementById('nextMonth');
+            const newCloseBoxScoreBtn = document.getElementById('closeBoxScore');
+            
+            if (newPrevMonthBtn) {
+                newPrevMonthBtn.addEventListener('click', () => {
+                    console.log('이전 월 버튼 클릭');
+                    console.log('현재 월:', currentCalendarDate.getMonth() + 1);
+                    
+                    // 이전 월로 이동 - 더 안전한 방법
+                    const currentYear = currentCalendarDate.getFullYear();
+                    const currentMonth = currentCalendarDate.getMonth();
+                    
+                    let newYear = currentYear;
+                    let newMonth = currentMonth - 1;
+                    
+                    if (newMonth < 0) {
+                        newMonth = 11;
+                        newYear = currentYear - 1;
+                    }
+                    
+                    currentCalendarDate = new Date(newYear, newMonth, 1);
+                    
+                    console.log('변경된 월:', currentCalendarDate.getMonth() + 1);
+                    updateCalendarNavigation();
+                    renderCalendar();
+                });
+            }
+            
+            if (newNextMonthBtn) {
+                newNextMonthBtn.addEventListener('click', () => {
+                    console.log('다음 월 버튼 클릭');
+                    console.log('현재 월:', currentCalendarDate.getMonth() + 1);
+                    
+                    // 다음 월로 이동 - 더 안전한 방법
+                    const currentYear = currentCalendarDate.getFullYear();
+                    const currentMonth = currentCalendarDate.getMonth();
+                    
+                    let newYear = currentYear;
+                    let newMonth = currentMonth + 1;
+                    
+                    if (newMonth > 11) {
+                        newMonth = 0;
+                        newYear = currentYear + 1;
+                    }
+                    
+                    currentCalendarDate = new Date(newYear, newMonth, 1);
+                    
+                    console.log('변경된 월:', currentCalendarDate.getMonth() + 1);
+                    updateCalendarNavigation();
+                    renderCalendar();
+                });
+            }
+            
+            if (newCloseBoxScoreBtn) {
+                newCloseBoxScoreBtn.addEventListener('click', () => {
+                    const modal = document.getElementById('boxScoreModal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+            
+            // 모달 외부 클릭 시 닫기
+            const modal = document.getElementById('boxScoreModal');
+            if (modal) {
+                // 기존 이벤트 리스너 제거를 위해 새로운 모달 생성
+                const newModal = modal.cloneNode(true);
+                modal.parentNode.replaceChild(newModal, modal);
+                
+                newModal.addEventListener('click', (e) => {
+                    if (e.target === newModal) {
+                        newModal.style.display = 'none';
+                    }
+                });
+            }
+        }
+        
+        // 박스스코어 표시
+        async function showBoxScore(homeTeam, awayTeam, homeScore, awayScore, gameTime, gameDate) {
+            const modal = document.getElementById('boxScoreModal');
+            const title = document.getElementById('boxScoreTitle');
+            const details = document.getElementById('boxScoreDetails');
+            
+            if (!modal || !title || !details) return;
+            
+            // 특별한 경기들 처리
+            if (homeTeam === 'ALLSTARS' || homeTeam === 'PostSeason') {
+                const date = new Date(gameDate);
+                const year = date.getFullYear();
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                
+                title.textContent = `${year}년 ${month}월 ${day}일 - ${homeTeam}`;
+                
+                let html = '<div class="box-score-container">';
+                html += `<div class="box-score-team" style="background: #ff9800; color: white; width: 100%; text-align: center;">`;
+                html += `<div class="box-score-team-name">${homeTeam}</div>`;
+                html += `<div class="box-score-team-score">특별 이벤트</div>`;
+                html += '</div>';
+                html += '</div>';
+                
+                details.innerHTML = html;
+                modal.style.display = 'block';
+                return;
+            }
+            
+            // 날짜 포맷팅
+            const date = new Date(gameDate);
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            
+            title.textContent = `${year}년 ${month}월 ${day}일 - ${homeTeam} vs ${awayTeam}`;
+            
+            // 로딩 표시
+            details.innerHTML = '<div style="text-align: center; padding: 20px;"><div style="color: #666;">박스스코어 로딩 중...</div></div>';
+            modal.style.display = 'block';
+            
+            try {
+                // CSV 파일에서 박스스코어 데이터 로드
+                const boxScoreData = await loadBoxScoreCSV(homeTeam, awayTeam, gameDate);
+                
+                if (boxScoreData) {
+                    // 박스스코어 데이터가 있는 경우
+                    const boxScoreHTML = createBoxScoreHTML(boxScoreData, homeTeam, awayTeam, gameDate);
+                    details.innerHTML = boxScoreHTML;
+                } else {
+                    // 박스스코어 데이터가 없는 경우 기본 정보 표시
+                    const defaultHTML = createDefaultBoxScoreHTML(homeTeam, awayTeam, gameDate);
+                    details.innerHTML = defaultHTML;
+                }
+                
+            } catch (error) {
+                console.error('박스스코어 표시 오류:', error);
+                const defaultHTML = createDefaultBoxScoreHTML(homeTeam, awayTeam, gameDate);
+                details.innerHTML = defaultHTML;
+            }
         }
         
         // 시즌 타자 데이터 로드
@@ -4053,6 +4551,8 @@
                                     <button onclick="showPlayerStats('${player.name}', 'season-batter')" class="nav-item" style="font-size: 1.1em; padding: 12px 20px; border-radius: 8px; font-weight: 500; transition: all 0.3s ease;" data-ko="시즌 타자" data-ja="シーズン打者">시즌 타자</button>
                                     <button onclick="showPlayerStats('${player.name}', 'season-pitcher')" class="nav-item" style="font-size: 1.1em; padding: 12px 20px; border-radius: 8px; font-weight: 500; transition: all 0.3s ease;" data-ko="시즌 투수" data-ja="シーズン投手">시즌 투수</button>
                                 ` : ''}
+                                <button onclick="showPlayerStats('${player.name}', 'batting-info')" class="nav-item" style="font-size: 1.1em; padding: 12px 20px; border-radius: 8px; font-weight: 500; transition: all 0.3s ease;" data-ko="타격정보" data-ja="打撃情報">타격정보</button>
+                                <button onclick="showPlayerStats('${player.name}', 'pitching-info')" class="nav-item" style="font-size: 1.1em; padding: 12px 20px; border-radius: 8px; font-weight: 500; transition: all 0.3s ease;" data-ko="투구정보" data-ja="投球情報">투구정보</button>
                             </div>
                             <div id="player-stats-${player.name.replace(/[^a-zA-Z0-9]/g, '')}" class="player-stats-container" style="flex: 1; display: flex; align-items: center; justify-content: center; min-height: 400px; background: #fafafa; border-radius: 12px; margin: 10px 0;">
                                 <div style="text-align: center; color: #666; padding: 50px; font-size: 1.2em; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
@@ -4282,6 +4782,20 @@
                         'B/9': b9.toFixed(1)
                     };
                 }
+            } else if (type === 'batting-info') {
+                // 타격정보 - 빈 내용 표시
+                stats = null;
+                html = '<div style="text-align: center; color: #666; padding: 50px; font-size: 1.2em; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">';
+                html += '<div style="font-size: 2em; margin-bottom: 15px; color: #999;">📊</div>';
+                html += '타격정보 준비 중...';
+                html += '</div>';
+            } else if (type === 'pitching-info') {
+                // 투구정보 - 빈 내용 표시
+                stats = null;
+                html = '<div style="text-align: center; color: #666; padding: 50px; font-size: 1.2em; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">';
+                html += '<div style="font-size: 2em; margin-bottom: 15px; color: #999;">⚾</div>';
+                html += '투구정보 준비 중...';
+                html += '</div>';
             }
             
             if (stats) {
@@ -4435,6 +4949,359 @@
                 tooltip.remove();
             }
         }
+        
+        // CSV 파일을 읽어서 박스스코어 데이터 파싱
+        async function loadBoxScoreCSV(homeTeam, awayTeam, gameDate) {
+            try {
+                const date = new Date(gameDate);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                
+                const fileName = `${year}${month}${day} ${homeTeam} vs ${awayTeam}.csv`;
+                const filePath = `./BoxScore/${fileName}`;
+                
+                console.log('박스스코어 CSV 파일 로드 시도:', filePath);
+                console.log('홈팀:', homeTeam);
+                console.log('원정팀:', awayTeam);
+                
+                const response = await fetch(filePath);
+                if (!response.ok) {
+                    throw new Error(`박스스코어 파일을 찾을 수 없습니다: ${fileName}`);
+                }
+                
+                const csvText = await response.text();
+                console.log('CSV 내용 (처음 500자):', csvText.substring(0, 500));
+                
+                const data = parseBoxScoreCSV(csvText);
+                console.log('파싱된 박스스코어 데이터:', data);
+                
+                return data;
+                
+            } catch (error) {
+                console.error('박스스코어 CSV 로드 오류:', error.message);
+                return null;
+            }
+        }
+        
+        // CSV 파싱 함수
+        function parseBoxScoreCSV(csv) {
+            console.log('박스스코어 CSV 파싱 시작');
+            
+            const lines = csv.split('\n')
+                .map(line => line.replace(/\r/g, '').trim())
+                .filter(line => line && !line.match(/^,+$/));
+            
+            console.log('총 라인 수:', lines.length);
+            console.log('처리할 라인들:', lines.slice(0, 10));
+            
+            const data = {
+                gameInfo: {},
+                scoreByInning: [],
+                awayBatting: [],
+                homeBatting: [],
+                awayPitching: [],
+                homePitching: [],
+                records: [] // 추가
+            };
+
+            let currentSection = '';
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                console.log(`라인 ${i + 1}:`, line);
+                
+                // 섹션 구분자 확인
+                if (line.includes('[GAME_INFO]')) {
+                    currentSection = 'gameInfo';
+                    console.log('GAME_INFO 섹션 시작');
+                    continue;
+                } else if (line.includes('[SCORE_BY_INNING]')) {
+                    currentSection = 'scoreByInning';
+                    console.log('SCORE_BY_INNING 섹션 시작');
+                    continue;
+                } else if (line.includes('[AWAY_BATTING]')) {
+                    currentSection = 'awayBatting';
+                    console.log('AWAY_BATTING 섹션 시작');
+                    continue;
+                } else if (line.includes('[HOME_BATTING]')) {
+                    currentSection = 'homeBatting';
+                    console.log('HOME_BATTING 섹션 시작');
+                    continue;
+                } else if (line.includes('[AWAY_PITCHING]')) {
+                    currentSection = 'awayPitching';
+                    console.log('AWAY_PITCHING 섹션 시작');
+                    continue;
+                } else if (line.includes('[HOME_PITCHING]')) {
+                    currentSection = 'homePitching';
+                    console.log('HOME_PITCHING 섹션 시작');
+                    continue;
+                } else if (line.toLowerCase().includes('[records]')) {
+                    currentSection = 'records';
+                    console.log('RECORDS 섹션 시작');
+                    continue;
+                }
+
+                const values = line.split(',').map(v => v.trim());
+                console.log(`  값들:`, values);
+                
+                // 빈 행이나 모든 값이 빈 행은 건너뛰기
+                if (values.every(v => v === '')) {
+                    console.log('  빈 행 건너뛰기');
+                    continue;
+                }
+                
+                if (currentSection === 'gameInfo') {
+                    if (values.length >= 2 && values[0] && values[1]) {
+                        data.gameInfo[values[0]] = values[1];
+                        console.log(`  게임 정보 추가: ${values[0]} = ${values[1]}`);
+                    }
+                } else if (currentSection && data[currentSection]) {
+                    // 불필요한 빈 컬럼들 제거
+                    const cleanValues = values.filter((v, index) => {
+                        if (currentSection === 'scoreByInning') {
+                            return index < 14; // R, H, E, B까지만
+                        }
+                        if (currentSection === 'records') {
+                            return v !== '' || index < 16;
+                        }
+                        return v !== '' || index < 16; // 기본적으로 16컬럼까지 유지
+                    });
+                    
+                    if (cleanValues.some(v => v !== '')) {
+                        data[currentSection].push(cleanValues);
+                        console.log(`  ${currentSection}에 데이터 추가:`, cleanValues);
+                    }
+                }
+            }
+
+            console.log('최종 파싱 결과:', data);
+            return data;
+        }
+        
+        // 박스스코어 HTML 생성
+        function createBoxScoreHTML(data, homeTeam, awayTeam, gameDate) {
+            if (!data) {
+                return createDefaultBoxScoreHTML(homeTeam, awayTeam, gameDate);
+            }
+            
+            const date = new Date(gameDate);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
+            
+            let html = '';
+            
+            // 헤더 섹션
+            html += '<div style="text-align: center; margin-bottom: 20px;">';
+            html += `<div style="font-size: 1.2em; color: #666; margin-bottom: 15px;">${year}.${month}.${day}(${dayOfWeek})</div>`;
+            html += '</div>';
+            
+            // 팀 정보
+            html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">';
+            
+            // 홈팀 (왼쪽)
+            html += '<div style="text-align: center; flex: 1;">';
+            html += `<img src="/image/${homeTeam}.png" alt="${homeTeam} 로고" style="height: 60px; margin-bottom: 8px;"><br>`;
+            html += `<div style="font-size: 1.5em; font-weight: bold; margin-bottom: 5px;">${homeTeam}</div>`;
+            html += `<div style="background: #ffd700; color: white; padding: 8px 18px; border-radius: 8px; display: inline-block; margin-bottom: 5px; font-size: 1.3em; font-weight: bold;">${data.scoreByInning && data.scoreByInning[2] ? data.scoreByInning[2][10] : '-'}</div>`;
+            html += '</div>';
+            
+            // 원정팀 (오른쪽)
+            html += '<div style="text-align: center; flex: 1;">';
+            html += `<img src="/image/${awayTeam}.png" alt="${awayTeam} 로고" style="height: 60px; margin-bottom: 8px;"><br>`;
+            html += `<div style="font-size: 1.5em; font-weight: bold; margin-bottom: 5px;">${awayTeam}</div>`;
+            html += `<div style="background: #4fc3f7; color: white; padding: 8px 18px; border-radius: 8px; display: inline-block; margin-bottom: 5px; font-size: 1.3em; font-weight: bold;">${data.scoreByInning && data.scoreByInning[1] ? data.scoreByInning[1][10] : '-'}</div>`;
+            html += '</div>';
+            
+            html += '</div>';
+            
+            // 구장 정보 삭제 (5091 라인)
+            // html += '<div style="text-align: center; margin-bottom: 20px; color: #666;">구장 : 문경</div>';
+            
+            // 스코어보드 테이블
+            if (data.scoreByInning && data.scoreByInning.length > 0) {
+                html += '<div style="overflow-x: auto; margin-bottom: 20px;">';
+                html += '<table style="width: 100%; border-collapse: collapse; border: 2px solid #333;">';
+                
+                // 테이블 헤더
+                html += '<thead>';
+                html += '<tr style="background: #f8f9fa;">';
+                const headers = ['TEAM', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'R', 'H', 'E', 'B'];
+                headers.forEach(header => {
+                    html += `<th style="border: 1px solid #333; padding: 8px; text-align: center; font-weight: bold;">${header}</th>`;
+                });
+                html += '</tr>';
+                html += '</thead>';
+                
+                // 테이블 바디
+                html += '<tbody>';
+                data.scoreByInning.forEach((row, index) => {
+                    if (index === 0) return; // 헤더는 이미 추가했으므로 건너뛰기
+                    
+                    html += '<tr>';
+                    row.forEach((cell, cellIndex) => {
+                        const className = cellIndex >= row.length - 4 ? 'final-stats' : '';
+                        html += `<td style="border: 1px solid #333; padding: 8px; text-align: center; ${cellIndex === 0 ? 'font-weight: bold; background: #f8f9fa;' : ''}">${cell}</td>`;
+                    });
+                    html += '</tr>';
+                });
+                html += '</tbody>';
+                html += '</table>';
+                html += '</div>';
+            }
+            // [Records] 표 출력 (2컬럼, 기존 표 스타일)
+            if (data.records && data.records.length > 0) {
+                html += '<div style="overflow-x: auto; margin-bottom: 20px;">';
+                html += '<h3 style="color: #e91e63; margin-bottom: 10px;">주요 기록</h3>';
+                html += '<table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd; font-size: 0.95em;">';
+                data.records.forEach((row, idx) => {
+                    if (row.length === 0 || (row.length === 1 && row[0] === '')) return;
+                    html += '<tr>';
+                    html += `<th style=\"border: 1px solid #ddd; padding: 7px; text-align: center; background: #f8f9fa; font-weight: bold; width: 25%;\">${row[0]}</th>`;
+                    html += `<td style=\"border: 1px solid #ddd; padding: 7px; text-align: center; width: 75%;\">${row.slice(1).filter(cell => cell).join(' ')}</td>`;
+                    html += '</tr>';
+                });
+                html += '</table>';
+                html += '</div>';
+            }
+
+            // X버튼(닫기) 안전하게 처리
+            document.addEventListener('click', function(e) {
+                if (e.target && e.target.id === 'closeBoxScore') {
+                    const modal = document.getElementById('boxScoreModal');
+                    if (modal) modal.style.display = 'none';
+                }
+            });
+            
+            // 홈팀 타자 기록
+            if (data.homeBatting && data.homeBatting.length > 0) {
+                html += '<div style="overflow-x: auto; margin-bottom: 20px;">';
+                html += `<h3 style="color: #333; margin-bottom: 10px;">${homeTeam} 타자 기록</h3>`;
+                html += '<table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd; font-size: 0.8em;">';
+                
+                data.homeBatting.forEach((row, index) => {
+                    if (index === 0) {
+                        html += '<tr style="background: #f8f9fa;">';
+                        row.forEach(cell => {
+                            html += `<th style="border: 1px solid #ddd; padding: 6px; text-align: center; font-weight: bold;">${cell}</th>`;
+                        });
+                        html += '</tr>';
+                    } else {
+                        const isTotal = row[2] === 'TOTAL' || (row.length > 2 && row[2] === 'TOTAL');
+                        const rowClass = isTotal ? 'total-row' : '';
+                        html += `<tr style="${isTotal ? 'background: #f0f0f0; font-weight: bold;' : ''}">`;
+                        
+                        row.forEach((cell, cellIndex) => {
+                            if (cellIndex === 0) {
+                                html += `<td style="border: 1px solid #ddd; padding: 6px; text-align: center; font-weight: bold; color: #666;">${cell}</td>`;
+                            } else if (cellIndex === 1) {
+                                html += `<td style="border: 1px solid #ddd; padding: 6px; text-align: center; font-weight: bold; color: #666;">${cell}</td>`;
+                            } else if (cellIndex === 2) {
+                                html += `<td style="border: 1px solid #ddd; padding: 6px; text-align: left; font-weight: bold;">${cell}</td>`;
+                            } else {
+                                html += `<td style="border: 1px solid #ddd; padding: 6px; text-align: center;">${cell}</td>`;
+                            }
+                        });
+                        html += '</tr>';
+                    }
+                });
+                
+                html += '</table>';
+                html += '</div>';
+            }
+            
+            // 원정팀 투수 기록
+            if (data.awayPitching && data.awayPitching.length > 0) {
+                html += '<div style="overflow-x: auto; margin-bottom: 20px;">';
+                html += `<h3 style="color: #333; margin-bottom: 10px;">${awayTeam} 투수 기록</h3>`;
+                html += renderPitchingStats(data.awayPitching);
+                html += '</div>';
+            }
+            
+            // 홈팀 투수 기록
+            if (data.homePitching && data.homePitching.length > 0) {
+                html += '<div style="overflow-x: auto; margin-bottom: 20px;">';
+                html += `<h3 style="color: #333; margin-bottom: 10px;">${homeTeam} 투수 기록</h3>`;
+                html += renderPitchingStats(data.homePitching);
+                html += '</div>';
+            }
+            
+            return html;
+        }
+        
+        // 기본 박스스코어 HTML (파일이 없을 때)
+        function createDefaultBoxScoreHTML(homeTeam, awayTeam, gameDate) {
+            const date = new Date(gameDate);
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            
+            let html = '<div class="box-score-container">';
+            
+            html += `<div class="box-score-team scheduled">`;
+            html += `<div class="box-score-team-name">${awayTeam}</div>`;
+            html += `<div class="box-score-team-score">-</div>`;
+            html += '</div>';
+            
+            html += '<div class="box-score-vs">VS</div>';
+            
+            html += `<div class="box-score-team scheduled">`;
+            html += `<div class="box-score-team-name">${homeTeam}</div>`;
+            html += `<div class="box-score-team-score">-</div>`;
+            html += '</div>';
+            
+            html += '</div>';
+            return html;
+        }
+        
+        // 투수 기록 렌더링 함수
+        function renderPitchingStats(pitchingData) {
+            console.log('투수 기록 렌더링:', pitchingData);
+            
+            if (!pitchingData || pitchingData.length === 0) {
+                console.warn('투수 기록 데이터가 없습니다.');
+                return '<p style="text-align: center; padding: 20px; color: #666;">투수 기록 데이터가 없습니다.</p>';
+            }
+            
+            try {
+                let html = '<table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd; font-size: 0.8em;">';
+                
+                pitchingData.forEach((row, index) => {
+                    console.log(`투수 기록 행 ${index}:`, row);
+                    
+                    if (index === 0) {
+                        html += '<tr style="background: #f8f9fa;">';
+                        row.forEach(cell => {
+                            html += `<th style="border: 1px solid #ddd; padding: 6px; text-align: center; font-weight: bold;">${cell}</th>`;
+                        });
+                        html += '</tr>';
+                    } else {
+                        const isTotal = row[0] === 'TOTAL' || row[0] === '';
+                        html += `<tr style="${isTotal ? 'background: #f0f0f0; font-weight: bold;' : ''}">`;
+                        
+                        row.forEach((cell, cellIndex) => {
+                            if (cellIndex === 0) {
+                                html += `<td style="border: 1px solid #ddd; padding: 6px; text-align: left; font-weight: bold;">${cell}</td>`;
+                            } else {
+                                html += `<td style="border: 1px solid #ddd; padding: 6px; text-align: center;">${cell}</td>`;
+                            }
+                        });
+                        html += '</tr>';
+                    }
+                });
+                
+                html += '</table>';
+                return html;
+                
+            } catch (error) {
+                console.error('투수 기록 렌더링 오류:', error);
+                return '<p style="text-align: center; padding: 20px; color: #f44336;">투수 기록 렌더링 오류</p>';
+            }
+        }
+        
+        // 기본 박스스코어 HTML (파일이 없을 때)
     </script>
 </body>
 </html>

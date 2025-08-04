@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>야구 박스스코어</title>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #1a237e, #3949ab);
+            color: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .game-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .team-logo {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .team-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .team-record {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .result {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .win { background-color: #4caf50; }
+        .lose { background-color: #f44336; }
+        
+        .scoreboard {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .scoreboard table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .scoreboard th {
+            background: #333;
+            color: white;
+            padding: 10px 8px;
+            text-align: center;
+            font-size: 14px;
+            border: 1px solid #555;
+        }
+        
+        .scoreboard td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+        
+        .team-row {
+            font-weight: bold;
+        }
+        
+        .team-row td:first-child {
+            background: #f8f9fa;
+            text-align: left;
+            padding-left: 15px;
+        }
+        
+        .inning-score {
+            min-width: 30px;
+        }
+        
+        .final-stats {
+            background: #e3f2fd;
+        }
+        
+        .batting-stats {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .stats-header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .stats-table th {
+            background: #f8f9fa;
+            padding: 8px 6px;
+            text-align: center;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+        
+        .stats-table td {
+            padding: 6px;
+            text-align: center;
+            border: 1px solid #ddd;
+            font-size: 12px;
+        }
+        
+        .player-name {
+            text-align: left !important;
+            padding-left: 10px !important;
+            font-weight: bold;
+        }
+        
+        .batting-order {
+            text-align: center !important;
+            font-weight: bold;
+            color: #666;
+            width: 30px;
+        }
+        
+        .position {
+            font-weight: bold;
+            color: #666;
+            text-align: center !important;
+            width: 30px;
+        }
+        
+        .total-row {
+            background: #f0f0f0;
+            font-weight: bold;
+        }
+        
+        .pitching-stats {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .highlight {
+            background: #fff3cd !important;
+        }
+        
+        .file-input {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .file-input label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .file-input input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="file-input">
+        <label for="csvFile">CSV 파일 업로드:</label>
+        <input type="file" id="csvFile" accept=".csv" onchange="loadCSV(event)">
+        <button onclick="loadSampleData()" style="margin-left: 10px; padding: 8px 15px; background: #2196f3; color: white; border: none; border-radius: 4px; cursor: pointer;">샘플 데이터 로드</button>
+    </div>
+
+    <div id="boxscore-container"></div>
+
+    <script>
+        // 샘플 데이터
+        const sampleData = {
+            gameInfo: {
+                date: '2025.08.01(금)',
+                awayTeam: 'NC',
+                homeTeam: '삼성',
+                awayRecord: 'AWAY 33승 35패 2무',
+                homeRecord: 'HOME 50승 20패 1무',
+                location: '구장: 잠실'
+            },
+            scoreByInning: [
+                ['TEAM', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'R', 'H', 'E', 'B'],
+                ['NC', '1', '0', '2', '0', '1', '0', '0', '0', '0', '4', '9', '2', '5'],
+                ['삼성', '3', '2', '2', '0', '1', '0', '0', '0', '-', '8', '9', '0', '8']
+            ],
+            awayBatting: [
+                ['타순', '포지션', '선수명', '1', '2', '3', '4', '5', '6', '7', '8', '9', '타수', '안타', '타점', '득점', '타율'],
+                ['1', '중', '박형빈', '삼진', '삼진', '', '삼진', '', '2루', '', '', '', '4', '0', '0', '0', '0.208'],
+                ['', '타', '오태양', '', '', '', '', '', '', '유볼', '', '', '1', '0', '0', '0', '0.286'],
+                ['2', '좌', '박시현', '삼진', '', '4구', '우안', '', '2루', '', '유볼', '', '4', '1', '0', '0', '0.293'],
+                ['3', '지', '한석연', '좌안', '', '4구', '1타', '', '2직', '', '', '', '3', '1', '0', '2', '0.346'],
+                ['4', '일', '안진산', '2루', '', '우볼2', '', '좌플', '', '뜬땅', '', '', '4', '3', '2', '2', '0.395'],
+                ['5', '우', '김범준', '우안', '', '사구', '', '포파', '', '우안', '', '', '3', '2', '1', '0', '0.247'],
+                ['6', '삼', '도태훈', '4구', '', '2루', '', '유비', '', '2볼', '', '', '3', '0', '0', '0', '0.356'],
+                ['7', '이', '박인우', '', '', '', '', '', '', '', '', '', '0', '0', '0', '0', '0.233'],
+                ['8', '포', '신민우', '', '4구', '', '좌비', '', '유비', '', '3루', '', '3', '0', '0', '0', '0.314'],
+                ['9', '유', '김길태', '', '유볼', '', '2볼', '', '1직', '', '', '', '3', '0', '0', '0', '0.17'],
+                ['', '대타', '고승업', '', '', '', '', '', '', '뜬땅', '', '', '1', '1', '0', '0', '0.353'],
+                ['', '', 'TOTAL', '', '', '', '', '', '', '', '', '', '33', '9', '4', '4', '0.281']
+            ],
+            homeBatting: [
+                ['타순', '포지션', '선수명', '1', '2', '3', '4', '5', '6', '7', '8', '9', '타수', '안타', '타점', '득점', '타율'],
+                ['1', '중', '류승민', '삼진', '4구', '우안', '', '좌안', '', '출타', '', '4', '2', '2', '1', '0.237'],
+                ['2', '이', '류경인', '좌안', '4구', '2루', '', '좌안', '', '1루', '', '4', '2', '0', '2', '0.427'],
+                ['3', '우', '이재현', '4구', '3루', '', '출비', '삼진', '', '우비', '', '4', '0', '1', '1', '0.335'],
+                ['4', '삼', '진동희', '우안', '우볼안', '', '1타', '', '3루', '', '', '4', '2', '2', '1', '0.405'],
+                ['5', '포', '윤호준', '4구', '2루', '', '3실', '', '우비', '', '', '3', '0', '0', '0', '0.353'],
+                ['6', '일', '전의산', '4구', '', '좌안', '3볼', '', '삼진', '', '', '3', '1', '0', '1', '0.304'],
+                ['7', '좌', '김영준', '좌안', '', '4구', '', '삼진', '', '좌비', '', '3', '1', '1', '1', '0.225'],
+                ['8', '유', '김재상', '2볼', '', '포칸', '', '좌비', '', '4구', '', '3', '1', '0', '0', '0.364'],
+                ['9', '지', '정순원', '2루', '', '2루', '', '', '', '', '', '2', '0', '1', '0', '0.27'],
+                ['', '대타', '전대흠', '', '', '', '', '4구', '', '출타', '', '1', '0', '0', '1', '0.333'],
+                ['', '', 'TOTAL', '', '', '', '', '', '', '', '', '31', '9', '7', '8', '0.319']
+            ],
+            awayPitching: [
+                ['선수명', '등판', '결과', '승', '패', '세', '이닝', '타자', '투수', '타수', '피안타', '피홈런', '4사구', '삼진', '실점', '자책', '평균자책점'],
+                ['김태경', '선발', '패', '0', '3', '0', ' 1/3', '7', '37', '4', '3', '0', '3', '1', '3', '3', '5.68'],
+                ['전동건', '1.8', '', '5', '2', '0', '1 2/3', '7', '26', '5', '1', '0', '2', '0', '2', '1', '5.66'],
+                ['최준욱', '3.6', '', '0', '0', '0', '1', '6', '23', '5', '3', '0', '1', '0', '2', '2', '6'],
+                ['김동엽', '4.3', '', '5', '1', '0', '1', '4', '15', '4', '0', '0', '0', '0', '0', '0', '2.73'],
+                ['박시검', '5.7', '', '0', '1', '0', '1', '6', '27', '5', '2', '0', '1', '2', '1', '1', '9'],
+                ['김태건', '6.4', '', '1', '0', '2', '1', '3', '17', '3', '0', '0', '0', '1', '0', '0', '3.63'],
+                ['서의태', '7.7', '', '0', '1', '0', '1', '3', '13', '2', '0', '0', '1', '0', '0', '0', '6'],
+                ['김태훈', '8.1', '', '0', '1', '4', '1', '3', '11', '3', '0', '0', '0', '0', '0', '0', '3.38'],
+                ['', 'TOTAL', '', '', '', '8', '39', '169', '31', '9', '0', '8', '4', '8', '7', '5.66']
+            ],
+            homePitching: [
+                ['선수명', '등판', '결과', '승', '패', '세', '이닝', '타자', '투수', '타수', '피안타', '피홈런', '4사구', '삼진', '실점', '자책', '평균자책점'],
+                ['고효준', '선발', '', '0', '1', '0', '2 2/3', '16', '66', '11', '5', '0', '5', '3', '3', '3', '11.88'],
+                ['김영현', '3.8', '승', '2', '0', '0', '2 1/3', '9', '33', '9', '2', '1', '0', '2', '1', '1', '10.26'],
+                ['이정하', '6.8', '', '2', '0', '0', '1', '3', '15', '3', '0', '0', '0', '0', '0', '0', '7.08'],
+                ['김동욱', '7.2', '', '1', '2', '0', '1', '3', '6', '3', '0', '0', '0', '0', '0', '0', '4.35'],
+                ['홍승현', '8.5', '', '6', '0', '1', '1', '4', '10', '4', '1', '0', '0', '1', '0', '0', '4.47'],
+                ['이창준', '9.9', '', '5', '2', '9', '1', '3', '8', '3', '1', '0', '0', '0', '0', '0', '4.43'],
+                ['', 'TOTAL', '', '', '', '9', '38', '138', '33', '9', '1', '5', '6', '4', '4', '5.53']
+            ]
+        };
+
+        function loadSampleData() {
+            renderBoxscore(sampleData);
+        }
+
+        function loadCSV(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                console.error('파일이 선택되지 않았습니다.');
+                return;
+            }
+
+            console.log('파일 로드 시작:', file.name);
+            console.log('파일 크기:', file.size, 'bytes');
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const csv = e.target.result;
+                    console.log('CSV 내용 (처음 500자):', csv.substring(0, 500));
+                    
+                    const data = parseCSV(csv);
+                    console.log('파싱된 데이터:', data);
+                    
+                    renderBoxscore(data);
+                } catch (error) {
+                    console.error('CSV 파싱 오류:', error);
+                    alert('CSV 파일을 파싱하는 중 오류가 발생했습니다: ' + error.message);
+                }
+            };
+            
+            reader.onerror = function(error) {
+                console.error('파일 읽기 오류:', error);
+                alert('파일을 읽는 중 오류가 발생했습니다.');
+            };
+            
+            reader.readAsText(file, 'utf-8');
+        }
+
+        function parseCSV(csv) {
+            console.log('CSV 파싱 시작');
+            
+            const lines = csv.split('\n')
+                .map(line => line.replace(/\r/g, '').trim())
+                .filter(line => line && !line.match(/^,+$/));
+            
+            console.log('총 라인 수:', lines.length);
+            console.log('처리할 라인들:', lines.slice(0, 10)); // 처음 10줄만 로그
+            
+            const data = {
+                gameInfo: {},
+                scoreByInning: [],
+                awayBatting: [],
+                homeBatting: [],
+                awayPitching: [],
+                homePitching: []
+            };
+
+            let currentSection = '';
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                console.log(`라인 ${i + 1}:`, line);
+                
+                // 섹션 구분자 확인
+                if (line.includes('[GAME_INFO]')) {
+                    currentSection = 'gameInfo';
+                    console.log('GAME_INFO 섹션 시작');
+                    continue;
+                } else if (line.includes('[SCORE_BY_INNING]')) {
+                    currentSection = 'scoreByInning';
+                    console.log('SCORE_BY_INNING 섹션 시작');
+                    continue;
+                } else if (line.includes('[AWAY_BATTING]')) {
+                    currentSection = 'awayBatting';
+                    console.log('AWAY_BATTING 섹션 시작');
+                    continue;
+                } else if (line.includes('[HOME_BATTING]')) {
+                    currentSection = 'homeBatting';
+                    console.log('HOME_BATTING 섹션 시작');
+                    continue;
+                } else if (line.includes('[AWAY_PITCHING]')) {
+                    currentSection = 'awayPitching';
+                    console.log('AWAY_PITCHING 섹션 시작');
+                    continue;
+                } else if (line.includes('[HOME_PITCHING]')) {
+                    currentSection = 'homePitching';
+                    console.log('HOME_PITCHING 섹션 시작');
+                    continue;
+                }
+
+                const values = line.split(',').map(v => v.trim());
+                console.log(`  값들:`, values);
+                
+                // 빈 행이나 모든 값이 빈 행은 건너뛰기
+                if (values.every(v => v === '')) {
+                    console.log('  빈 행 건너뛰기');
+                    continue;
+                }
+                
+                if (currentSection === 'gameInfo') {
+                    if (values.length >= 2 && values[0] && values[1]) {
+                        data.gameInfo[values[0]] = values[1];
+                        console.log(`  게임 정보 추가: ${values[0]} = ${values[1]}`);
+                    }
+                } else if (currentSection && data[currentSection]) {
+                    // 불필요한 빈 컬럼들 제거
+                    const cleanValues = values.filter((v, index) => {
+                        if (currentSection === 'scoreByInning') {
+                            return index < 14; // R, H, E, B까지만
+                        }
+                        return v !== '' || index < 16; // 기본적으로 16컬럼까지 유지
+                    });
+                    
+                    if (cleanValues.some(v => v !== '')) {
+                        data[currentSection].push(cleanValues);
+                        console.log(`  ${currentSection}에 데이터 추가:`, cleanValues);
+                    }
+                }
+            }
+
+            console.log('최종 파싱 결과:', data);
+            return data;
+        }
+
+        function renderBoxscore(data) {
+            console.log('박스스코어 렌더링 시작:', data);
+            
+            const container = document.getElementById('boxscore-container');
+            if (!container) {
+                console.error('boxscore-container를 찾을 수 없습니다.');
+                return;
+            }
+            
+            try {
+                // 데이터 검증
+                if (!data) {
+                    throw new Error('데이터가 없습니다.');
+                }
+                
+                if (!data.gameInfo) {
+                    console.warn('게임 정보가 없습니다. 기본값을 사용합니다.');
+                    data.gameInfo = {};
+                }
+                
+                if (!data.scoreByInning || data.scoreByInning.length === 0) {
+                    console.warn('스코어보드 데이터가 없습니다.');
+                    data.scoreByInning = [];
+                }
+                
+                if (!data.awayBatting || data.awayBatting.length === 0) {
+                    console.warn('원정팀 타자 데이터가 없습니다.');
+                    data.awayBatting = [];
+                }
+                
+                if (!data.homeBatting || data.homeBatting.length === 0) {
+                    console.warn('홈팀 타자 데이터가 없습니다.');
+                    data.homeBatting = [];
+                }
+                
+                if (!data.awayPitching || data.awayPitching.length === 0) {
+                    console.warn('원정팀 투수 데이터가 없습니다.');
+                    data.awayPitching = [];
+                }
+                
+                if (!data.homePitching || data.homePitching.length === 0) {
+                    console.warn('홈팀 투수 데이터가 없습니다.');
+                    data.homePitching = [];
+                }
+                
+                container.innerHTML = `
+                    <div class="header">
+                        <div class="game-info">
+                            <div class="team-logo">NC</div>
+                            <div>
+                                <div class="team-name">${data.gameInfo.awayTeam || 'NC'}</div>
+                                <div class="team-record">${data.gameInfo.awayRecord || ''}</div>
+                            </div>
+                            <div class="result lose">LOSE</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 20px; font-weight: bold;">${data.gameInfo.date || ''}</div>
+                            <div style="font-size: 14px; margin-top: 5px;">${data.gameInfo.location || ''}</div>
+                        </div>
+                        <div class="game-info">
+                            <div class="result win">WIN</div>
+                            <div>
+                                <div class="team-name">${data.gameInfo.homeTeam || '삼성'}</div>
+                                <div class="team-record">${data.gameInfo.homeRecord || ''}</div>
+                            </div>
+                            <div class="team-logo">삼성</div>
+                        </div>
+                    </div>
+
+                    <div class="scoreboard">
+                        ${renderScoreboard(data.scoreByInning)}
+                    </div>
+
+                    <div class="batting-stats">
+                        <div class="stats-header">
+                            <span>🏏</span> NC 다이노스 타자 기록
+                        </div>
+                        ${renderBattingStats(data.awayBatting)}
+                    </div>
+
+                    <div class="batting-stats">
+                        <div class="stats-header">
+                            <span>🏏</span> 삼성 타자 기록
+                        </div>
+                        ${renderBattingStats(data.homeBatting)}
+                    </div>
+
+                    <div class="pitching-stats">
+                        <div class="stats-header">
+                            <span>⚾</span> NC 다이노스 투수 기록
+                        </div>
+                        ${renderPitchingStats(data.awayPitching)}
+                    </div>
+
+                    <div class="pitching-stats">
+                        <div class="stats-header">
+                            <span>⚾</span> 삼성 투수 기록
+                        </div>
+                        ${renderPitchingStats(data.homePitching)}
+                    </div>
+                `;
+                
+                console.log('박스스코어 렌더링 완료');
+                
+            } catch (error) {
+                console.error('박스스코어 렌더링 오류:', error);
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #f44336; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h3>오류가 발생했습니다</h3>
+                        <p>${error.message}</p>
+                        <p>파일 형식을 확인해주세요.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderScoreboard(scoreData) {
+            console.log('스코어보드 렌더링:', scoreData);
+            
+            if (!scoreData || scoreData.length === 0) {
+                console.warn('스코어보드 데이터가 없습니다.');
+                return '<p style="text-align: center; padding: 20px; color: #666;">스코어보드 데이터가 없습니다.</p>';
+            }
+            
+            try {
+                let html = '<table>';
+                
+                scoreData.forEach((row, index) => {
+                    console.log(`스코어보드 행 ${index}:`, row);
+                    
+                    if (index === 0) {
+                        html += '<tr>';
+                        row.forEach(cell => {
+                            html += `<th class="inning-score">${cell}</th>`;
+                        });
+                        html += '</tr>';
+                    } else {
+                        html += `<tr class="team-row">`;
+                        row.forEach((cell, cellIndex) => {
+                            const className = cellIndex >= row.length - 4 ? 'final-stats' : '';
+                            html += `<td class="${className}">${cell}</td>`;
+                        });
+                        html += '</tr>';
+                    }
+                });
+                
+                html += '</table>';
+                return html;
+                
+            } catch (error) {
+                console.error('스코어보드 렌더링 오류:', error);
+                return '<p style="text-align: center; padding: 20px; color: #f44336;">스코어보드 렌더링 오류</p>';
+            }
+        }
+
+        function renderBattingStats(battingData) {
+            console.log('타자 기록 렌더링:', battingData);
+            
+            if (!battingData || battingData.length === 0) {
+                console.warn('타자 기록 데이터가 없습니다.');
+                return '<p style="text-align: center; padding: 20px; color: #666;">타자 기록 데이터가 없습니다.</p>';
+            }
+            
+            try {
+                let html = '<table class="stats-table">';
+                
+                battingData.forEach((row, index) => {
+                    console.log(`타자 기록 행 ${index}:`, row);
+                    
+                    if (index === 0) {
+                        html += '<tr>';
+                        row.forEach(cell => {
+                            html += `<th>${cell}</th>`;
+                        });
+                        html += '</tr>';
+                    } else {
+                        const isTotal = row[2] === 'TOTAL' || (row.length > 2 && row[2] === 'TOTAL');
+                        const rowClass = isTotal ? 'total-row' : '';
+                        html += `<tr class="${rowClass}">`;
+                        
+                        row.forEach((cell, cellIndex) => {
+                            if (cellIndex === 0) {
+                                // 타순
+                                html += `<td class="batting-order">${cell}</td>`;
+                            } else if (cellIndex === 1) {
+                                // 포지션
+                                html += `<td class="position">${cell}</td>`;
+                            } else if (cellIndex === 2) {
+                                // 선수명
+                                html += `<td class="player-name">${cell}</td>`;
+                            } else {
+                                html += `<td>${cell}</td>`;
+                            }
+                        });
+                        html += '</tr>';
+                    }
+                });
+                
+                html += '</table>';
+                return html;
+                
+            } catch (error) {
+                console.error('타자 기록 렌더링 오류:', error);
+                return '<p style="text-align: center; padding: 20px; color: #f44336;">타자 기록 렌더링 오류</p>';
+            }
+        }
+
+        function renderPitchingStats(pitchingData) {
+            console.log('투수 기록 렌더링:', pitchingData);
+            
+            if (!pitchingData || pitchingData.length === 0) {
+                console.warn('투수 기록 데이터가 없습니다.');
+                return '<p style="text-align: center; padding: 20px; color: #666;">투수 기록 데이터가 없습니다.</p>';
+            }
+            
+            try {
+                let html = '<table class="stats-table">';
+                
+                pitchingData.forEach((row, index) => {
+                    console.log(`투수 기록 행 ${index}:`, row);
+                    
+                    if (index === 0) {
+                        html += '<tr>';
+                        row.forEach(cell => {
+                            html += `<th>${cell}</th>`;
+                        });
+                        html += '</tr>';
+                    } else {
+                        const isTotal = row[0] === '';
+                        const rowClass = isTotal ? 'total-row' : '';
+                        html += `<tr class="${rowClass}">`;
+                        
+                        row.forEach((cell, cellIndex) => {
+                            if (cellIndex === 0) {
+                                html += `<td class="player-name">${cell}</td>`;
+                            } else {
+                                html += `<td>${cell}</td>`;
+                            }
+                        });
+                        html += '</tr>';
+                    }
+                });
+                
+                html += '</table>';
+                return html;
+                
+            } catch (error) {
+                console.error('투수 기록 렌더링 오류:', error);
+                return '<p style="text-align: center; padding: 20px; color: #f44336;">투수 기록 렌더링 오류</p>';
+            }
+        }
+
+        // 페이지 로드 시 샘플 데이터 표시
+        window.onload = function() {
+            loadSampleData();
+        };
+    </script>
+</body>
+</html>
