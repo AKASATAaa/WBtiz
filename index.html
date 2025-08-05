@@ -4958,18 +4958,14 @@
                 const month = String(date.getMonth() + 1).padStart(2, '0');
                 const day = String(date.getDate()).padStart(2, '0');
                 
-                const fileName = `${year}${month}${day}_${homeTeam}_vs_${awayTeam}.csv`;
+                const fileName = `${year}${month}${day} ${homeTeam} vs ${awayTeam}.csv`;
                 const filePath = `BoxScore/${fileName}`;
                 
                 console.log('박스스코어 CSV 파일 로드 시도:', filePath);
                 console.log('홈팀:', homeTeam);
                 console.log('원정팀:', awayTeam);
                 
-                // GitHub Pages에서 파일명 인코딩
-                const encodedPath = encodeURIComponent(filePath);
-                console.log('인코딩된 경로:', encodedPath);
-                
-                const response = await fetch(encodedPath);
+                const response = await fetch(filePath);
                 if (!response.ok) {
                     throw new Error(`박스스코어 파일을 찾을 수 없습니다: ${fileName}`);
                 }
