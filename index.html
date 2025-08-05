@@ -5103,14 +5103,14 @@
             
             // 홈팀 (왼쪽)
             html += '<div style="text-align: center; flex: 1;">';
-            html += `<img src="/image/${homeTeam}.png" alt="${homeTeam} 로고" style="height: 60px; margin-bottom: 8px;"><br>`;
+            html += `<img src="/image/${homeTeam}.png" alt="${homeTeam} 로고" style="height: 120px; margin-bottom: 8px;"><br>`;
             html += `<div style="font-size: 1.5em; font-weight: bold; margin-bottom: 5px;">${homeTeam}</div>`;
             html += `<div style="background: #ffd700; color: white; padding: 8px 18px; border-radius: 8px; display: inline-block; margin-bottom: 5px; font-size: 1.3em; font-weight: bold;">${data.scoreByInning && data.scoreByInning[2] ? data.scoreByInning[2][10] : '-'}</div>`;
             html += '</div>';
             
             // 원정팀 (오른쪽)
             html += '<div style="text-align: center; flex: 1;">';
-            html += `<img src="/image/${awayTeam}.png" alt="${awayTeam} 로고" style="height: 60px; margin-bottom: 8px;"><br>`;
+            html += `<img src="/image/${awayTeam}.png" alt="${awayTeam} 로고" style="height: 120px; margin-bottom: 8px;"><br>`;
             html += `<div style="font-size: 1.5em; font-weight: bold; margin-bottom: 5px;">${awayTeam}</div>`;
             html += `<div style="background: #4fc3f7; color: white; padding: 8px 18px; border-radius: 8px; display: inline-block; margin-bottom: 5px; font-size: 1.3em; font-weight: bold;">${data.scoreByInning && data.scoreByInning[1] ? data.scoreByInning[1][10] : '-'}</div>`;
             html += '</div>';
