@@ -5212,11 +5212,40 @@
                 html += '</div>';
             }
             
-            // 원정팀 투수 기록
-            if (data.awayPitching && data.awayPitching.length > 0) {
+            // 원정팀 타자 기록
+            if (data.awayBatting && data.awayBatting.length > 0) {
                 html += '<div style="overflow-x: auto; margin-bottom: 20px;">';
-                html += `<h3 style="color: #333; margin-bottom: 10px;">${awayTeam} 투수 기록</h3>`;
-                html += renderPitchingStats(data.awayPitching);
+                html += `<h3 style="color: #333; margin-bottom: 10px;">${awayTeam} 타자 기록</h3>`;
+                html += '<table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd; font-size: 0.8em;">';
+                
+                data.awayBatting.forEach((row, index) => {
+                    if (index === 0) {
+                        html += '<tr style="background: #f8f9fa;">';
+                        row.forEach(cell => {
+                            html += `<th style="border: 1px solid #ddd; padding: 6px; text-align: center; font-weight: bold;">${cell}</th>`;
+                        });
+                        html += '</tr>';
+                    } else {
+                        const isTotal = row[2] === 'TOTAL' || (row.length > 2 && row[2] === 'TOTAL');
+                        const rowClass = isTotal ? 'total-row' : '';
+                        html += `<tr style="${isTotal ? 'background: #f0f0f0; font-weight: bold;' : ''}">`;
+                        
+                        row.forEach((cell, cellIndex) => {
+                            if (cellIndex === 0) {
+                                html += `<td style="border: 1px solid #ddd; padding: 6px; text-align: center; font-weight: bold; color: #666;">${cell}</td>`;
+                            } else if (cellIndex === 1) {
+                                html += `<td style="border: 1px solid #ddd; padding: 6px; text-align: center; font-weight: bold; color: #666;">${cell}</td>`;
+                            } else if (cellIndex === 2) {
+                                html += `<td style="border: 1px solid #ddd; padding: 6px; text-align: left; font-weight: bold;">${cell}</td>`;
+                            } else {
+                                html += `<td style="border: 1px solid #ddd; padding: 6px; text-align: center;">${cell}</td>`;
+                            }
+                        });
+                        html += '</tr>';
+                    }
+                });
+                
+                html += '</table>';
                 html += '</div>';
             }
             
@@ -5225,6 +5254,14 @@
                 html += '<div style="overflow-x: auto; margin-bottom: 20px;">';
                 html += `<h3 style="color: #333; margin-bottom: 10px;">${homeTeam} 투수 기록</h3>`;
                 html += renderPitchingStats(data.homePitching);
+                html += '</div>';
+            }
+            
+            // 원정팀 투수 기록
+            if (data.awayPitching && data.awayPitching.length > 0) {
+                html += '<div style="overflow-x: auto; margin-bottom: 20px;">';
+                html += `<h3 style="color: #333; margin-bottom: 10px;">${awayTeam} 투수 기록</h3>`;
+                html += renderPitchingStats(data.awayPitching);
                 html += '</div>';
             }
             
