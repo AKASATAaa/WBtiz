@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>팀기록실 - WBD 기록실</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .header {
+            background-color: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 0;
+        }
+        
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #ff4757, #ff3742);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .search-icon, .user-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .search-icon svg, .user-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: #666;
+        }
+        
+        .user-icon {
+            background-color: #ff4757;
+            border-radius: 50%;
+        }
+        
+        .user-icon svg {
+            fill: white;
+        }
+        
+        .nav-container {
+            background-color: white;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 20px;
+        }
+        
+        .nav-item {
+            padding: 16px 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-item:hover {
+            color: #333;
+            border-bottom-color: #ff4757;
+        }
+        
+        .nav-item.active {
+            color: #333;
+            border-bottom-color: #ff4757;
+        }
+
+        /* 서브메뉴 스타일 */
+        .sub-nav-container {
+            background-color: white;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .sub-nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 20px;
+        }
+
+        .sub-nav-item {
+            padding: 12px 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .sub-nav-item:hover {
+            color: #333;
+            border-bottom-color: #ff4757;
+        }
+
+        .sub-nav-item.active {
+            color: #333;
+            border-bottom-color: #ff4757;
+        }
+
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .content-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .page-title-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+            line-height: 1;
+        }
+
+        /* 팀 기록실 카테고리 스타일 */
+        .team-record-categories {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .category-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .category-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ff4757;
+        }
+
+        .category-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .category-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .category-link:hover {
+            background: white;
+            border-color: #ff4757;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.15);
+        }
+
+        .link-icon {
+            font-size: 32px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ff4757, #ff3742);
+            border-radius: 50%;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .link-content h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .link-content p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .category-links {
+                grid-template-columns: 1fr;
+            }
+            
+            .category-link {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .link-icon {
+                margin-bottom: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">W</div>
+                <span class="logo-text">WBD 기록실</span>
+            </a>
+            
+            <div class="header-actions">
+                <div class="search-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                </div>
+                
+                <div class="user-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <nav class="nav-container">
+        <div class="nav">
+            <a href="record_bat_basic.html" class="nav-item active">기록실</a>
+            <a href="season.html" class="nav-item">시즌정보</a>
+            <a href="team.html" class="nav-item">팀정보</a>
+            <a href="player.html" class="nav-item">선수정보</a>
+            <a href="schedule.html" class="nav-item">경기일정</a>
+
+
+        </div>
+    </nav>
+
+    <nav class="sub-nav-container">
+        <div class="sub-nav">
+            <a href="record_bat_basic.html" class="sub-nav-item">시즌기록실</a>
+            <a href="career-record.html" class="sub-nav-item">통산기록실</a>
+            <a href="team-record.html" class="sub-nav-item active">팀기록실</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="content-container">
+            <div class="page-header">
+                <div class="page-title-section">
+                    <h1 class="page-title">팀기록실</h1>
+                </div>
+            </div>
+            
+            <!-- 팀 기록실 카테고리 -->
+            <div class="team-record-categories">
+                <div class="category-section">
+                    <h2 class="category-title">타격 기록</h2>
+                    <div class="category-links">
+                        <a href="team-record_bat_basic.html" class="category-link">
+                            <div class="link-icon">📊</div>
+                            <div class="link-content">
+                                <h3>기본 기록</h3>
+                                <p>타율, 홈런, 타점 등 기본 타격 통계</p>
+                            </div>
+                        </a>
+                        <a href="team-record_bat_advanced.html" class="category-link">
+                            <div class="link-icon">📈</div>
+                            <div class="link-content">
+                                <h3>심화 기록</h3>
+                                <p>OPS, wOBA, BABIP 등 고급 타격 통계</p>
+                            </div>
+                        </a>
+                        <a href="team-record_bat_value.html" class="category-link">
+                            <div class="link-icon">💎</div>
+                            <div class="link-content">
+                                <h3>가치 기록</h3>
+                                <p>WAR, RAA, RAR 등 선수 가치 통계</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="category-section">
+                    <h2 class="category-title">투구 기록</h2>
+                    <div class="category-links">
+                        <a href="team-record_pitch_basic.html" class="category-link">
+                            <div class="link-icon">⚾</div>
+                            <div class="link-content">
+                                <h3>기본 기록</h3>
+                                <p>승률, ERA, 삼진 등 기본 투구 통계</p>
+                            </div>
+                        </a>
+                        <a href="team-record_pitch_advanced.html" class="category-link">
+                            <div class="link-icon">🎯</div>
+                            <div class="link-content">
+                                <h3>심화 기록</h3>
+                                <p>FIP, xFIP, BABIP 등 고급 투구 통계</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html> 

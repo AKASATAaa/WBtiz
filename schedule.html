@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>경기일정 - WBD 기록실</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .header {
+            background-color: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 0;
+        }
+        
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #ff4757, #ff3742);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .search-icon, .user-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .search-icon svg, .user-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: #666;
+        }
+        
+        .user-icon {
+            background-color: #ff4757;
+            border-radius: 50%;
+        }
+        
+        .user-icon svg {
+            fill: white;
+        }
+        
+        .nav-container {
+            background-color: white;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 20px;
+        }
+        
+        .nav-item {
+            padding: 16px 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-item:hover {
+            color: #333;
+            border-bottom-color: #ff4757;
+        }
+        
+        .nav-item.active {
+            color: #333;
+            border-bottom-color: #ff4757;
+        }
+
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .content-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* 달력 스타일 */
+        .calendar-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .calendar-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav-arrow {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #e9ecef;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .nav-arrow:hover {
+            border-color: #ff4757;
+            color: #ff4757;
+        }
+
+        .nav-arrow svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .current-month {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .calendar-day-header {
+            background: #f8f9fa;
+            padding: 12px 8px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .calendar-day {
+            background: white;
+            min-height: 80px;
+            padding: 8px;
+            position: relative;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .calendar-day[style*="visibility: hidden"] {
+            background: transparent !important;
+            border: none !important;
+            min-height: 0 !important;
+            padding: 0 !important;
+        }
+
+        .calendar-day.other-month {
+            background: #f8f9fa;
+            color: #ccc;
+        }
+
+        .day-number {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .calendar-day.other-month .day-number {
+            color: #ccc;
+        }
+
+        .game-list {
+            font-size: 10px;
+            line-height: 1.2;
+            width: 100%;
+            text-align: center;
+        }
+
+        .game-item {
+            margin-bottom: 2px;
+            padding: 2px 4px;
+            background: #f0f0f0;
+            border-radius: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+        }
+
+        .game-item.highlight {
+            background: #ffe6e6;
+            color: #ff4757;
+        }
+
+        .game-item.winner {
+            background: #e8f5e8;
+            color: #28a745;
+        }
+
+        .game-item.loser {
+            background: #ffe8e8;
+            color: #dc3545;
+        }
+
+        .game-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 2px;
+            flex-wrap: wrap;
+            background: #f8f9fa;
+            border-radius: 4px;
+            padding: 4px;
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+        }
+
+        .game-container:hover {
+            background: #e9ecef;
+            transition: background-color 0.2s ease;
+        }
+
+        .team-block {
+            padding: 2px 4px;
+            background: #f0f0f0;
+            border-radius: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: #333;
+            min-width: 30px;
+        }
+
+        .team-block.winner {
+            background: #e8f5e8;
+            color: #28a745;
+        }
+
+        .team-block.loser {
+            background: #ffe8e8;
+            color: #dc3545;
+        }
+
+        .score-block {
+            font-size: 10px;
+            font-weight: 600;
+            color: #333;
+            margin: 0 2px;
+        }
+
+        .time-block {
+            font-size: 8px;
+            color: #666;
+            width: 100%;
+            text-align: center;
+            margin-top: 1px;
+        }
+
+        /* 박스스코어 스타일 */
+        .boxscore-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .boxscore-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .boxscore-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+        }
+
+        .close-btn {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background-color: #dc3545;
+        }
+
+        /* 박스스코어 내용이 여기에 표시됩니다 */
+        .boxscore-content {
+            overflow-x: auto;
+            position: relative;
+            transform: translateZ(0);
+            will-change: scroll-position;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 표 컨테이너 스타일 */
+        .table-container {
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 경기 이벤트 테이블을 위한 특별한 스타일 */
+        .table-container.event-table {
+            text-align: center;
+        }
+        
+        .table-container.event-table .table-wrapper {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .table-container.event-table table {
+            margin: 0 auto;
+            width: auto;
+            min-width: 500px;
+        }
+        
+        /* 테이블 래퍼 - 스크롤 컨테이너 */
+        .table-container .table-wrapper {
+            overflow-x: auto;
+            position: relative;
+            border-radius: 8px;
+            /* 스크롤 컨텍스트 명확화 */
+            transform: translateZ(0);
+            will-change: scroll-position;
+        }
+        
+        /* 테이블 자체 */
+        .table-container table {
+            margin: 0;
+            border-collapse: collapse;
+            min-width: 800px;
+            width: 100%;
+            table-layout: fixed;
+            /* 고정 열을 위한 설정 */
+            position: relative;
+        }
+        
+        /* 스크롤바 스타일링 */
+        .table-container .table-wrapper::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .table-container .table-wrapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .table-container .table-wrapper::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        
+        .table-container .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        /* 팀명 제목 스타일 */
+        .table-container h4 {
+            margin: 0;
+            padding: 8px;
+            border-radius: 5px 5px 0 0;
+            background-color: #e8f5e8;
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+            border-bottom: 1px solid #ddd;
+            position: relative;
+            z-index: 20;
+        }
+        
+        /* 투수 기록의 팀명 제목 스타일 */
+        .table-container h4.pitching-team {
+            background-color: #ffe8e8;
+        }
+        
+        /* 테이블 헤더 고정 */
+        .table-container thead th {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background-color: inherit;
+        }
+        
+        /* 타자 기록 헤더 배경색 */
+        .table-container:not(.pitching-table) thead th {
+            background-color: #e8f5e8;
+        }
+        
+        /* 투수 기록 헤더 배경색 */
+        .table-container.pitching-table thead th {
+            background-color: #ffe8e8;
+        }
+        
+        /* 고정 열들의 기본 스타일 */
+        .fixed-column {
+            position: sticky;
+            background-color: #f8f9fa;
+            z-index: 10;
+            transform: translateZ(0);
+            will-change: transform;
+            backface-visibility: hidden;
+            /* 고정 위치 강화 */
+            left: 0;
+            box-sizing: border-box;
+        }
+        
+        /* 타자 기록 테이블의 1, 2, 3열 고정 */
+        .table-container.batting-table .fixed-col-1 {
+            left: 0;
+            width: 60px;
+            min-width: 60px;
+            max-width: 60px;
+        }
+        
+        .table-container.batting-table .fixed-col-2 {
+            left: 60px;
+            width: 80px;
+            min-width: 80px;
+            max-width: 80px;
+        }
+        
+        .table-container.batting-table .fixed-col-3 {
+            left: 140px;
+            width: 100px;
+            min-width: 100px;
+            max-width: 100px;
+            border-right: 3px solid #333;
+            box-shadow: 3px 0 0 0 #333;
+        }
+        
+        /* 상단 요약 테이블의 첫 번째 열 고정 */
+        .table-container.summary-table .fixed-col-1 {
+            left: 0;
+            width: 60px;
+            min-width: 60px;
+            max-width: 60px;
+            border-right: 3px solid #333;
+            box-shadow: 3px 0 0 0 #333;
+        }
+        
+        /* 투수 기록 테이블의 첫 번째 열 고정 */
+        .table-container.pitching-table .fixed-col-1 {
+            left: 0;
+            width: 80px;
+            min-width: 80px;
+            max-width: 80px;
+            background-color: #fff5f5;
+            border-right: 3px solid #333;
+            box-shadow: 3px 0 0 0 #333;
+        }
+        
+        /* 고정된 열들의 테두리 스타일 */
+        .fixed-column {
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+        }
+        
+        /* 고정된 열들의 배경색 강화 */
+        .table-container.batting-table .fixed-column {
+            background-color: #f8f9fa;
+        }
+        
+        .table-container.summary-table .fixed-column {
+            background-color: #f8f9fa;
+        }
+        
+        .table-container.pitching-table .fixed-column {
+            background-color: #fff5f5;
+        }
+        
+        /* 고정 열들의 위치 강화 */
+        .table-container.batting-table .fixed-col-1,
+        .table-container.summary-table .fixed-col-1,
+        .table-container.pitching-table .fixed-col-1 {
+            left: 0 !important;
+        }
+        
+        .table-container.batting-table .fixed-col-2 {
+            left: 60px !important;
+        }
+        
+        .table-container.batting-table .fixed-col-3 {
+            left: 140px !important;
+        }
+        
+        .boxscore-game {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .team-score {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        
+        .team-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            padding: 8px 16px;
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+        
+        .team-name.winner {
+            background: #e8f5e8;
+            color: #28a745;
+        }
+        
+        .team-name.loser {
+            background: #ffe8e8;
+            color: #dc3545;
+        }
+        
+        .score {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .vs-separator {
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+        }
+        
+        .game-time {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        /* 박스스코어 테이블 스타일 */
+        .boxscore-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .boxscore-table th,
+        .boxscore-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .boxscore-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .boxscore-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .content-container {
+                padding: 0 12px;
+            }
+            
+            .calendar-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .month-buttons {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">W</div>
+                <span class="logo-text">WBD 기록실</span>
+            </a>
+            
+            <div class="header-actions">
+                <div class="search-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                </div>
+                
+                <div class="user-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <nav class="nav-container">
+        <div class="nav">
+            <a href="record_bat_basic.html" class="nav-item">기록실</a>
+            <a href="season.html" class="nav-item">시즌정보</a>
+            <a href="team.html" class="nav-item">팀정보</a>
+            <a href="player.html" class="nav-item">선수정보</a>
+            <a href="schedule.html" class="nav-item active">경기일정</a>
+
+
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="content-container">
+            <h1 class="page-title">경기일정</h1>
+            
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <div class="calendar-nav">
+                        <div class="nav-arrow" onclick="previousMonth()">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                            </svg>
+                        </div>
+                        <div class="current-month">8월</div>
+                        <div class="nav-arrow" onclick="nextMonth()">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="calendar-grid">
+                    <div class="calendar-day-header">일</div>
+                    <div class="calendar-day-header">월</div>
+                    <div class="calendar-day-header">화</div>
+                    <div class="calendar-day-header">수</div>
+                    <div class="calendar-day-header">목</div>
+                    <div class="calendar-day-header">금</div>
+                    <div class="calendar-day-header">토</div>
+                    
+                    <!-- 달력 날짜들이 JavaScript로 생성됩니다 -->
+                </div>
+            </div>
+            
+            <!-- 박스스코어 영역 -->
+            <div class="boxscore-container" id="boxscore-container" style="display: none;">
+                <div class="boxscore-header">
+                    <h3 id="boxscore-title">박스스코어</h3>
+                    <button class="close-btn" onclick="closeBoxscore()">×</button>
+                </div>
+                <div class="boxscore-content" id="boxscore-content">
+                    <!-- 박스스코어 내용이 여기에 표시됩니다 -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        let currentDate = new Date(2025, 7, 1); // 2025년 8월 1일
+        let scheduleData = {}; // CSV에서 읽어온 일정 데이터
+        
+        // 팀명 축약표
+        const teamAbbreviations = {
+            'MoonShot Spirits': 'MOON',
+            'Nyanko Avengers': 'NYAN',
+            'Ishikawa Fighting Folks': 'ISHI',
+            'Florian T-Shirts': 'FLO',
+            'Leroleros': 'LERO',
+            'Bubble Stars': 'BUBL',
+            'ALLSTARS': 'ALL',
+            'PostSeason': 'POST'
+        };
+        
+        // 팀명 풀네임 매핑
+        const teamFullNames = {
+            'MOON': 'MoonShot Spirits',
+            'NYAN': 'Nyanko Avengers',
+            'ISHI': 'Ishikawa Fighting Folks',
+            'FLO': 'Florian T-Shirts',
+            'LERO': 'Leroleros',
+            'BUBL': 'Bubble Stars',
+            'ALL': 'ALLSTARS',
+            'POST': 'PostSeason'
+        };
+        
+        // 팀명 축약 함수
+        function getTeamAbbreviation(teamName) {
+            return teamAbbreviations[teamName] || teamName;
+        }
+        
+        // 팀명 풀네임 함수
+        function getTeamFullName(abbreviation) {
+            return teamFullNames[abbreviation] || abbreviation;
+        }
+        
+        // 숫자 포맷팅 함수 (소수점 3자리까지)
+        function formatNumber(value) {
+            if (value === undefined || value === null || value === '') {
+                return '';
+            }
+            
+            // 문자열로 변환
+            const strValue = String(value);
+            
+            // 숫자와 문자가 혼합된 경우 원본 값 반환
+            if (/^[0-9]+[A-Za-z가-힣]+$/.test(strValue) || /^[A-Za-z가-힣]+[0-9]+$/.test(strValue)) {
+                return strValue;
+            }
+            
+            // 순수 숫자인지 확인 (소수점 포함)
+            if (/^[0-9]+(\.[0-9]+)?$/.test(strValue)) {
+                const num = parseFloat(strValue);
+                
+                // 정수인 경우
+                if (Number.isInteger(num)) {
+                    return num.toString();
+                }
+                
+                // 소수인 경우 3자리까지 표시
+                return num.toFixed(3);
+            }
+            
+            // 숫자가 아니면 원본 값 반환
+            return strValue;
+        }
+        
+        // CSV 파일에서 일정 읽어오기
+        async function loadScheduleFromCSV() {
+            try {
+                const response = await fetch('./Data/schedule.csv');
+                const csvText = await response.text();
+                scheduleData = parseCSV(csvText);
+                renderCalendar();
+            } catch (error) {
+                console.log('CSV 파일을 불러올 수 없습니다. 기본 데이터를 사용합니다.');
+                scheduleData = sampleGames;
+                renderCalendar();
+            }
+        }
+        
+        // CSV 파싱 함수
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const headers = lines[0].split(',');
+            const schedule = {};
+            
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim() === '') continue;
+                
+                const values = lines[i].split(',');
+                const date = values[0];
+                const homeTeam = values[1];
+                const awayTeam = values[2];
+                const homeScore = values[3];
+                const awayScore = values[4];
+                const time = values[5];
+                const league = values[6];
+                const code = values[7];
+                
+                // 빈 데이터는 건너뛰기
+                if (!date || !homeTeam || !awayTeam) continue;
+                
+                // 날짜 형식 변환 (2025.7.18 -> 2025.7.18)
+                const dateKey = date;
+                
+                if (!schedule[dateKey]) {
+                    schedule[dateKey] = [];
+                }
+                
+                // 점수가 있는 경우와 없는 경우 구분
+                let homeTeamAbbr = getTeamAbbreviation(homeTeam);
+                let awayTeamAbbr = getTeamAbbreviation(awayTeam);
+                let isWinner = false;
+                let isLoser = false;
+                
+                if (homeScore && awayScore && homeScore !== '' && awayScore !== '') {
+                    // 승패 판단
+                    if (parseInt(homeScore) > parseInt(awayScore)) {
+                        isWinner = true;
+                    } else if (parseInt(homeScore) < parseInt(awayScore)) {
+                        isLoser = true;
+                    }
+                    
+                    schedule[dateKey].push({
+                        homeTeam: homeTeamAbbr,
+                        awayTeam: awayTeamAbbr,
+                        homeScore: homeScore,
+                        awayScore: awayScore,
+                        time: time || '',
+                        isWinner: isWinner,
+                        isLoser: isLoser,
+                        league: league,
+                        code: code
+                    });
+                } else {
+                    // 예정 경기
+                    schedule[dateKey].push({
+                        homeTeam: homeTeamAbbr,
+                        awayTeam: awayTeamAbbr,
+                        homeScore: '',
+                        awayScore: '',
+                        time: time || '',
+                        isWinner: false,
+                        isLoser: false,
+                        league: league,
+                        code: code
+                    });
+                }
+            }
+            
+            return schedule;
+        }
+
+        // 샘플 경기 데이터 (실제로는 API에서 가져올 데이터)
+        const sampleGames = {
+            '2025-08-01': [
+                { teams: 'SSG 7 2 두산', location: '대전', highlight: true },
+                { teams: 'LG 5 3 KT', location: '잠실' }
+            ],
+            '2025-08-02': [
+                { teams: '한화 4 1 롯데', location: '고척' },
+                { teams: 'KIA 6 2 NC', location: '창원', highlight: true }
+            ],
+            '2025-08-03': [
+                { teams: '삼성 3 5 SSG', location: '사직', highlight: true },
+                { teams: '두산 2 4 LG', location: '수원' }
+            ],
+            '2025-08-04': [
+                { teams: 'KT 1 3 한화', location: '대구' },
+                { teams: 'NC 4 2 삼성', location: '광주' }
+            ],
+            '2025-08-05': [
+                { teams: '롯데 5 4 KIA', location: '문학' },
+                { teams: 'SSG 3 1 LG', location: '잠실' }
+            ]
+        };
+        
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            document.querySelector('.current-month').textContent = `${year}.${month + 1}월`;
+            
+            // 해당 월의 첫 번째 날과 마지막 날 계산
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const firstDayOfWeek = firstDay.getDay(); // 0=일요일, 1=월요일, ..., 6=토요일
+            
+            const calendarGrid = document.querySelector('.calendar-grid');
+            const dayHeaders = calendarGrid.querySelectorAll('.calendar-day-header');
+            
+            // 기존 날짜 셀들 제거 (헤더 제외)
+            while (calendarGrid.children.length > dayHeaders.length) {
+                calendarGrid.removeChild(calendarGrid.children[dayHeaders.length]);
+            }
+            
+            // 달력 그리드 생성 (6주 x 7일 = 42개 셀)
+            for (let i = 0; i < 42; i++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'calendar-day';
+                
+                // 각 셀의 실제 날짜 계산
+                const cellDate = new Date(year, month, 1);
+                cellDate.setDate(1 - firstDayOfWeek + i);
+                
+                // 현재 월이 아닌 경우 숨김 처리
+                if (cellDate.getMonth() !== month) {
+                    dayCell.style.visibility = 'hidden';
+                    dayCell.style.backgroundColor = 'transparent';
+                } else {
+                    const dayNumber = document.createElement('div');
+                    dayNumber.className = 'day-number';
+                    dayNumber.textContent = cellDate.getDate();
+                    dayCell.appendChild(dayNumber);
+                    
+                    // 경기 데이터 추가
+                    const dateKey = `${year}.${month + 1}.${cellDate.getDate()}`;
+                    const games = scheduleData[dateKey];
+                    
+                    if (games) {
+                        const gameList = document.createElement('div');
+                        gameList.className = 'game-list';
+                        
+                        games.forEach(game => {
+                            const gameContainer = document.createElement('div');
+                            gameContainer.className = 'game-container';
+                            gameContainer.style.marginBottom = '2px';
+                            gameContainer.onclick = function() {
+                                showBoxscore(game, dateKey);
+                            };
+                            
+                            // 홈팀 블록
+                            const homeTeamBlock = document.createElement('div');
+                            homeTeamBlock.className = 'team-block';
+                            if (game.isWinner) {
+                                homeTeamBlock.classList.add('winner');
+                            } else if (game.isLoser) {
+                                homeTeamBlock.classList.add('loser');
+                            }
+                            homeTeamBlock.textContent = game.homeTeam;
+                            
+                            // 스코어 표시
+                            const scoreBlock = document.createElement('div');
+                            scoreBlock.className = 'score-block';
+                            if (game.homeScore && game.awayScore) {
+                                scoreBlock.textContent = `${game.homeScore}:${game.awayScore}`;
+                            } else {
+                                scoreBlock.textContent = 'vs';
+                            }
+                            
+                            // 어웨이팀 블록
+                            const awayTeamBlock = document.createElement('div');
+                            awayTeamBlock.className = 'team-block';
+                            if (game.homeScore && game.awayScore) {
+                                if (parseInt(game.awayScore) > parseInt(game.homeScore)) {
+                                    awayTeamBlock.classList.add('winner');
+                                } else if (parseInt(game.awayScore) < parseInt(game.homeScore)) {
+                                    awayTeamBlock.classList.add('loser');
+                                }
+                            }
+                            awayTeamBlock.textContent = game.awayTeam;
+                            
+                            // 시간 표시
+                            if (game.time) {
+                                const timeBlock = document.createElement('div');
+                                timeBlock.className = 'time-block';
+                                timeBlock.textContent = `(${game.time})`;
+                                gameContainer.appendChild(timeBlock);
+                            }
+                            
+                            gameContainer.appendChild(homeTeamBlock);
+                            gameContainer.appendChild(scoreBlock);
+                            gameContainer.appendChild(awayTeamBlock);
+                            gameList.appendChild(gameContainer);
+                        });
+                        
+                        dayCell.appendChild(gameList);
+                    }
+                }
+                
+                calendarGrid.appendChild(dayCell);
+            }
+        }
+        
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+        
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        // 박스스코어 스크롤 처리 함수
+        function setupBoxscoreScrollHandling() {
+            const boxscoreContent = document.querySelector('.boxscore-content');
+            if (!boxscoreContent) return;
+            
+            // 모든 팀명 제목을 찾기
+            const teamHeaders = boxscoreContent.querySelectorAll('.table-container h4');
+            
+            boxscoreContent.addEventListener('scroll', function() {
+                const scrollTop = this.scrollTop;
+                
+                teamHeaders.forEach((header, index) => {
+                    const container = header.closest('.table-container');
+                    const containerTop = container.offsetTop;
+                    const headerHeight = header.offsetHeight;
+                    
+                    // 스크롤 위치에 따라 제목 고정/해제
+                    if (scrollTop >= containerTop && scrollTop < containerTop + container.offsetHeight - headerHeight) {
+                        header.style.position = 'fixed';
+                        header.style.top = '0';
+                        header.style.left = '0';
+                        header.style.right = '0';
+                        header.style.zIndex = '1000';
+                        header.style.width = '100%';
+                        header.style.boxSizing = 'border-box';
+                        
+                        // 고정된 제목 아래에 여백 추가
+                        if (!container.querySelector('.header-spacer')) {
+                            const spacer = document.createElement('div');
+                            spacer.className = 'header-spacer';
+                            spacer.style.height = headerHeight + 'px';
+                            container.insertBefore(spacer, container.firstChild);
+                        }
+                    } else {
+                        header.style.position = 'static';
+                        header.style.top = 'auto';
+                        header.style.left = 'auto';
+                        header.style.right = 'auto';
+                        header.style.zIndex = 'auto';
+                        header.style.width = 'auto';
+                        
+                        // 여백 제거
+                        const spacer = container.querySelector('.header-spacer');
+                        if (spacer) {
+                            spacer.remove();
+                        }
+                    }
+                });
+            });
+        }
+
+        // 박스스코어 표시 함수
+        async function showBoxscore(game, date) {
+            console.log('showBoxscore 호출:', game, date);
+            
+            const boxscoreContainer = document.getElementById('boxscore-container');
+            const boxscoreTitle = document.getElementById('boxscore-title');
+            const boxscoreContent = document.getElementById('boxscore-content');
+            
+            // 제목 설정 (풀네임 사용) - 날짜 형식 개선
+            let dateObj;
+            try {
+                // 날짜 형식 변환 (2025.7.18 -> 2025-07-18)
+                const dateParts = date.split('.');
+                if (dateParts.length === 3) {
+                    dateObj = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
+                } else {
+                    dateObj = new Date(date);
+                }
+            } catch (error) {
+                console.error('날짜 파싱 오류:', error);
+                dateObj = new Date();
+            }
+            
+            const dateStr = `${dateObj.getFullYear()}년 ${dateObj.getMonth() + 1}월 ${dateObj.getDate()}일`;
+            const homeTeamFull = getTeamFullName(game.homeTeam);
+            const awayTeamFull = getTeamFullName(game.awayTeam);
+            boxscoreTitle.textContent = `${dateStr} - ${homeTeamFull} vs ${awayTeamFull}`;
+            
+            // 기본 박스스코어 내용 생성
+            let content = '';
+            if (game.homeScore && game.awayScore) {
+                // 어웨이팀 승패 판단
+                let awayTeamClass = '';
+                if (parseInt(game.awayScore) > parseInt(game.homeScore)) {
+                    awayTeamClass = 'winner';
+                } else if (parseInt(game.awayScore) < parseInt(game.homeScore)) {
+                    awayTeamClass = 'loser';
+                }
+                
+                content = `
+                    <div class="boxscore-game">
+                        <div class="team-score">
+                            <div class="team-name ${game.isWinner ? 'winner' : game.isLoser ? 'loser' : ''}">${homeTeamFull}</div>
+                            <div class="score">${game.homeScore}</div>
+                        </div>
+                        <div class="vs-separator">vs</div>
+                        <div class="team-score">
+                            <div class="team-name ${awayTeamClass}">${awayTeamFull}</div>
+                            <div class="score">${game.awayScore}</div>
+                        </div>
+                    </div>
+                    <div class="game-time">경기시간: ${game.time || '미정'}</div>
+                `;
+            } else {
+                content = `
+                    <div class="boxscore-game">
+                        <div class="team-score">
+                            <div class="team-name">${homeTeamFull}</div>
+                        </div>
+                        <div class="vs-separator">vs</div>
+                        <div class="team-score">
+                            <div class="team-name">${awayTeamFull}</div>
+                        </div>
+                    </div>
+                    <div class="game-time">경기시간: ${game.time || '미정'}</div>
+                `;
+            }
+
+            // 엑셀 파일에서 박스스코어 데이터 로드
+            if (game.league && game.code) {
+                console.log('league와 code가 있음:', game.league, game.code);
+                try {
+                    const leagueCode = `${game.league}_${game.code}`;
+                    console.log('찾을 시트명:', leagueCode);
+                    
+                    const response = await fetch('./Data/WBD Summer 팀리그 박스스코어 모음.xlsx');
+                    if (!response.ok) {
+                        throw new Error('엑셀 파일을 불러올 수 없습니다');
+                    }
+                    
+                    const arrayBuffer = await response.arrayBuffer();
+                    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                    
+                    console.log('사용 가능한 시트들:', workbook.SheetNames);
+                    
+                    // 해당 시트 찾기 (더 정확한 매칭)
+                    const sheetName = workbook.SheetNames.find(name => {
+                        const cleanName = name.trim().replace(/\r?\n/g, '').replace(/\s+/g, '');
+                        const cleanLeagueCode = leagueCode.trim().replace(/\s+/g, '');
+                        
+                        console.log('원본 시트명:', name);
+                        console.log('정리된 시트명:', cleanName);
+                        console.log('찾을 시트명:', cleanLeagueCode);
+                        console.log('비교 결과:', cleanName === cleanLeagueCode);
+                        
+                        return cleanName === cleanLeagueCode || name.includes(cleanLeagueCode);
+                    });
+                    
+                    if (sheetName) {
+                        console.log('시트를 찾았습니다:', sheetName);
+                        const worksheet = workbook.Sheets[sheetName];
+                        
+                        // 빈 셀과 0값을 구분하기 위한 설정
+                        const boxscoreData = XLSX.utils.sheet_to_json(worksheet, { 
+                            header: 1,
+                            defval: null, // 빈 셀을 null로 설정하여 구분
+                            blankrows: false, // 빈 행 제거
+                            raw: false // 원본 데이터 타입 보존
+                        });
+                        
+                        console.log('박스스코어 데이터:', boxscoreData);
+                        console.log('박스스코어 데이터 길이:', boxscoreData.length);
+                        
+                        // 박스스코어 테이블 생성 - 정확한 구조로 분리
+                        if (boxscoreData && boxscoreData.length > 0) {
+                            console.log('박스스코어 테이블 생성 시작');
+                            let tableContent = '';
+                            
+                            // 데이터를 파트별로 분류
+                            let summaryRows = [];
+                            let eventRows = [];
+                            let battingRows = [];
+                            let pitchingRows = [];
+                            
+                            let currentSection = 'summary';
+                            
+                            for (let i = 0; i < boxscoreData.length; i++) {
+                                const row = boxscoreData[i];
+                                if (!row || row.length === 0) continue;
+                                
+                                const firstCell = String(row[0] || '');
+                                const secondCell = String(row[1] || '');
+                                
+                                // 섹션 구분
+                                if (secondCell.includes('타자기록')) {
+                                    currentSection = 'batting';
+                                    continue;
+                                } else if (secondCell.includes('투수기록')) {
+                                    currentSection = 'pitching';
+                                    continue;
+                                } else if (secondCell.includes('결승타') || secondCell.includes('홈런') || 
+                                         secondCell.includes('실책') || secondCell.includes('도루') ||
+                                         secondCell.includes('주루사') || secondCell.includes('견제사') ||
+                                         secondCell.includes('포일') || secondCell.includes('폭투') ||
+                                         secondCell.includes('보크')) {
+                                    currentSection = 'event';
+                                }
+                                
+                                // 현재 섹션에 따라 분류
+                                switch (currentSection) {
+                                    case 'summary':
+                                        summaryRows.push(row);
+                                        break;
+                                    case 'event':
+                                        eventRows.push(row);
+                                        break;
+                                    case 'batting':
+                                        battingRows.push(row);
+                                        break;
+                                    case 'pitching':
+                                        pitchingRows.push(row);
+                                        break;
+                                }
+                            }
+                            
+                            // 1. 상단 요약 부분
+                            if (summaryRows.length > 0) {
+                                tableContent += '<div class="table-container summary-table">';
+                                tableContent += '<div class="table-wrapper">';
+                                tableContent += '<table style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: 12px; margin-bottom: 15px;">';
+                                
+                                // 마지막 행으로부터 위로 4줄까지 표시
+                                const lastRowIndex = summaryRows.length - 1;
+                                const startRowIndex = Math.max(0, lastRowIndex - 3); // 마지막 행으로부터 위로 4줄
+                                
+                                console.log('전체 요약 행 수:', summaryRows.length);
+                                console.log('마지막 행 인덱스:', lastRowIndex);
+                                console.log('시작 행 인덱스:', startRowIndex);
+                                console.log('표시할 행 범위:', startRowIndex, '~', lastRowIndex);
+                                
+                                for (let rowIndex = startRowIndex; rowIndex <= lastRowIndex; rowIndex++) {
+                                    if (summaryRows[rowIndex]) {
+                                        const row = summaryRows[rowIndex];
+                                        const trimmedRow = row.slice(2, 25);
+                                        const hasData = trimmedRow.some(cell => 
+                                            cell !== undefined && cell !== null && cell !== ''
+                                        );
+                                        
+                                        if (hasData) {
+                                            let lastInningIndex = -1;
+                                            for (let i = 0; i < trimmedRow.length; i++) {
+                                                if (trimmedRow[i] !== undefined && trimmedRow[i] !== null && trimmedRow[i] !== '') {
+                                                    lastInningIndex = i;
+                                                }
+                                            }
+                                            
+                                            const finalRow = trimmedRow.slice(0, lastInningIndex + 1);
+                                            
+                                            tableContent += '<tr>';
+                                            finalRow.forEach((cell, cellIndex) => {
+                                                const cellStyle = `
+                                                    style="
+                                                        border: 1px solid #000;
+                                                        padding: 6px 4px;
+                                                        text-align: center;
+                                                        min-width: 80px;
+                                                        white-space: nowrap;
+                                                        vertical-align: middle;
+                                                        font-size: 11px;
+                                                        background-color: #f8f9fa;
+                                                    "
+                                                `;
+                                                
+                                                // 셀 데이터 안전하게 처리
+                                                let cellValue = '';
+                                                if (cell !== undefined && cell !== null && cell !== '') {
+                                                    // 숫자와 문자가 혼합된 데이터인지 확인
+                                                    const strCell = String(cell);
+                                                    if (/^[0-9]+[A-Za-z가-힣]+$/.test(strCell) || /^[A-Za-z가-힣]+[0-9]+$/.test(strCell)) {
+                                                        cellValue = strCell; // 혼합 데이터는 그대로 표시
+                                                    } else {
+                                                        cellValue = formatNumber(cell); // 순수 숫자는 포맷팅
+                                                    }
+                                                }
+                                                
+                                                const fixedClass = cellIndex === 0 ? ' class="fixed-column fixed-col-1"' : '';
+                                                tableContent += `<td ${cellStyle}${fixedClass}>${cellValue}</td>`;
+                                            });
+                                            tableContent += '</tr>';
+                                        }
+                                    }
+                                }
+                                
+                                tableContent += '</table>';
+                                tableContent += '</div>';
+                                tableContent += '</div>';
+                            }
+                            
+                            // 2. 경기 이벤트 부분
+                            if (eventRows.length > 0) {
+                                const filteredEventRows = eventRows.filter(row => {
+                                    return row.some(cell => cell !== undefined && cell !== null && cell !== '');
+                                });
+                                
+                                if (filteredEventRows.length > 1) {
+                                    filteredEventRows.pop();
+                                }
+                                
+                                if (filteredEventRows.length > 0) {
+                                    tableContent += '<div class="table-container event-table">';
+                                    tableContent += '<div class="table-wrapper">';
+                                    tableContent += '<table style="border-collapse: collapse; font-family: Arial, sans-serif; font-size: 12px; margin-bottom: 15px; width: auto;">';
+                                    
+                                    filteredEventRows.forEach((row, rowIndex) => {
+                                        const eventItem = row[1];
+                                        const eventContent = row[2];
+                                        
+                                        if (eventItem && eventItem !== '') {
+                                            tableContent += '<tr>';
+                                            
+                                            const itemCellStyle = `
+                                                style="
+                                                    border: 1px solid #000;
+                                                    padding: 6px 4px;
+                                                    text-align: center;
+                                                    min-width: 120px;
+                                                    white-space: nowrap;
+                                                    vertical-align: middle;
+                                                    font-size: 11px;
+                                                    background-color: #fff3cd;
+                                                    font-weight: bold;
+                                                "
+                                            `;
+                                            tableContent += `<td ${itemCellStyle}>${eventItem}</td>`;
+                                            
+                                            const contentCellStyle = `
+                                                style="
+                                                    border: 1px solid #000;
+                                                    padding: 6px 4px;
+                                                    text-align: center;
+                                                    white-space: nowrap;
+                                                    vertical-align: middle;
+                                                    font-size: 11px;
+                                                    background-color: #ffffff;
+                                                "
+                                            `;
+                                            const contentValue = eventContent === undefined || eventContent === null ? '' : eventContent;
+                                            tableContent += `<td ${contentCellStyle}>${contentValue}</td>`;
+                                            
+                                            tableContent += '</tr>';
+                                        }
+                                    });
+                                    
+                                    tableContent += '</table>';
+                                    tableContent += '</div>';
+                                    tableContent += '</div>';
+                                }
+                            }
+                            
+                            // 3. 타자 기록 테이블
+                            if (battingRows.length > 0) {
+                                const filteredBattingRows = battingRows.filter(row => {
+                                    return row.some(cell => cell !== undefined && cell !== null && cell !== '');
+                                });
+                                
+                                // 타자 기록 메인 제목 추가
+                                tableContent += '<div style="margin-bottom: 20px;">';
+                                tableContent += '<h3 style="margin-bottom: 15px; color: #333; text-align: center; border-bottom: 2px solid #e8f5e8; padding-bottom: 10px;">타자 기록</h3>';
+                                tableContent += '</div>';
+                                
+                                let splitIndex = -1;
+                                for (let i = 0; i < filteredBattingRows.length; i++) {
+                                    const firstCell = String(filteredBattingRows[i][1] || '');
+                                    console.log(`타자 기록 ${i}번째 행 첫 번째 셀:`, firstCell);
+                                    if (firstCell.includes('합계')) {
+                                        splitIndex = i;
+                                        console.log('합계 행 발견! 인덱스:', splitIndex);
+                                        break;
+                                    }
+                                }
+                                
+                                console.log('최종 splitIndex:', splitIndex);
+                                console.log('전체 타자 행 수:', filteredBattingRows.length);
+                                
+                                if (splitIndex >= 0) {
+                                    const firstTeamRows = filteredBattingRows.slice(0, splitIndex + 1);
+                                    // 첫 번째 팀명 찾기 - 첫 번째 행의 인덱스 2에서 팀명 가져오기
+                                    let firstTeamName = '첫 번째 팀';
+                                    if (firstTeamRows.length > 0) {
+                                        const teamName = String(firstTeamRows[0][2] || '');
+                                        if (teamName && teamName !== '' && !teamName.includes('타순') && !teamName.includes('선수명')) {
+                                            firstTeamName = teamName;
+                                        }
+                                    }
+                                    
+                                    tableContent += '<div class="table-container batting-table">';
+                                    tableContent += `<h4 style="margin-bottom: 10px; color: #333; background-color: #e8f5e8; padding: 8px; border-radius: 5px;">${firstTeamName}</h4>`;
+                                    tableContent += '<div class="table-wrapper">';
+                                    tableContent += '<table style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: 12px; margin-bottom: 15px;">';
+                                    
+                                    firstTeamRows.slice(1).forEach((row, rowIndex) => {
+                                        const trimmedRow = row.slice(1, 25); // 첫 번째 열 제거
+                                        if (rowIndex === 0) {
+                                            tableContent += '<thead><tr>';
+                                            trimmedRow.forEach((cell, cellIndex) => {
+                                                const cellStyle = `
+                                                    style="
+                                                        border: 1px solid #000;
+                                                        padding: 8px 6px;
+                                                        text-align: center;
+                                                        font-weight: bold;
+                                                        background-color: #e8f5e8;
+                                                        min-width: 80px;
+                                                        white-space: nowrap;
+                                                        vertical-align: middle;
+                                                        font-size: 11px;
+                                                    "
+                                                `;
+                                                const cellValue = cell === undefined || cell === null ? '' : cell;
+                                                const fixedClass = cellIndex < 3 ? ` class="fixed-column fixed-col-${cellIndex + 1}"` : '';
+                                                tableContent += `<th ${cellStyle}${fixedClass}>${cellValue}</th>`;
+                                            });
+                                            tableContent += '</tr></thead><tbody>';
+                                        } else {
+                                            tableContent += '<tr>';
+                                            trimmedRow.forEach((cell, cellIndex) => {
+                                                const cellStyle = `
+                                                    style="
+                                                        border: 1px solid #000;
+                                                        padding: 6px 4px;
+                                                        text-align: center;
+                                                        min-width: 80px;
+                                                        white-space: nowrap;
+                                                        vertical-align: middle;
+                                                        font-size: 11px;
+                                                    "
+                                                `;
+                                                const cellValue = cell === undefined || cell === null ? '' : formatNumber(cell);
+                                                const fixedClass = cellIndex < 3 ? ` class="fixed-column fixed-col-${cellIndex + 1}"` : '';
+                                                tableContent += `<td ${cellStyle}${fixedClass}>${cellValue}</td>`;
+                                            });
+                                            tableContent += '</tr>';
+                                        }
+                                    });
+                                    
+                                    tableContent += '</tbody></table>';
+                                    tableContent += '</div>';
+                                    tableContent += '</div>';
+                                    
+                                    // 두 번째 팀 타자 기록
+                                    let secondTeamRows = filteredBattingRows.slice(splitIndex + 1);
+                                    if (secondTeamRows.length > 0) {
+                                        secondTeamRows = secondTeamRows.slice(1);
+                                    }
+                                    
+                                    if (secondTeamRows.length > 0) {
+                                        // 두 번째 팀명 찾기 - 첫 번째 행의 인덱스 2에서 팀명 가져오기
+                                        let secondTeamName = '두 번째 팀';
+                                        if (secondTeamRows.length > 0) {
+                                            const teamName = String(secondTeamRows[0][2] || '');
+                                            if (teamName && teamName !== '' && !teamName.includes('타순') && !teamName.includes('선수명')) {
+                                                secondTeamName = teamName;
+                                            }
+                                        }
+                                        
+                                        tableContent += '<div class="table-container batting-table">';
+                                        tableContent += `<h4 style="margin-bottom: 10px; color: #333; background-color: #e8f5e8; padding: 8px; border-radius: 5px;">${secondTeamName}</h4>`;
+                                        tableContent += '<div class="table-wrapper">';
+                                        tableContent += '<table style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: 12px; margin-bottom: 15px;">';
+                                        
+                                        secondTeamRows.slice(1).forEach((row, rowIndex) => {
+                                            const trimmedRow = row.slice(1, 25); // 첫 번째 열 제거
+                                            if (rowIndex === 0) {
+                                                tableContent += '<thead><tr>';
+                                                trimmedRow.forEach((cell, cellIndex) => {
+                                                    const cellStyle = `
+                                                        style="
+                                                            border: 1px solid #000;
+                                                            padding: 8px 6px;
+                                                            text-align: center;
+                                                            font-weight: bold;
+                                                            background-color: #e8f5e8;
+                                                            min-width: 80px;
+                                                            white-space: nowrap;
+                                                            vertical-align: middle;
+                                                            font-size: 11px;
+                                                        "
+                                                    `;
+                                                    const cellValue = cell === undefined || cell === null ? '' : cell;
+                                                    const fixedClass = cellIndex < 3 ? ` class="fixed-column fixed-col-${cellIndex + 1}"` : '';
+                                                    tableContent += `<th ${cellStyle}${fixedClass}>${cellValue}</th>`;
+                                                });
+                                                tableContent += '</tr></thead><tbody>';
+                                            } else {
+                                                tableContent += '<tr>';
+                                                trimmedRow.forEach((cell, cellIndex) => {
+                                                    const cellStyle = `
+                                                        style="
+                                                            border: 1px solid #000;
+                                                            padding: 6px 4px;
+                                                            text-align: center;
+                                                            min-width: 80px;
+                                                            white-space: nowrap;
+                                                            vertical-align: middle;
+                                                            font-size: 11px;
+                                                        "
+                                                    `;
+                                                    const cellValue = cell === undefined || cell === null ? '' : formatNumber(cell);
+                                                    const fixedClass = cellIndex < 3 ? ` class="fixed-column fixed-col-${cellIndex + 1}"` : '';
+                                                    tableContent += `<td ${cellStyle}${fixedClass}>${cellValue}</td>`;
+                                                });
+                                                tableContent += '</tr>';
+                                            }
+                                        });
+                                        
+                                        tableContent += '</tbody></table>';
+                                        tableContent += '</div>';
+                                        tableContent += '</div>';
+                                    }
+                                } else {
+                                    // 합계를 찾지 못한 경우
+                                    tableContent += '<div style="margin-bottom: 20px;">';
+                                    tableContent += '<h4 style="margin-bottom: 10px; color: #333;">타자 기록</h4>';
+                                    tableContent += '<table style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: 12px; margin-bottom: 15px; min-width: 800px;">';
+                                    
+                                    filteredBattingRows.forEach((row, rowIndex) => {
+                                        const trimmedRow = row.slice(1, 25); // 첫 번째 열 제거
+                                        if (rowIndex === 0) {
+                                            tableContent += '<thead><tr>';
+                                            trimmedRow.forEach((cell, cellIndex) => {
+                                                const cellStyle = `
+                                                    style="
+                                                        border: 1px solid #000;
+                                                        padding: 8px 6px;
+                                                        text-align: center;
+                                                        font-weight: bold;
+                                                        background-color: #e8f5e8;
+                                                        min-width: 80px;
+                                                        white-space: nowrap;
+                                                        vertical-align: middle;
+                                                        font-size: 11px;
+                                                    "
+                                                `;
+                                                const cellValue = cell === undefined || cell === null ? '' : cell;
+                                                const fixedClass = cellIndex < 3 ? ` class="fixed-column fixed-col-${cellIndex + 1}"` : '';
+                                                tableContent += `<th ${cellStyle}${fixedClass}>${cellValue}</th>`;
+                                            });
+                                            tableContent += '</tr></thead><tbody>';
+                                        } else {
+                                            tableContent += '<tr>';
+                                            trimmedRow.forEach((cell, cellIndex) => {
+                                                const cellStyle = `
+                                                    style="
+                                                        border: 1px solid #000;
+                                                        padding: 6px 4px;
+                                                        text-align: center;
+                                                        min-width: 80px;
+                                                        white-space: nowrap;
+                                                        vertical-align: middle;
+                                                        font-size: 11px;
+                                                    "
+                                                `;
+                                                const cellValue = cell === undefined || cell === null ? '' : formatNumber(cell);
+                                                const fixedClass = cellIndex < 3 ? ` class="fixed-column fixed-col-${cellIndex + 1}"` : '';
+                                                tableContent += `<td ${cellStyle}${fixedClass}>${cellValue}</td>`;
+                                            });
+                                            tableContent += '</tr>';
+                                        }
+                                    });
+                                    
+                                    tableContent += '</tbody></table>';
+                                    tableContent += '</div>';
+                                }
+                            }
+                            
+                            // 4. 투수 기록 테이블
+                            if (pitchingRows.length > 0) {
+                                console.log('전체 투수 행:', pitchingRows);
+                                
+                                const filteredPitchingRows = pitchingRows.filter(row => {
+                                    return row.some(cell => cell !== undefined && cell !== null && cell !== '');
+                                });
+                                
+                                console.log('필터링된 투수 행:', filteredPitchingRows);
+                                
+                                // 투수 기록 메인 제목 추가
+                                tableContent += '<div style="margin-bottom: 20px;">';
+                                tableContent += '<h3 style="margin-bottom: 20px; color: #333; text-align: center; border-bottom: 2px solid #ddd; padding-bottom: 10px;">투수 기록</h3>';
+                                tableContent += '</div>';
+                                
+                                // 합계 행을 기준으로 두 팀으로 분리
+                                let splitIndex = -1;
+                                for (let i = 0; i < filteredPitchingRows.length; i++) {
+                                    const firstCell = String(filteredPitchingRows[i][1] || '');
+                                    if (firstCell.includes('합계')) {
+                                        splitIndex = i;
+                                        break;
+                                    }
+                                }
+                                
+                                if (splitIndex >= 0) {
+                                    // 첫 번째 팀 투수 기록
+                                    const firstTeamRows = filteredPitchingRows.slice(0, splitIndex + 1);
+                                    // 첫 번째 팀명 찾기 - 첫 번째 행의 인덱스 2에서 팀명 가져오기
+                                    let firstTeamName = '첫 번째 팀';
+                                    if (firstTeamRows.length > 0) {
+                                        const teamName = String(firstTeamRows[0][2] || '');
+                                        if (teamName && teamName !== '' && !teamName.includes('선수명') && !teamName.includes('Player')) {
+                                            firstTeamName = teamName;
+                                        }
+                                    }
+                                    
+                                    tableContent += '<div class="table-container pitching-table">';
+                                    tableContent += `<h4 class="pitching-team" style="margin-bottom: 10px; color: #333; background-color: #ffe8e8; padding: 8px; border-radius: 5px;">${firstTeamName}</h4>`;
+                                    tableContent += '<div class="table-wrapper">';
+                                    tableContent += '<table style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: 12px; margin-bottom: 15px;">';
+                                    
+                                    let isHeaderAdded = false;
+                                    
+                                    firstTeamRows.forEach((row, rowIndex) => {
+                                        console.log(`첫 번째 팀 투수 ${rowIndex}번째 행:`, row);
+                                        
+                                        // 헤더 행인지 확인 (선수명이 포함된 행)
+                                        const isHeaderRow = row[1] === '선수명' || row[1] === 'Player Name';
+                                        
+                                        if (isHeaderRow && !isHeaderAdded) {
+                                            // 헤더 행 추가
+                                            const headerRow = row.slice(1, 25);
+                                            tableContent += '<thead><tr>';
+                                            headerRow.forEach((cell, cellIndex) => {
+                                                const cellStyle = `
+                                                    style="
+                                                        border: 1px solid #000;
+                                                        padding: 8px 6px;
+                                                        text-align: center;
+                                                        font-weight: bold;
+                                                        background-color: #ffe8e8;
+                                                        min-width: 80px;
+                                                        white-space: nowrap;
+                                                        vertical-align: middle;
+                                                        font-size: 11px;
+                                                    "
+                                                `;
+                                                const cellValue = cell === undefined || cell === null ? '' : cell;
+                                                const fixedClass = cellIndex === 0 ? ' class="fixed-column fixed-col-1"' : '';
+                                                tableContent += `<th ${cellStyle}${fixedClass}>${cellValue}</th>`;
+                                            });
+                                            tableContent += '</tr></thead><tbody>';
+                                            isHeaderAdded = true;
+                                        } else if (isHeaderAdded && row.some(cell => cell !== undefined && cell !== null && cell !== '')) {
+                                            // 데이터 행 추가
+                                            const playerName = row[1]; // 선수명은 인덱스 1에 있음
+                                            const remainingCols = row.slice(2, 25);
+                                            const trimmedRow = [playerName, ...remainingCols];
+                                            
+                                            tableContent += '<tr>';
+                                            trimmedRow.forEach((cell, cellIndex) => {
+                                                const cellStyle = `
+                                                    style="
+                                                        border: 1px solid #000;
+                                                        padding: 6px 4px;
+                                                        text-align: center;
+                                                        min-width: 80px;
+                                                        white-space: nowrap;
+                                                        vertical-align: middle;
+                                                        font-size: 11px;
+                                                    "
+                                                `;
+                                                // 첫 번째 열(선수명)은 formatNumber 적용하지 않음
+                                                const cellValue = cellIndex === 0 ? (cell === undefined || cell === null ? '' : cell) : (cell === undefined || cell === null ? '' : formatNumber(cell));
+                                                const fixedClass = cellIndex === 0 ? ' class="fixed-column fixed-col-1"' : '';
+                                                tableContent += `<td ${cellStyle}${fixedClass}>${cellValue}</td>`;
+                                            });
+                                            tableContent += '</tr>';
+                                        }
+                                    });
+                                    
+                                    tableContent += '</tbody></table>';
+                                    tableContent += '</div>';
+                                    tableContent += '</div>';
+                                    
+                                    // 두 번째 팀 투수 기록
+                                    let secondTeamRows = filteredPitchingRows.slice(splitIndex + 1);
+                                    
+                                    if (secondTeamRows.length > 0) {
+                                        // 두 번째 팀명 찾기 - 첫 번째 행의 인덱스 2에서 팀명 가져오기
+                                        let secondTeamName = '두 번째 팀';
+                                        console.log('두 번째 팀 첫 번째 행:', secondTeamRows[0]);
+                                        const teamName = String(secondTeamRows[0][2] || '');
+                                        console.log('두 번째 팀명 후보:', teamName);
+                                        if (teamName && teamName !== '' && !teamName.includes('선수명') && !teamName.includes('Player')) {
+                                            secondTeamName = teamName;
+                                            console.log('두 번째 팀명 설정됨:', secondTeamName);
+                                        }
+                                        
+                                        // 두 번째 팀 투수 기록에서 합계 행 찾기
+                                        let secondTeamSplitIndex = -1;
+                                        for (let i = 0; i < secondTeamRows.length; i++) {
+                                            const firstCell = String(secondTeamRows[i][1] || '');
+                                            if (firstCell.includes('합계')) {
+                                                secondTeamSplitIndex = i;
+                                                break;
+                                            }
+                                        }
+                                        
+                                        // 투수 기록 테이블 생성
+                                        const pitchingTableRows = secondTeamSplitIndex >= 0 ? 
+                                            secondTeamRows.slice(0, secondTeamSplitIndex + 1) : 
+                                            secondTeamRows;
+                                        
+                                        tableContent += '<div class="table-container pitching-table">';
+                                        tableContent += `<h4 class="pitching-team" style="margin-bottom: 10px; color: #333; background-color: #ffe8e8; padding: 8px; border-radius: 5px;">${secondTeamName}</h4>`;
+                                        tableContent += '<div class="table-wrapper">';
+                                        tableContent += '<table style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: 12px; margin-bottom: 15px;">';
+                                        
+                                        let isSecondHeaderAdded = false;
+                                        
+                                        pitchingTableRows.forEach((row, rowIndex) => {
+                                            console.log(`두 번째 팀 투수 ${rowIndex}번째 행:`, row);
+                                            
+                                            // 헤더 행인지 확인 (선수명이 포함된 행)
+                                            const isHeaderRow = row[1] === '선수명' || row[1] === 'Player Name';
+                                            
+                                            if (isHeaderRow && !isSecondHeaderAdded) {
+                                                // 헤더 행 추가
+                                                const headerRow = row.slice(1, 25);
+                                                tableContent += '<thead><tr>';
+                                                headerRow.forEach((cell, cellIndex) => {
+                                                    const cellStyle = `
+                                                        style="
+                                                            border: 1px solid #000;
+                                                            padding: 8px 6px;
+                                                            text-align: center;
+                                                            font-weight: bold;
+                                                            background-color: #ffe8e8;
+                                                            min-width: 80px;
+                                                            white-space: nowrap;
+                                                            vertical-align: middle;
+                                                            font-size: 11px;
+                                                        "
+                                                    `;
+                                                    const cellValue = cell === undefined || cell === null ? '' : cell;
+                                                    const fixedClass = cellIndex === 0 ? ' class="fixed-column fixed-col-1"' : '';
+                                                    tableContent += `<th ${cellStyle}${fixedClass}>${cellValue}</th>`;
+                                                });
+                                                tableContent += '</tr></thead><tbody>';
+                                                isSecondHeaderAdded = true;
+                                            } else if (isSecondHeaderAdded && row.some(cell => cell !== undefined && cell !== null && cell !== '')) {
+                                                // 데이터 행 추가
+                                                const playerName = row[1]; // 선수명은 인덱스 1에 있음
+                                                const remainingCols = row.slice(2, 25);
+                                                const trimmedRow = [playerName, ...remainingCols];
+                                                
+                                                tableContent += '<tr>';
+                                                trimmedRow.forEach((cell, cellIndex) => {
+                                                    const cellStyle = `
+                                                        style="
+                                                            border: 1px solid #000;
+                                                            padding: 6px 4px;
+                                                            text-align: center;
+                                                            min-width: 80px;
+                                                            white-space: nowrap;
+                                                            vertical-align: middle;
+                                                            font-size: 11px;
+                                                        "
+                                                    `;
+                                                    // 첫 번째 열(선수명)은 formatNumber 적용하지 않음
+                                                    const cellValue = cellIndex === 0 ? (cell === undefined || cell === null ? '' : cell) : (cell === undefined || cell === null ? '' : formatNumber(cell));
+                                                    const fixedClass = cellIndex === 0 ? ' class="fixed-column fixed-col-1"' : '';
+                                                    tableContent += `<td ${cellStyle}${fixedClass}>${cellValue}</td>`;
+                                                });
+                                                tableContent += '</tr>';
+                                            }
+                                        });
+                                        
+                                        tableContent += '</tbody></table>';
+                                        tableContent += '</div>';
+                                        tableContent += '</div>';
+                                        
+                                        // 두 번째 팀 투수 기록의 합계 아래 추가 정보가 있는지 확인
+                                        if (secondTeamSplitIndex >= 0 && secondTeamSplitIndex < secondTeamRows.length - 1) {
+                                            const additionalInfoRows = secondTeamRows.slice(secondTeamSplitIndex + 1);
+                                            const filteredAdditionalInfo = additionalInfoRows.filter(row => {
+                                                return row.some(cell => cell !== undefined && cell !== null && cell !== '');
+                                            });
+                                            
+                                            if (filteredAdditionalInfo.length > 0) {
+                                                tableContent += '<div class="table-container" style="margin-bottom: 20px;">';
+                                                tableContent += '<h4 style="margin-bottom: 15px; color: #333; background-color: #fff3cd; padding: 8px; border-radius: 5px; text-align: center;">추가 정보</h4>';
+                                                tableContent += '<div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; border: 1px solid #ffeaa7;">';
+                                                
+                                                filteredAdditionalInfo.forEach((row, rowIndex) => {
+                                                    const rowText = row.filter(cell => 
+                                                        cell !== undefined && cell !== null && cell !== ''
+                                                    ).join(' | ');
+                                                    
+                                                    if (rowText.trim()) {
+                                                        tableContent += `<div style="margin-bottom: 8px; font-size: 12px; color: #333; line-height: 1.4;">`;
+                                                        tableContent += `<strong>${rowIndex + 1}.</strong> ${rowText}`;
+                                                        tableContent += '</div>';
+                                                    }
+                                                });
+                                                
+                                                tableContent += '</div>';
+                                                tableContent += '</div>';
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    // 합계를 찾지 못한 경우 기존 방식으로 표시
+                                    tableContent += '<div class="table-container pitching-table">';
+                                    tableContent += '<h4 class="pitching-team" style="margin-bottom: 10px; color: #333; background-color: #ffe8e8; padding: 8px; border-radius: 5px;">투수 기록</h4>';
+                                    tableContent += '<table style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: 12px; margin-bottom: 15px; min-width: 800px;">';
+                                    
+                                    let isHeaderAdded = false;
+                                    
+                                    filteredPitchingRows.forEach((row, rowIndex) => {
+                                        console.log(`투수 ${rowIndex}번째 행:`, row);
+                                        
+                                        // 헤더 행인지 확인 (선수명이 포함된 행)
+                                        const isHeaderRow = row[1] === '선수명' || row[1] === 'Player Name';
+                                        
+                                        if (isHeaderRow && !isHeaderAdded) {
+                                            // 헤더 행 추가
+                                            const headerRow = row.slice(1, 25);
+                                            tableContent += '<thead><tr>';
+                                            headerRow.forEach((cell, cellIndex) => {
+                                                const cellStyle = `
+                                                    style="
+                                                        border: 1px solid #000;
+                                                        padding: 8px 6px;
+                                                        text-align: center;
+                                                        font-weight: bold;
+                                                        background-color: #ffe8e8;
+                                                        min-width: 80px;
+                                                        white-space: nowrap;
+                                                        vertical-align: middle;
+                                                        font-size: 11px;
+                                                    "
+                                                `;
+                                                const cellValue = cell === undefined || cell === null ? '' : cell;
+                                                const fixedClass = cellIndex === 0 ? ' class="fixed-column fixed-col-1"' : '';
+                                                tableContent += `<th ${cellStyle}${fixedClass}>${cellValue}</th>`;
+                                            });
+                                            tableContent += '</tr></thead><tbody>';
+                                            isHeaderAdded = true;
+                                        } else if (isHeaderAdded && row.some(cell => cell !== undefined && cell !== null && cell !== '')) {
+                                            // 데이터 행 추가
+                                            const playerName = row[1]; // 선수명은 인덱스 1에 있음
+                                            const remainingCols = row.slice(2, 25);
+                                            const trimmedRow = [playerName, ...remainingCols];
+                                            
+                                            tableContent += '<tr>';
+                                            trimmedRow.forEach((cell, cellIndex) => {
+                                                const cellStyle = `
+                                                    style="
+                                                        border: 1px solid #000;
+                                                        padding: 6px 4px;
+                                                        text-align: center;
+                                                        min-width: 80px;
+                                                        white-space: nowrap;
+                                                        vertical-align: middle;
+                                                        font-size: 11px;
+                                                    "
+                                                `;
+                                                // 첫 번째 열(선수명)은 formatNumber 적용하지 않음
+                                                const cellValue = cellIndex === 0 ? (cell === undefined || cell === null ? '' : cell) : (cell === undefined || cell === null ? '' : formatNumber(cell));
+                                                const fixedClass = cellIndex === 0 ? ' class="fixed-column fixed-col-1"' : '';
+                                                tableContent += `<td ${cellStyle}${fixedClass}>${cellValue}</td>`;
+                                            });
+                                            tableContent += '</tr>';
+                                        }
+                                    });
+                                    
+                                    tableContent += '</tbody></table>';
+                                    tableContent += '</div>';
+                                }
+                            }
+                            
+                            content += tableContent;
+                            console.log('박스스코어 정확한 구조로 분리 완료');
+                        } else {
+                            console.log('박스스코어 데이터가 없습니다');
+                            content += '<div style="text-align: center; color: #666; padding: 20px;">박스스코어 데이터를 찾을 수 없습니다.</div>';
+                        }
+                    } else {
+                        console.log('시트를 찾을 수 없습니다:', leagueCode);
+                        content += '<div style="text-align: center; color: #666; padding: 20px;">해당 경기의 박스스코어를 찾을 수 없습니다.</div>';
+                    }
+                } catch (error) {
+                    console.error('박스스코어 로드 오류:', error);
+                    content += '<div style="text-align: center; color: #666; padding: 20px;">박스스코어를 불러오는 중 오류가 발생했습니다.</div>';
+                }
+            } else {
+                console.log('league 또는 code가 없음:', game.league, game.code);
+                content += '<div style="text-align: center; color: #666; padding: 20px;">박스스코어 정보가 없습니다.</div>';
+            }
+            
+            boxscoreContent.innerHTML = content;
+            boxscoreContainer.style.display = 'block';
+            console.log('박스스코어 표시 완료');
+            
+            // 박스스코어 표시 후 스크롤 이벤트 처리
+            setupBoxscoreScrollHandling();
+        }
+
+        // 박스스코어 닫기 함수
+        function closeBoxscore() {
+            const boxscoreContainer = document.getElementById('boxscore-container');
+            boxscoreContainer.style.display = 'none';
+        }
+        
+        // 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            loadScheduleFromCSV();
+        });
+    </script>
+</body>
+</html> 

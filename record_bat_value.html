@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시즌기록실 - 스탯티즈</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .header {
+            background-color: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 0;
+        }
+        
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #ff4757, #ff3742);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .search-icon, .user-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .search-icon svg, .user-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: #666;
+        }
+        
+        .user-icon {
+            background-color: #ff4757;
+            border-radius: 50%;
+        }
+        
+        .user-icon svg {
+            fill: white;
+        }
+        
+        .nav-container {
+            background-color: white;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 20px;
+        }
+        
+        .nav-item {
+            padding: 16px 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-item:hover {
+            color: #333;
+            border-bottom-color: #ff4757;
+        }
+        
+        .nav-item.active {
+            color: #333;
+            border-bottom-color: #ff4757;
+        }
+
+        /* 서브메뉴 스타일 */
+        .sub-nav-container {
+            background-color: white;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .sub-nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 20px;
+        }
+
+        .sub-nav-item {
+            padding: 12px 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .sub-nav-item:hover {
+            color: #333;
+            border-bottom-color: #ff4757;
+        }
+
+        .sub-nav-item.active {
+            color: #333;
+            border-bottom-color: #ff4757;
+        }
+
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .content-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 페이지 헤더 스타일 */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .page-title-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+            line-height: 1;
+        }
+
+        /* 카테고리 버튼 스타일 */
+        .category-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #e9ecef;
+            color: #666;
+            line-height: 1;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            pointer-events: auto;
+        }
+
+        .category-button.active {
+            background-color: #333;
+            color: white;
+        }
+
+        .category-button:hover:not(.active) {
+            background-color: #dee2e6;
+            color: #333;
+        }
+
+        /* 통계 탭 네비게이션 */
+        .stats-nav {
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        .stats-nav-container {
+            display: flex;
+            min-width: max-content;
+        }
+
+        .stats-nav-item {
+            padding: 12px 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .stats-nav-item:hover {
+            color: #333;
+            border-bottom-color: #ff4757;
+        }
+
+        .stats-nav-item.active {
+            color: #333;
+            border-bottom-color: #ff4757;
+        }
+
+        /* 통계 테이블 */
+        .stats-table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            min-width: 1200px;
+        }
+
+        .stats-table th {
+            background-color: #f8f9fa;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 1px solid #e9ecef;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            min-width: 70px;
+        }
+
+        .stats-table th:hover {
+            background-color: #e9ecef;
+        }
+
+        .stats-table th.sortable {
+            position: relative;
+        }
+
+        .stats-table th.sortable::after {
+            content: '↕';
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 8px;
+            color: #999;
+        }
+
+        .stats-table th.sort-asc::after {
+            content: '↑';
+            color: #ff4757;
+        }
+
+        .stats-table th.sort-desc::after {
+            content: '↓';
+            color: #ff4757;
+        }
+
+        .stats-table td {
+            padding: 14px 12px;
+            text-align: center;
+            border-bottom: 1px solid #f1f3f4;
+            color: #333;
+            white-space: nowrap;
+            min-width: 70px;
+        }
+
+        .stats-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* 랭크, 이름, 팀 컬럼 고정 */
+        .stats-table th:nth-child(1),
+        .stats-table th:nth-child(2),
+        .stats-table th:nth-child(3),
+        .stats-table td:nth-child(1),
+        .stats-table td:nth-child(2),
+        .stats-table td:nth-child(3) {
+            position: sticky;
+            background-color: inherit;
+            z-index: 1;
+        }
+
+        .stats-table th:nth-child(1) {
+            left: 0;
+            z-index: 3;
+            background-color: #f8f9fa;
+            min-width: 60px;
+            cursor: default;
+        }
+
+        .stats-table th:nth-child(2) {
+            left: 60px;
+            z-index: 3;
+            background-color: #f8f9fa;
+            min-width: 100px;
+            cursor: default;
+        }
+
+        .stats-table th:nth-child(3) {
+            left: 160px;
+            z-index: 3;
+            background-color: #f8f9fa;
+            min-width: 80px;
+            cursor: default;
+        }
+
+        .stats-table td:nth-child(1) {
+            left: 0;
+            background-color: white;
+            min-width: 60px;
+        }
+
+        .stats-table td:nth-child(2) {
+            left: 60px;
+            background-color: white;
+            min-width: 100px;
+        }
+
+        .stats-table td:nth-child(3) {
+            left: 160px;
+            background-color: white;
+            min-width: 80px;
+        }
+
+        .stats-table tbody tr:nth-child(odd) td:nth-child(1),
+        .stats-table tbody tr:nth-child(odd) td:nth-child(2),
+        .stats-table tbody tr:nth-child(odd) td:nth-child(3) {
+            background-color: #fafbfc;
+        }
+
+        .stats-table tbody tr:nth-child(even) td:nth-child(1),
+        .stats-table tbody tr:nth-child(even) td:nth-child(2),
+        .stats-table tbody tr:nth-child(even) td:nth-child(3) {
+            background-color: white;
+        }
+
+        .stats-table tbody tr:hover td:nth-child(1),
+        .stats-table tbody tr:hover td:nth-child(2),
+        .stats-table tbody tr:hover td:nth-child(3) {
+            background-color: #f8f9fa;
+        }
+
+        /* 정렬 비활성화된 헤더에서 화살표 제거 */
+        .stats-table th:nth-child(1)::after,
+        .stats-table th:nth-child(2)::after,
+        .stats-table th:nth-child(3)::after {
+            display: none;
+        }
+
+        /* 반복되는 헤더 스타일 */
+        .stats-table tbody th {
+            background-color: #f8f9fa;
+            padding: 16px 12px;
+            text-align: center;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 1px solid #e9ecef;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            min-width: 70px;
+        }
+
+        /* 반복 헤더의 고정 컬럼 스타일 */
+        .stats-table tbody th:nth-child(1) {
+            left: 0;
+            z-index: 3;
+            background-color: #f8f9fa;
+            min-width: 60px;
+            cursor: default;
+        }
+
+        .stats-table tbody th:nth-child(2) {
+            left: 60px;
+            z-index: 3;
+            background-color: #f8f9fa;
+            min-width: 100px;
+            cursor: default;
+        }
+
+        .stats-table tbody th:nth-child(3) {
+            left: 160px;
+            z-index: 3;
+            background-color: #f8f9fa;
+            min-width: 80px;
+            cursor: default;
+        }
+
+        .stats-table tbody th:nth-child(1)::after,
+        .stats-table tbody th:nth-child(2)::after,
+        .stats-table tbody th:nth-child(3)::after {
+            display: none;
+        }
+
+        .team-name-cell {
+            text-align: center;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .war-value {
+            font-weight: 600;
+            color: #ff4757;
+        }
+
+        .player-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .raa-positive {
+            color: #28a745;
+        }
+
+        .raa-negative {
+            color: #dc3545;
+        }
+
+        /* 팀 로고 스타일 */
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .team-logo {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: contain;
+        }
+
+        .team-logo.KIA { background-color: #ff4757; }
+        .team-logo.LG { background-color: #007bff; }
+        .team-logo.NC { background-color: #28a745; }
+        .team-logo.SK { background-color: #6c757d; }
+        .team-logo.KT { background-color: #17a2b8; }
+        .team-logo.SS { background-color: #ffc107; }
+        .team-logo.HW { background-color: #6f42c1; }
+        .team-logo.LT { background-color: #dc3545; }
+        .team-logo.SSG { background-color: #6c757d; }
+        .team-logo.두산 { background-color: #dc3545; }
+        .team-logo.롯데 { background-color: #dc3545; }
+        .team-logo.키움 { background-color: #6f42c1; }
+        .team-logo.한화 { background-color: #6f42c1; }
+        .team-logo.삼성 { background-color: #ffc107; }
+
+
+
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .team-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: #333;
+        }
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .content-container {
+                padding: 0 10px;
+            }
+            
+            .page-title {
+                font-size: 20px;
+            }
+            
+            .category-buttons {
+                gap: 4px;
+            }
+            
+            .category-button {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="header">
+        <div class="header-container">
+            <a href="#" class="logo">
+                <div class="logo-icon">W</div>
+                <div class="logo-text">WBD 기록실</div>
+            </a>
+            <div class="header-actions">
+                <div class="search-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5s2.91 6.5 6.5 6.5c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                </div>
+                <div class="user-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 네비게이션 -->
+    <nav class="nav-container">
+        <div class="nav">
+            <a href="record_bat_basic.html" class="nav-item active">기록실</a>
+            <a href="season.html" class="nav-item">시즌정보</a>
+            <a href="team.html" class="nav-item">팀정보</a>
+            <a href="player.html" class="nav-item">선수정보</a>
+            <a href="schedule.html" class="nav-item">경기일정</a>
+
+
+        </div>
+    </nav>
+
+    <!-- 서브 네비게이션 -->
+    <nav class="sub-nav-container">
+        <div class="sub-nav">
+            <a href="record_bat_basic.html" class="sub-nav-item active">시즌기록실</a>
+            <a href="career-record.html" class="sub-nav-item">통산기록실</a>
+            <a href="team-record_bat_value.html" class="sub-nav-item">팀기록실</a>
+        </div>
+    </nav>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+        <div class="content-container">
+            <!-- 페이지 헤더 -->
+            <div class="page-header">
+                <div class="page-title-section">
+                    <h1 class="page-title">시즌기록실</h1>
+                    <div class="category-buttons">
+                        <button class="category-button active" data-tab="batting">타격</button>
+                        <button class="category-button" data-tab="pitching">투구</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 통계 탭 네비게이션 -->
+            <div class="stats-nav">
+                <div class="stats-nav-container">
+                    <a href="record_bat_basic.html" class="stats-nav-item" data-tab="basic">기본</a>
+                    <a href="record_bat_advanced.html" class="stats-nav-item" data-tab="advanced">심화</a>
+                    <a href="record_bat_value.html" class="stats-nav-item active" data-tab="value">가치</a>
+                </div>
+            </div>
+
+            <!-- 통계 테이블 -->
+            <div class="stats-table-container">
+                <table class="stats-table" id="statsTable">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-sort="Rank">Rank</th>
+                            <th class="sortable" data-sort="이름">Name</th>
+                            <th class="sortable" data-sort="팀">Team</th>
+                            <th class="sortable sort-desc" data-sort="WAR">WAR</th>
+                            <th class="sortable" data-sort="PA">PA</th>
+                            <th class="sortable" data-sort="타격RAA">타격 RAA</th>
+                            <th class="sortable" data-sort="도루RAA">도루 RAA</th>
+                            <th class="sortable" data-sort="주루RAA">주루 RAA</th>
+                            <th class="sortable" data-sort="공격RAA">공격 RAA</th>
+                            <th class="sortable" data-sort="필딩RAA">필딩 RAA</th>
+                            <th class="sortable" data-sort="수비RAA">수비 RAA</th>
+                            <th class="sortable" data-sort="종합RAA">종합 RAA</th>
+                            <th class="sortable" data-sort="RAR">RAR</th>
+                            <th class="sortable" data-sort="WAAOff">WAA Off</th>
+                            <th class="sortable" data-sort="WAA">WAA</th>
+                        </tr>
+                    </thead>
+                    <tbody id="statsTableBody">
+                        <!-- 데이터가 JavaScript로 동적 생성됨 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        let playerData = [];
+        let leagueTeamData = {}; // 리그별 팀 정보를 저장할 객체
+        let currentSortColumn = 'WAR';
+        let currentSortDirection = 'desc';
+
+        // League_Team 파일에서 리그별 팀 정보를 로드하는 함수
+        async function loadLeagueTeamData() {
+            try {
+                const response = await fetch('./Data/League_Team.xlsx');
+                if (!response.ok) {
+                    throw new Error('League_Team 파일을 불러올 수 없습니다');
+                }
+                
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                
+                console.log('League_Team 파일의 모든 시트:', workbook.SheetNames);
+                
+                // 각 시트(리그)의 팀 정보를 파싱
+                workbook.SheetNames.forEach(sheetName => {
+                    if (sheetName !== '~$League_Team') { // 임시 파일 제외
+                        const worksheet = workbook.Sheets[sheetName];
+                        const sheetData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                        
+                        console.log(`시트 "${sheetName}"의 데이터 구조:`, sheetData.slice(0, 5));
+                        
+                        if (sheetData.length > 0) {
+                            const teams = [];
+                            
+                            // 이 구조는 헤더가 왼쪽(A열)에 있고, 팀명이 위쪽(1행)에 있음
+                            // A1: "팀명", A2: "줄임말", A3: "팀원(주장)", A4-A14: "팀원"
+                            // B1, C1, D1... 에 팀명이 있음
+                            
+                            // 1행에서 팀명들을 찾기 (B1부터)
+                            const teamRow = sheetData[0]; // 1행 (인덱스 0)
+                            const abbreviationRow = sheetData[1]; // 2행 (인덱스 1)
+                            
+                            if (teamRow && abbreviationRow) {
+                                console.log(`시트 "${sheetName}"의 팀명 행:`, teamRow);
+                                console.log(`시트 "${sheetName}"의 줄임말 행:`, abbreviationRow);
+                                
+                                // B열부터 팀명과 줄임말을 찾기
+                                for (let colIndex = 1; colIndex < teamRow.length; colIndex++) {
+                                    const teamName = teamRow[colIndex];
+                                    const abbreviation = abbreviationRow[colIndex];
+                                    
+                                    if (teamName && typeof teamName === 'string' && teamName.trim()) {
+                                        console.log(`팀 발견: "${teamName}" (줄임말: "${abbreviation}")`);
+                                        
+                                        // 3행부터 선수명들을 찾기 (팀원(주장)과 팀원들)
+                                        for (let rowIndex = 2; rowIndex < sheetData.length; rowIndex++) {
+                                            const playerName = sheetData[rowIndex][colIndex];
+                                            
+                                            if (playerName && typeof playerName === 'string' && playerName.trim()) {
+                                                // 팀원(주장)인지 확인
+                                                const isCaptain = sheetData[rowIndex][0] && 
+                                                                sheetData[rowIndex][0].toString().includes('주장');
+                                                
+                                                let teamType = '팀원';
+                                                if (isCaptain) {
+                                                    teamType = '팀원(주장)';
+                                                }
+                                                
+                                                teams.push({
+                                                    name: playerName.trim(),
+                                                    team: teamType,
+                                                    teamName: teamName.trim(),
+                                                    abbreviation: abbreviation ? abbreviation.toString().trim() : ''
+                                                });
+                                                
+                                                console.log(`  선수: "${playerName}" (${teamType})`);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            leagueTeamData[sheetName] = teams;
+                            console.log(`리그 "${sheetName}"의 팀 정보:`, teams);
+                        }
+                    }
+                });
+                
+                console.log('전체 리그 팀 데이터:', leagueTeamData);
+                
+                // PlayerStatsLeague의 리그 컬럼과 매칭되는 시트가 있는지 확인
+                if (playerData && playerData.length > 0) {
+                    const uniqueLeagues = [...new Set(playerData.map(p => p.리그).filter(Boolean))];
+                    console.log('PlayerStatsLeague에서 찾은 리그들:', uniqueLeagues);
+                    
+                    uniqueLeagues.forEach(league => {
+                        if (!leagueTeamData[league]) {
+                            console.log(`경고: 리그 "${league}"에 대한 팀 정보가 League_Team에서 찾을 수 없습니다.`);
+                            // 유사한 시트명 찾기
+                            const similarSheets = Object.keys(leagueTeamData).filter(sheet => 
+                                sheet.includes(league) || league.includes(sheet) ||
+                                sheet.replace(/\s+/g, '').includes(league.replace(/\s+/g, '')) ||
+                                league.replace(/\s+/g, '').includes(sheet.replace(/\s+/g, ''))
+                            );
+                            if (similarSheets.length > 0) {
+                                console.log(`유사한 시트명들:`, similarSheets);
+                            }
+                        }
+                    });
+                }
+                
+            } catch (error) {
+                console.error('League_Team 데이터 로딩 실패:', error);
+            }
+        }
+
+        // Excel 파일에서 선수 데이터를 로드하는 함수
+        async function loadPlayerStats() {
+            try {
+                // 먼저 League_Team 데이터 로드
+                await loadLeagueTeamData();
+                
+                const response = await fetch('./Data/PlayerStatsLeague.xlsx');
+                if (!response.ok) {
+                    throw new Error('Excel 파일을 불러올 수 없습니다');
+                }
+                
+                const arrayBuffer = await response.arrayBuffer();
+                
+                // Excel 파일의 구조 확인
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                console.log('Excel 파일의 모든 시트:', workbook.SheetNames);
+                
+                // RAA 데이터가 포함된 시트 찾기
+                let targetSheet = '2025 썸머시즌 타자';
+                
+                // 기본 시트가 없으면 첫 번째 시트 사용
+                if (!workbook.SheetNames.includes(targetSheet)) {
+                    targetSheet = workbook.SheetNames[0];
+                    console.log(`기본 시트를 찾을 수 없어 첫 번째 시트 사용: "${targetSheet}"`);
+                }
+                
+                // 선택된 시트의 헤더 정보 출력
+                const selectedWorksheet = workbook.Sheets[targetSheet];
+                const selectedSheetData = XLSX.utils.sheet_to_json(selectedWorksheet, { header: 1 });
+                if (selectedSheetData.length > 0) {
+                    console.log(`선택된 시트 "${targetSheet}"의 헤더:`, selectedSheetData[0]);
+                }
+                
+                playerData = parseExcelFileBySheet(arrayBuffer, targetSheet);
+                
+                // 초기 정렬 및 표시
+                sortAndDisplayData();
+                
+                // 반복 헤더에 클릭 이벤트 추가
+                addHeaderClickEvents();
+                
+            } catch (error) {
+                console.error('선수 데이터 로딩 실패:', error);
+                document.getElementById('statsTableBody').innerHTML = `
+                    <tr><td colspan="15" style="text-align: center; color: #666;">데이터를 불러올 수 없습니다</td></tr>
+                `;
+            }
+        }
+
+        // 특정 시트의 데이터를 파싱하는 함수
+        function parseExcelFileBySheet(arrayBuffer, sheetName) {
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+            const worksheet = workbook.Sheets[sheetName];
+            
+            if (!worksheet) {
+                console.error(`시트 "${sheetName}"을 찾을 수 없습니다`);
+                return [];
+            }
+            
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            
+            const headers = jsonData[0];
+            console.log('파싱된 헤더:', headers);
+            
+            const data = [];
+            
+            for (let i = 1; i < jsonData.length; i++) {
+                const row = jsonData[i];
+                const rowData = {};
+                
+                headers.forEach((header, index) => {
+                    if (header && typeof header === 'string') {
+                        rowData[header] = row[index] || '';
+                    }
+                });
+                
+                data.push(rowData);
+            }
+            
+            console.log('파싱된 데이터 샘플:', data.slice(0, 3));
+            return data;
+        }
+
+        // 리그와 선수명을 기반으로 팀명을 찾는 함수
+        function findTeamByLeagueAndPlayer(leagueName, playerName) {
+            if (!leagueTeamData[leagueName]) {
+                console.log(`리그 "${leagueName}"의 데이터를 찾을 수 없습니다`);
+                return { displayName: 'N/A', originalName: 'N/A' };
+            }
+            
+            const teams = leagueTeamData[leagueName];
+            const player = teams.find(p => p.name === playerName);
+            
+            if (player) {
+                // 줄임말을 표시용으로, 원래 팀명을 이미지용으로 반환
+                const displayName = player.abbreviation || player.teamName || 'N/A';
+                const originalName = player.teamName || 'N/A';
+                console.log(`선수 "${playerName}"의 팀 정보:`, player);
+                console.log(`표시할 팀명: ${displayName}, 이미지용 팀명: ${originalName}`);
+                return { displayName, originalName };
+            }
+            
+            console.log(`선수 "${playerName}"을 리그 "${leagueName}"에서 찾을 수 없습니다`);
+            return { displayName: 'N/A', originalName: 'N/A' };
+        }
+
+        // 데이터 정렬 및 표시 함수
+        function sortAndDisplayData() {
+            const validData = playerData.filter(row => row[currentSortColumn] && row.이름);
+            
+            validData.sort((a, b) => {
+                const aValue = parseFloat(a[currentSortColumn]) || 0;
+                const bValue = parseFloat(b[currentSortColumn]) || 0;
+                
+                if (currentSortDirection === 'desc') {
+                    return bValue - aValue;
+                } else {
+                    return aValue - bValue;
+                }
+            });
+
+            displayData(validData);
+        }
+
+        // 데이터 표시 함수
+        function displayData(data) {
+            const tbody = document.getElementById('statsTableBody');
+            tbody.innerHTML = '';
+            
+            // RAA 관련 컬럼명 찾기 - 실제 Excel 컬럼명과 일치
+            const 타격RAA = findColumnName(data, ['타격 RAA', '타격RAA', 'Batting RAA', 'battingRAA']);
+            const 도루RAA = findColumnName(data, ['도루 RAA', '도루RAA', 'SB RAA', 'sbRAA']);
+            const 주루RAA = findColumnName(data, ['주루 RAA', '주루RAA', 'Baserunning RAA', 'baserunningRAA']);
+            const 공격RAA = findColumnName(data, ['공격 RAA', '공격RAA', 'Offensive RAA', 'offensiveRAA']);
+            const 필딩RAA = findColumnName(data, ['필딩 RAA', '필딩RAA', 'Fielding RAA', 'fieldingRAA']);
+            const 수비RAA = findColumnName(data, ['수비 RAA', '수비RAA', 'Defensive RAA', 'defensiveRAA']);
+            const 종합RAA = findColumnName(data, ['종합 RAA', '종합RAA', 'Total RAA', 'totalRAA']);
+            const RAR = findColumnName(data, ['RAR', 'RAR']);
+            const WAAOff = findColumnName(data, ['WAA Off', 'WAAOff', 'WAA Offensive', 'waaOff']);
+            const WAA = findColumnName(data, ['WAA', 'WAA']);
+            
+            console.log('찾은 RAA 컬럼들:', {
+                타격RAA, 도루RAA, 주루RAA, 공격RAA, 필딩RAA, 
+                수비RAA, 종합RAA, RAR, WAAOff, WAA
+            });
+            
+            // 컬럼명이 찾아지지 않았을 때의 디버깅 정보
+            if (!타격RAA || !도루RAA || !주루RAA || !공격RAA || !필딩RAA || !수비RAA || !종합RAA) {
+                console.log('일부 RAA 컬럼을 찾을 수 없습니다. 사용 가능한 컬럼들:', Object.keys(data[0] || {}));
+            }
+            
+            data.forEach((player, index) => {
+                // 10행마다 헤더 추가
+                if (index % 10 === 0 && index > 0) {
+                    const headerRow = document.createElement('tr');
+                    headerRow.innerHTML = `
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Team</th>
+                        <th class="sortable" data-sort="WAR">WAR</th>
+                        <th class="sortable" data-sort="PA">PA</th>
+                        <th class="sortable" data-sort="타격RAA">타격 RAA</th>
+                        <th class="sortable" data-sort="도루RAA">도루 RAA</th>
+                        <th class="sortable" data-sort="주루RAA">주루 RAA</th>
+                        <th class="sortable" data-sort="공격RAA">공격 RAA</th>
+                        <th class="sortable" data-sort="필딩RAA">필딩 RAA</th>
+                        <th class="sortable" data-sort="수비RAA">수비 RAA</th>
+                        <th class="sortable" data-sort="종합RAA">종합 RAA</th>
+                        <th class="sortable" data-sort="RAR">RAR</th>
+                        <th class="sortable" data-sort="WAAOff">WAA Off</th>
+                        <th class="sortable" data-sort="WAA">WAA</th>
+                    `;
+                    tbody.appendChild(headerRow);
+                }
+                
+                // 리그와 선수명을 기반으로 팀명 찾기
+                const leagueName = player.리그 || '';
+                const playerName = player.이름 || '';
+                const teamInfo = findTeamByLeagueAndPlayer(leagueName, playerName);
+                
+                // 팀명이 N/A인 경우 원본 팀 정보 사용
+                const displayTeamName = teamInfo.displayName !== 'N/A' ? teamInfo.displayName : (player.팀 || 'N/A');
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td class="player-name">${playerName}</td>
+                    <td class="team-name-cell">
+                        <div class="team-info">
+                            <img src="Image/Team/${getTeamLogo(teamInfo.originalName)}" alt="${displayTeamName}" class="team-logo ${getTeamLogoClass(teamInfo.originalName)}" onerror="this.style.display='none'">
+                            <span class="team-name">${displayTeamName}</span>
+                        </div>
+                    </td>
+                    <td class="war-value">${parseFloat(player['WAR'] || 0).toFixed(2)}</td>
+                    <td>${player['PA'] || 0}</td>
+                    <td class="${getRaaClass(player[타격RAA])}">${parseFloat(player[타격RAA] || 0).toFixed(2)}</td>
+                    <td class="${getRaaClass(player[도루RAA])}">${parseFloat(player[도루RAA] || 0).toFixed(2)}</td>
+                    <td class="${getRaaClass(player[주루RAA])}">${parseFloat(player[주루RAA] || 0).toFixed(2)}</td>
+                    <td class="${getRaaClass(player[공격RAA])}">${parseFloat(player[공격RAA] || 0).toFixed(2)}</td>
+                    <td class="${getRaaClass(player[필딩RAA])}">${parseFloat(player[필딩RAA] || 0).toFixed(2)}</td>
+                    <td class="${getRaaClass(player[수비RAA])}">${parseFloat(player[수비RAA] || 0).toFixed(2)}</td>
+                    <td class="${getRaaClass(player[종합RAA])}">${parseFloat(player[종합RAA] || 0).toFixed(2)}</td>
+                    <td>${parseFloat(player[RAR] || 0).toFixed(2)}</td>
+                    <td>${parseFloat(player[WAAOff] || 0).toFixed(2)}</td>
+                    <td>${parseFloat(player[WAA] || 0).toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // RAA 값에 따른 CSS 클래스 반환
+        function getRaaClass(value) {
+            const numValue = parseFloat(value) || 0;
+            if (numValue > 0) return 'raa-positive';
+            if (numValue < 0) return 'raa-negative';
+            return '';
+        }
+
+        // Excel 컬럼명을 찾는 함수
+        function findColumnName(data, possibleNames) {
+            if (!data || data.length === 0) {
+                console.log('findColumnName: 데이터가 없습니다');
+                return null;
+            }
+            
+            const firstRow = data[0];
+            console.log('findColumnName: 첫 번째 행의 키들:', Object.keys(firstRow));
+            console.log('findColumnName: 찾고 있는 컬럼명들:', possibleNames);
+            
+            for (const name of possibleNames) {
+                if (firstRow.hasOwnProperty(name)) {
+                    console.log(`findColumnName: 컬럼명 "${name}" 발견!`);
+                    return name;
+                }
+            }
+            
+            console.log('findColumnName: 가능한 컬럼명 중 하나도 찾을 수 없습니다');
+            return null;
+        }
+
+        // 반복되는 헤더 클릭 이벤트를 동적으로 추가
+        function addHeaderClickEvents() {
+            document.querySelectorAll('.stats-table tbody th.sortable').forEach(th => {
+                th.addEventListener('click', () => {
+                    const sortColumn = th.getAttribute('data-sort');
+                    const currentSort = th.classList.contains('sort-desc') ? 'desc' : 
+                                     th.classList.contains('sort-asc') ? 'asc' : 'desc';
+                    
+                    // 모든 헤더에서 정렬 클래스 제거
+                    document.querySelectorAll('.stats-table th').forEach(header => {
+                        header.classList.remove('sort-asc', 'sort-desc');
+                    });
+                    
+                    // 새로운 정렬 방향 설정
+                    const newSort = currentSort === 'desc' ? 'asc' : 'desc';
+                    th.classList.add(newSort === 'desc' ? 'sort-desc' : 'sort-asc');
+                    
+                    // 데이터 정렬
+                    currentSortColumn = sortColumn;
+                    currentSortDirection = newSort;
+                    sortAndDisplayData();
+                });
+            });
+        }
+
+        // 이벤트 리스너 설정
+        document.addEventListener('DOMContentLoaded', () => {
+            // 초기 데이터 로딩
+            loadPlayerStats();
+            
+            // 테이블 헤더 클릭 이벤트 (기본 헤더)
+            document.querySelectorAll('.stats-table thead th.sortable').forEach(th => {
+                th.addEventListener('click', () => {
+                    const sortColumn = th.getAttribute('data-sort');
+                    const currentSort = th.classList.contains('sort-desc') ? 'desc' : 
+                                     th.classList.contains('sort-asc') ? 'asc' : 'desc';
+                    
+                    // 모든 헤더에서 정렬 클래스 제거
+                    document.querySelectorAll('.stats-table th').forEach(header => {
+                        header.classList.remove('sort-asc', 'sort-desc');
+                    });
+                    
+                    // 새로운 정렬 방향 설정
+                    const newSort = currentSort === 'desc' ? 'asc' : 'desc';
+                    th.classList.add(newSort === 'desc' ? 'sort-desc' : 'sort-asc');
+                    
+                    // 데이터 정렬
+                    currentSortColumn = sortColumn;
+                    currentSortDirection = newSort;
+                    sortAndDisplayData();
+                });
+            });
+            
+            // 마우스 휠로 가로 스크롤
+            const tableContainer = document.querySelector('.stats-table-container');
+            tableContainer.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                tableContainer.scrollLeft += e.deltaY;
+            });
+            
+            // 탭 네비게이션
+            document.querySelectorAll('.stats-nav-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    document.querySelectorAll('.stats-nav-item').forEach(nav => nav.classList.remove('active'));
+                    item.classList.add('active');
+                });
+            });
+
+            // 카테고리 버튼 클릭 이벤트
+            document.querySelectorAll('.category-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    console.log('카테고리 버튼 클릭됨');
+                    document.querySelectorAll('.category-button').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    const selectedTab = button.getAttribute('data-tab');
+                    console.log('선택된 탭:', selectedTab);
+                    
+                    if (selectedTab === 'batting') {
+                        console.log('타격 탭은 현재 페이지입니다');
+                        // 타격 탭은 현재 페이지이므로 아무것도 하지 않음
+                    } else if (selectedTab === 'pitching') {
+                        console.log('투수 페이지로 이동');
+                        window.location.href = 'record_pitch_basic.html';
+                    }
+                });
+            });
+        });
+
+        // 팀 로고 문자열을 반환하는 함수 (팀명에 따라)
+        function getTeamLogo(teamName) {
+            console.log('getTeamLogo 호출됨, 팀명:', teamName);
+            
+            if (!teamName || teamName === 'N/A') {
+                console.log('팀명이 없거나 N/A입니다.');
+                return '';
+            }
+            
+            // 팀명이 "팀원"인 경우
+            if (teamName === '팀원') {
+                console.log('팀명이 "팀원"입니다.');
+                return '';
+            }
+            
+            // 실제 팀명과 이미지 파일명 매핑 (전체 팀명과 줄임말 모두 지원)
+            const teamImageMap = {
+                // 전체 팀명
+                'MoonShot Spirits': 'MoonShot Spirits.png',
+                'Nyanko Avengers': 'Nyanko Avengers.png',
+                'Leroleros': 'Leroleros.png',
+                'Ishikawa Fighting Folks': 'Ishikawa Fighting Folks.png',
+                'Florian T-Shirts': 'Florian T-Shirts.png',
+                'Bubble Stars': 'Bubble Stars.png',
+                // 줄임말
+                'MS': 'MoonShot Spirits.png',
+                'NA': 'Nyanko Avengers.png',
+                'LL': 'Leroleros.png',
+                'IFF': 'Ishikawa Fighting Folks.png',
+                'FT': 'Florian T-Shirts.png',
+                'BS': 'Bubble Stars.png'
+            };
+            
+            console.log('사용 가능한 팀 매핑:', teamImageMap);
+            
+            // 팀명이 기존 매핑에 있는 경우
+            if (teamImageMap[teamName]) {
+                console.log(`팀명 "${teamName}"이 매핑에서 찾아졌습니다. 이미지: ${teamImageMap[teamName]}`);
+                return teamImageMap[teamName];
+            }
+            
+            // 팀명이 부분적으로 일치하는 경우
+            for (const [teamKey, imageFile] of Object.entries(teamImageMap)) {
+                if (teamName.includes(teamKey) || teamKey.includes(teamName)) {
+                    console.log(`부분 일치: "${teamName}"과 "${teamKey}"가 일치합니다. 이미지: ${imageFile}`);
+                    return imageFile;
+                }
+            }
+            
+            console.log(`팀명 "${teamName}"에 대한 매핑을 찾을 수 없습니다. 기본 이미지 사용: MoonShot Spirits.png`);
+            // 기본 이미지 반환
+            return 'MoonShot Spirits.png';
+        }
+
+        // 팀 로고의 CSS 클래스를 반환하는 함수
+        function getTeamLogoClass(teamName) {
+            if (!teamName || teamName === 'N/A') return 'team-logo-default';
+            
+            // 실제 팀명과 CSS 클래스 매핑 (전체 팀명과 줄임말 모두 지원)
+            const teamClassMap = {
+                // 전체 팀명
+                'MoonShot Spirits': 'team-logo-moonshot',
+                'Nyanko Avengers': 'team-logo-nyanko',
+                'Leroleros': 'team-logo-leroleros',
+                'Ishikawa Fighting Folks': 'team-logo-ishikawa',
+                'Florian T-Shirts': 'team-logo-florian',
+                'Bubble Stars': 'team-logo-bubble',
+                // 줄임말
+                'MS': 'team-logo-moonshot',
+                'NA': 'team-logo-nyanko',
+                'LL': 'team-logo-leroleros',
+                'IFF': 'team-logo-ishikawa',
+                'FT': 'team-logo-florian',
+                'BS': 'team-logo-bubble'
+            };
+            
+            // 팀명이 기존 매핑에 있는 경우
+            if (teamClassMap[teamName]) {
+                return teamClassMap[teamName];
+            }
+            
+            // 팀명이 부분적으로 일치하는 경우
+            for (const [teamKey, cssClass] of Object.entries(teamClassMap)) {
+                if (teamName.includes(teamKey) || teamKey.includes(teamName)) {
+                    return cssClass;
+                }
+            }
+            
+            return 'team-logo-default';
+        }
+    </script>
+</body>
+</html>

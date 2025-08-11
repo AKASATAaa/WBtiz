@@ -1,0 +1,3154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>승부예측 - WBD 기록실</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .header {
+            background-color: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 0;
+        }
+        
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #ff4757, #ff3742);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .search-icon, .user-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .search-icon svg, .user-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: #666;
+        }
+        
+        .user-icon {
+            background-color: #ff4757;
+            border-radius: 50%;
+        }
+        
+        .user-icon svg {
+            fill: white;
+        }
+        
+        .nav-container {
+            background-color: white;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 20px;
+        }
+        
+        .nav-item {
+            padding: 16px 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-item:hover {
+            color: #333;
+            border-bottom-color: #ff4757;
+        }
+        
+        .nav-item.active {
+            color: #333;
+            border-bottom-color: #ff4757;
+        }
+
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .content-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .content-placeholder {
+            background: white;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .date-selector {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .date-nav-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .date-nav-btn:hover {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .date-display {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .recent-btn {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .recent-btn:hover {
+            background-color: #e9ecef;
+        }
+
+        .recent-btn.active {
+            background-color: #ff4757;
+            color: white;
+            border-color: #ff4757;
+        }
+
+        .games-container {
+            margin-bottom: 20px;
+        }
+
+        .games-row {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding: 4px 0;
+            justify-content: center;
+        }
+
+        .game-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            min-width: 200px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .game-card:hover {
+            border-color: #ff4757;
+            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.15);
+        }
+
+        .game-card.selected {
+            border-color: #ff4757;
+            background-color: #fff5f5;
+        }
+
+        .game-status {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 16px;
+            font-weight: 500;
+            text-align: center;
+            width: 100%;
+        }
+
+        .team-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            width: 100%;
+            gap: 12px;
+        }
+
+        .team-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .team-logo {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .team-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+        }
+
+        .team-score {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            min-width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .no-games {
+            background: white;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .prediction-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .prediction-panel.show {
+            display: block;
+        }
+
+        .prediction-header {
+            margin-bottom: 20px;
+        }
+
+        .prediction-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .prediction-subtitle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .info-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .probability-bar-container {
+            margin-top: 20px;
+        }
+
+        .probability-bar {
+            display: flex;
+            height: 40px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .probability-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .home-probability {
+            background: linear-gradient(to right, #ff4757, #ff6b7a);
+        }
+
+        .away-probability {
+            background: linear-gradient(to right, #e9ecef, #6c757d);
+        }
+
+        .probability-text {
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 1;
+        }
+
+        .away-probability .probability-text {
+            color: #495057;
+        }
+
+        .team-labels {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .team-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .team-label.away-team {
+            flex-direction: row-reverse;
+        }
+
+        .team-logo-small {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #ff4757;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .away-team .team-logo-small {
+            background-color: #3742fa;
+        }
+
+        .team-name-small {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .team-comparison-container {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .comparison-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .comparison-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .teams-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .team-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .team-header.away-team {
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+
+        .team-logo-header {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .home-team .team-logo-header {
+            background-color: #ff4757;
+        }
+
+        .away-team .team-logo-header {
+            background-color: #3742fa;
+        }
+
+        .team-info-header {
+            text-align: center;
+        }
+
+        .team-name-header {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .team-rank {
+            font-size: 12px;
+            color: #ff4757;
+            font-weight: 600;
+        }
+
+        .vs-label {
+            font-size: 18px;
+            font-weight: 700;
+            color: #666;
+            margin: 0 20px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .stats-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            color: #333;
+            font-weight: 600;
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-value.rank {
+            color: #ff4757;
+        }
+
+        .stat-value.home {
+            text-align: right;
+            padding-right: 20px;
+        }
+
+        .stat-value.away {
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .content-container {
+                padding: 0 12px;
+            }
+            .team-comparison-container {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+
+        .stats-check-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stats-check-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .stats-check-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .stats-check-btn {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .home-team-btn {
+            background-color: #ff4757;
+        }
+        
+        .away-team-btn {
+            background-color: #3742fa;
+        }
+        
+        .all-teams-btn {
+            background-color: #2ed573;
+        }
+        
+        .stats-check-info {
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .stats-check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .stats-check-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">W</div>
+                <span class="logo-text">WBD 기록실</span>
+            </a>
+            
+            <div class="header-actions">
+                <div class="search-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                </div>
+                
+                <div class="user-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <nav class="nav-container">
+        <div class="nav">
+            <a href="record_bat_basic.html" class="nav-item">기록실</a>
+            <a href="season.html" class="nav-item">시즌정보</a>
+            <a href="team.html" class="nav-item">팀정보</a>
+            <a href="player.html" class="nav-item">선수정보</a>
+            <a href="schedule.html" class="nav-item">경기일정</a>
+
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="content-container">
+            <h1 class="page-title">승부예측</h1>
+            
+            <div class="date-selector">
+                <button class="recent-btn active">최근</button>
+                <button class="date-nav-btn" onclick="changeDate(-1)">&lt;</button>
+                <div class="date-display" id="currentDate">2025.08.12</div>
+                <button class="date-nav-btn" onclick="changeDate(1)">&gt;</button>
+            </div>
+            
+            <div class="games-container" id="gamesContainer">
+                <!-- 경기 카드들이 여기에 동적으로 생성됩니다 -->
+            </div>
+            
+            <div class="prediction-panel" id="predictionPanel">
+                <div class="prediction-header">
+                    <h2 class="prediction-title">승부예측</h2>
+                    <div class="prediction-subtitle">
+                        <span>STATIZ가 예상한 승패확률</span>
+                        <div class="info-icon">i</div>
+                    </div>
+                </div>
+                
+                <div class="probability-bar-container">
+                    <div class="probability-bar">
+                        <div class="probability-segment home-probability" style="width: 51.7%">
+                            <span class="probability-text">51.7%</span>
+                        </div>
+                        <div class="probability-segment away-probability" style="width: 48.3%">
+                            <span class="probability-text">48.3%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="team-labels">
+                        <div class="team-label home-team">
+                            <div class="team-logo-small">NC</div>
+                            <span class="team-name-small">NC</span>
+                        </div>
+                        <div class="team-label away-team">
+                            <span class="team-name-small">두산</span>
+                            <div class="team-logo-small">두산</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="team-comparison-container">
+                <div class="comparison-panel">
+                    <h3 class="comparison-title">경기 미리보기</h3>
+                    <div class="teams-header">
+                        <div class="team-header home-team">
+                            <div class="team-logo-header" id="homeTeamLogo">NC</div>
+                            <div class="team-info-header">
+                                <div class="team-name-header" id="homeTeamName">팀명</div>
+                                <div class="team-rank" id="homeTeamRank">순위</div>
+                                <div class="team-league" id="homeTeamLeague" style="font-size: 12px; color: #666; margin-top: 2px;">리그 정보</div>
+                            </div>
+                        </div>
+                        <div class="vs-label">VS</div>
+                        <div class="team-header away-team">
+                            <div class="team-info-header">
+                                <div class="team-name-header" id="awayTeamName">팀명</div>
+                                <div class="team-rank" id="awayTeamRank">순위</div>
+                                <div class="team-league" id="awayTeamLeague" style="font-size: 12px; color: #666; margin-top: 2px;">리그 정보</div>
+                            </div>
+                            <div class="team-logo-header" id="awayTeamLogo">두산</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-value home" id="homeSeasonRecord">47승 6무 49패</div>
+                        <div class="stat-label">시즌 성적</div>
+                        <div class="stat-value away" id="awaySeasonRecord">45승 5무 58패</div>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-value home" id="homeBattingAvg">6위 0.259</div>
+                        <div class="stat-label">팀 타율</div>
+                        <div class="stat-value away" id="awayBattingAvg">0.261 4위</div>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-value home" id="homeOPS">4위 0.731</div>
+                        <div class="stat-label">팀 OPS</div>
+                        <div class="stat-value away" id="awayOPS">0.713 7위</div>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-value home" id="homeERA">9위 4.71</div>
+                        <div class="stat-label">팀 평균자책</div>
+                        <div class="stat-value away" id="awayERA">4.14 5위</div>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-value home" id="homeWHIP">9위 1.48</div>
+                        <div class="stat-label">팀 WHIP</div>
+                        <div class="stat-value away" id="awayWHIP">1.38 5위</div>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-value home" id="homeHeadToHead">5승 2무 2패</div>
+                        <div class="stat-label">최근 맞대결</div>
+                        <div class="stat-value away" id="awayHeadToHead">2승 2무 5패</div>
+                    </div>
+                </div>
+                
+                <div class="comparison-panel">
+                    <h3 class="comparison-title">팀 전력 비교</h3>
+                    <div class="teams-header">
+                        <div class="team-header home-team">
+                            <div class="team-logo-header" id="homeTeamLogo2">NC</div>
+                            <div class="team-info-header">
+                                <div class="team-name-header" id="homeTeamName2">팀명</div>
+                                <div class="team-rank" id="homeTeamRank2">순위</div>
+                                <div class="team-league" id="homeTeamLeague2" style="font-size: 12px; color: #666; margin-top: 2px;">리그 정보</div>
+                            </div>
+                        </div>
+                        <div class="vs-label">VS</div>
+                        <div class="team-header away-team">
+                            <div class="team-info-header">
+                                <div class="team-name-header" id="awayTeamName2">팀명</div>
+                                <div class="team-rank" id="awayTeamRank2">순위</div>
+                                <div class="team-league" id="awayTeamLeague2" style="font-size: 12px; color: #666; margin-top: 2px;">리그 정보</div>
+                            </div>
+                            <div class="team-logo-header" id="awayTeamLogo2">두산</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-value home" id="homeRunsScored">503</div>
+                        <div class="stat-label">팀 득점</div>
+                        <div class="stat-value away" id="awayRunsScored">481</div>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-value home" id="homeRunsAllowed">530</div>
+                        <div class="stat-label">팀 실점</div>
+                        <div class="stat-value away" id="awayRunsAllowed">498</div>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-value home" id="homeOWAR">16.67</div>
+                        <div class="stat-label">oWAR</div>
+                        <div class="stat-value away" id="awayOWAR">15.86</div>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-value home" id="homeDWAR">-1.02</div>
+                        <div class="stat-label">dWAR</div>
+                        <div class="stat-value away" id="awayDWAR">0.65</div>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-value home" id="homeStartingWAR">7.01</div>
+                        <div class="stat-label">선발WAR</div>
+                        <div class="stat-value away" id="awayStartingWAR">12.26</div>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-value home" id="homeBullpenWAR">2.74</div>
+                        <div class="stat-label">불펜WAR</div>
+                        <div class="stat-value away" id="awayBullpenWAR">2.03</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-placeholder">
+                승부예측 페이지 내용이 여기에 표시됩니다.
+            </div>
+            
+            <!-- 팀별 개인 스탯 확인 버튼 추가 -->
+            <div class="stats-check-panel">
+                <h3 class="stats-check-title">팀별 개인 스탯 확인</h3>
+                <div class="stats-check-buttons">
+                    <button id="checkHomeTeamStats" class="stats-check-btn home-team-btn">
+                        홈팀 개인 스탯 확인
+                    </button>
+                    <button id="checkAwayTeamStats" class="stats-check-btn away-team-btn">
+                        원정팀 개인 스탯 확인
+                    </button>
+                    <button id="checkAllTeamsStats" class="stats-check-btn all-teams-btn">
+                        전체 팀 개인 스탯 확인
+                    </button>
+                </div>
+                <div class="stats-check-info">
+                    버튼을 클릭하면 브라우저 개발자 도구의 콘솔에 팀별 개인 스탯이 출력됩니다.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 오류 알림 함수
+        function showErrorNotification(message) {
+            try {
+                // 브라우저 알림 API 사용
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification('오류 발생', { body: message });
+                }
+                
+                // 콘솔에 오류 메시지 출력
+                console.error('사용자 알림:', message);
+                
+                // 페이지에 오류 메시지 표시 (선택사항)
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #ff4757;
+                    color: white;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    z-index: 10000;
+                    max-width: 300px;
+                    font-size: 14px;
+                `;
+                errorDiv.textContent = message;
+                
+                document.body.appendChild(errorDiv);
+                
+                // 5초 후 자동 제거
+                setTimeout(() => {
+                    if (errorDiv.parentNode) {
+                        errorDiv.parentNode.removeChild(errorDiv);
+                    }
+                }, 5000);
+                
+            } catch (error) {
+                console.error('오류 알림 표시 중 문제 발생:', error);
+            }
+        }
+
+        let currentDate = new Date();
+        let gamesData = [];
+        
+        // 간단한 데이터 초기화 함수
+        function initializeData() {
+            try {
+                console.log('=== 데이터 초기화 시작 ===');
+                console.log('현재 시간:', new Date().toISOString());
+                
+                // 기본 데이터 설정
+                gamesData = [];
+                
+                console.log('=== 데이터 초기화 완료 ===');
+                
+            } catch (error) {
+                console.error('데이터 초기화 중 오류:', error);
+            }
+        }
+        
+        // 팀명 정규화 함수
+        function normalizeTeamName(teamName) {
+            if (!teamName) return '';
+            
+            // 모든 특별한 팀 매핑 제거 - 원본 팀명 그대로 반환
+            return teamName.toString().trim();
+        }
+        
+        // 선수명 정규화 함수 추가
+        function normalizePlayerName(playerName) {
+            if (!playerName) return '';
+            
+            // 선수명에서 공백만 제거하고 특수문자는 보존
+            let normalized = playerName.toString().trim();
+            
+            // 괄호 안의 내용 제거 (예: "김현수(두산)" -> "김현수")
+            normalized = normalized.replace(/\([^)]*\)/g, '');
+            
+            // 불필요한 공백만 제거하고 특수문자는 보존
+            // 언더스코어(_), 하이픈(-), 점(.), 콜론(:) 등은 보존
+            normalized = normalized.replace(/\s+/g, ' ').trim();
+            
+            return normalized;
+        }
+
+        // 엑셀 데이터 로드 함수들 - 팀원 관련 기능 제거
+        async function loadLeagueTeamData() {
+            try {
+                console.log('=== loadLeagueTeamData 시작 ===');
+                console.log('현재 시간:', new Date().toISOString());
+                
+                // leagueTeamData가 제대로 초기화되었는지 확인
+                if (!leagueTeamData || typeof leagueTeamData !== 'object') {
+                    console.log('leagueTeamData 재초기화');
+                    leagueTeamData = {};
+                }
+                
+                // 파일 경로 확인
+                const filePath = './Data/League_Team.xlsx';
+                console.log('파일 경로:', filePath);
+                
+                // fetch 요청 전 상태 확인
+                console.log('fetch 요청 시작...');
+                const response = await fetch(filePath);
+                
+                console.log('응답 상태:', response.status, response.statusText);
+                console.log('응답 헤더:', Object.fromEntries(response.headers.entries()));
+                
+                if (!response.ok) {
+                    throw new Error(`League_Team 파일을 불러올 수 없습니다: ${response.status} ${response.statusText}`);
+                }
+                
+                // 응답 크기 확인
+                const contentLength = response.headers.get('content-length');
+                console.log('파일 크기:', contentLength ? `${contentLength} bytes` : '알 수 없음');
+                
+                console.log('ArrayBuffer 변환 시작...');
+                const arrayBuffer = await response.arrayBuffer();
+                console.log('ArrayBuffer 크기:', arrayBuffer.byteLength, 'bytes');
+                
+                if (arrayBuffer.byteLength === 0) {
+                    throw new Error('파일이 비어있습니다 (0 bytes)');
+                }
+                
+                console.log('XLSX 파싱 시작...');
+                const workbook = XLSX.read(arrayBuffer, { 
+                    type: 'array',
+                    cellDates: true,
+                    cellNF: false,
+                    cellText: false
+                });
+                
+                console.log('League_Team 파일의 모든 시트:', workbook.SheetNames);
+                console.log('시트 개수:', workbook.SheetNames.length);
+                
+                if (workbook.SheetNames.length === 0) {
+                    throw new Error('엑셀 파일에 시트가 없습니다');
+                }
+                
+                let totalTeamsProcessed = 0;
+                let totalPlayersProcessed = 0;
+                let sheetsWithErrors = 0;
+                
+                // 각 시트(리그)의 팀 정보를 파싱
+                for (let sheetIndex = 0; sheetIndex < workbook.SheetNames.length; sheetIndex++) {
+                    const sheetName = workbook.SheetNames[sheetIndex];
+                    
+                    try {
+                        console.log(`\n시트 ${sheetIndex + 1}/${workbook.SheetNames.length} 처리 중: "${sheetName}"`);
+                        
+                        if (sheetName !== '~$League_Team') { // 임시 파일 제외
+                            const worksheet = workbook.Sheets[sheetName];
+                            
+                            if (!worksheet) {
+                                console.warn(`시트 "${sheetName}"의 워크시트 객체가 null입니다`);
+                                continue;
+                            }
+                            
+                            console.log(`워크시트 범위:`, worksheet['!ref']);
+                            
+                            const sheetData = XLSX.utils.sheet_to_json(worksheet, { 
+                                header: 1,
+                                defval: '',
+                                blankrows: false
+                            });
+                            
+                            console.log(`시트 "${sheetName}"의 데이터 구조:`, {
+                                행수: sheetData.length,
+                                첫행: sheetData[0] ? sheetData[0].length : 0,
+                                샘플데이터: sheetData.slice(0, 3)
+                            });
+                            
+                            if (sheetData.length === 0) {
+                                console.warn(`시트 "${sheetName}"에 데이터가 없습니다`);
+                                continue;
+                            }
+                            
+                            if (sheetData[0].length === 0) {
+                                console.warn(`시트 "${sheetName}"의 첫 행에 데이터가 없습니다`);
+                                continue;
+                            }
+                            
+                            const teams = [];
+                            
+                            // 이 구조는 헤더가 왼쪽(A열)에 있고, 팀명이 위쪽(1행)에 있음
+                            // A1: "팀명", A2: "줄임말", A3: "팀원(주장)", A4-A14: "팀원"
+                            // B1, C1, D1... 에 팀명이 있음
+                            
+                            // 1행에서 팀명들을 찾기 (B1부터)
+                            const teamRow = sheetData[0]; // 1행 (인덱스 0)
+                            const abbreviationRow = sheetData[1]; // 2행 (인덱스 1)
+                            
+                            if (!teamRow || !abbreviationRow) {
+                                console.warn(`시트 "${sheetName}"의 팀명 또는 줄임말 행이 없습니다`);
+                                continue;
+                            }
+                            
+                            console.log(`시트 "${sheetName}"의 팀명 행:`, teamRow);
+                            console.log(`시트 "${sheetName}"의 줄임말 행:`, abbreviationRow);
+                            
+                            let teamsFoundInSheet = 0;
+                            
+                            // B열부터 팀명과 줄임말을 찾기
+                            for (let colIndex = 1; colIndex < teamRow.length; colIndex++) {
+                                const teamName = teamRow[colIndex];
+                                const abbreviation = abbreviationRow[colIndex];
+                                
+                                if (teamName && typeof teamName === 'string' && teamName.trim()) {
+                                    console.log(`팀 발견: "${teamName}" (줄임말: "${abbreviation}")`);
+                                    teamsFoundInSheet++;
+                                    
+                                    let playersInTeam = 0;
+                                    
+                                    // 3행부터 선수명들을 찾기 (팀원(주장)과 팀원들)
+                                    for (let rowIndex = 2; rowIndex < sheetData.length; rowIndex++) {
+                                        const playerName = sheetData[rowIndex][colIndex];
+                                        
+                                        if (playerName && typeof playerName === 'string' && playerName.trim()) {
+                                            // 팀원(주장)인지 확인
+                                            const isCaptain = sheetData[rowIndex][0] && 
+                                                            sheetData[rowIndex][0].toString().includes('주장');
+                                            
+                                            let teamType = '팀원';
+                                            if (isCaptain) {
+                                                teamType = '팀원(주장)';
+                                            }
+                                            
+                                            const playerData = {
+                                                name: playerName.trim(),
+                                                team: teamType,
+                                                teamName: teamName.trim(),
+                                                abbreviation: abbreviation ? abbreviation.toString().trim() : ''
+                                            };
+                                            
+                                            teams.push(playerData);
+                                            playersInTeam++;
+                                            
+                                            console.log(`  선수: "${playerName}" (${teamType})`);
+                                        }
+                                    }
+                                    
+                                    console.log(`  팀 "${teamName}"에 ${playersInTeam}명의 선수 발견`);
+                                }
+                            }
+                            
+                            console.log(`시트 "${sheetName}"에서 ${teamsFoundInSheet}개 팀 발견`);
+                            
+                            // teams 배열이 비어있지 않은 경우에만 저장
+                            if (teams.length > 0) {
+                                console.log(`시트 "${sheetName}"에 ${teams.length}명의 선수 발견`);
+                                leagueTeamData[sheetName] = teams;
+                                totalTeamsProcessed += teamsFoundInSheet;
+                                totalPlayersProcessed += teams.length;
+                                console.log(`리그 "${sheetName}"의 팀 정보:`, teams);
+                            } else {
+                                console.warn(`시트 "${sheetName}"에서 팀 정보를 찾을 수 없습니다.`);
+                            }
+                        }
+                    } catch (sheetError) {
+                        sheetsWithErrors++;
+                        console.error(`시트 "${sheetName}" 처리 중 오류 발생:`, sheetError);
+                        console.error('오류 스택:', sheetError.stack);
+                        console.error('오류 상세 정보:', {
+                            message: sheetError.message,
+                            name: sheetError.name,
+                            fileName: sheetError.fileName,
+                            lineNumber: sheetError.lineNumber
+                        });
+                        // 개별 시트 오류는 계속 진행
+                    }
+                }
+                
+                console.log('\n=== 처리 결과 요약 ===');
+                console.log('총 시트 수:', workbook.SheetNames.length);
+                console.log('오류 발생 시트 수:', sheetsWithErrors);
+                console.log('처리된 팀 수:', totalTeamsProcessed);
+                console.log('처리된 선수 수:', totalPlayersProcessed);
+                console.log('전체 리그 팀 데이터:', leagueTeamData);
+                console.log('데이터 구조 확인:', {
+                    리그수: Object.keys(leagueTeamData).length,
+                    각리그별팀수: Object.fromEntries(
+                        Object.entries(leagueTeamData).map(([league, teams]) => [
+                            league, 
+                            Array.isArray(teams) ? teams.length : '잘못된 형식'
+                        ])
+                    )
+                });
+                console.log('=== loadLeagueTeamData 완료 ===');
+                
+            } catch (error) {
+                console.error('=== League_Team 데이터 로딩 실패 ===');
+                console.error('오류 메시지:', error.message);
+                console.error('오류 이름:', error.name);
+                console.error('오류 스택:', error.stack);
+                console.error('오류 상세 정보:', {
+                    fileName: error.fileName,
+                    lineNumber: error.lineNumber,
+                    columnNumber: error.columnNumber
+                });
+                
+                // 추가 디버깅 정보
+                console.error('현재 leagueTeamData 상태:', leagueTeamData);
+                console.error('현재 시간:', new Date().toISOString());
+                
+                // 오류 발생 시 빈 객체로 초기화
+                leagueTeamData = {};
+                
+                // 사용자에게 오류 알림 (선택사항)
+                if (typeof showErrorNotification === 'function') {
+                    showErrorNotification('League_Team 데이터 로딩에 실패했습니다. 콘솔을 확인해주세요.');
+                }
+                
+                throw error; // 상위 함수에서도 오류를 처리할 수 있도록 재발생
+            }
+        }
+
+        // 리그와 선수명을 기반으로 팀명을 찾는 함수
+        function findTeamByLeagueAndPlayer(leagueName, playerName) {
+            // 백엔드 제거로 인해 항상 기본값 반환
+            return { displayName: 'N/A', originalName: 'N/A' };
+        }
+
+        // 소수 값 컬럼인지 판단하는 함수
+        function isDecimalColumn(columnName) {
+            // 소수 값이어야 하는 컬럼들 (타격 기본 통계)
+            const decimalColumns = [
+                'WAR', 'oWAR', 'dWAR', 'AVG', 'OBP', 'SLG', 'OPS', 'R/ePA', 'wRC+'
+            ];
+            
+            return decimalColumns.some(col => columnName.includes(col));
+        }
+
+        // 팀별로 데이터를 그룹화하고 합산하는 함수
+        function aggregateDataByTeam(playerData) {
+            if (!playerData || !Array.isArray(playerData) || playerData.length === 0) {
+                console.log('집계할 선수 데이터가 없습니다.');
+                return {};
+            }
+            
+            const teamGroups = {};
+            
+            playerData.forEach(player => {
+                if (!player || typeof player !== 'object') {
+                    console.log('잘못된 선수 데이터:', player);
+                    return;
+                }
+                
+                const leagueName = player.리그 || '';
+                const playerName = player.이름 || '';
+                const teamInfo = findTeamByLeagueAndPlayer(leagueName, playerName);
+                
+                // 팀명이 N/A인 경우 원본 팀 정보 사용
+                const teamName = teamInfo.displayName !== 'N/A' ? teamInfo.displayName : (player.팀 || 'N/A');
+                const originalTeamName = teamInfo.originalName !== 'N/A' ? teamInfo.originalName : (player.팀 || 'N/A');
+                
+                if (!teamGroups[teamName]) {
+                    teamGroups[teamName] = {
+                        teamName: teamName,
+                        originalTeamName: originalTeamName,
+                        players: [],
+                        counts: {},
+                        sums: {},
+                        averages: {}
+                    };
+                }
+                
+                teamGroups[teamName].players.push(player);
+            });
+            
+            // 각 팀의 데이터를 합산
+            Object.values(teamGroups).forEach(team => {
+                if (!team || !team.players || !Array.isArray(team.players) || team.players.length === 0) {
+                    return;
+                }
+                
+                const firstPlayer = team.players[0];
+                if (!firstPlayer || typeof firstPlayer !== 'object') {
+                    return;
+                }
+                
+                // 모든 가능한 컬럼에 대해 처리
+                Object.keys(firstPlayer).forEach(key => {
+                    if (key === '이름' || key === '리그' || key === '팀') return; // 제외할 컬럼
+                    
+                    const values = team.players.map(p => {
+                        if (p && p[key] !== undefined && p[key] !== null) {
+                            return parseFloat(p[key]) || 0;
+                        }
+                        return 0;
+                    }).filter(v => !isNaN(v));
+                    
+                    if (values.length > 0) {
+                        // 소수 값인지 확인 (소수점이 있거나 평균이 필요한 항목)
+                        const shouldUseAverage = isDecimalColumn(key);
+                        
+                        if (shouldUseAverage) {
+                            // 평균 계산
+                            const average = values.reduce((sum, val) => sum + val, 0) / values.length;
+                            team.averages[key] = average;
+                        } else {
+                            // 합계 계산
+                            const sum = values.reduce((sum, val) => sum + val, 0);
+                            team.sums[key] = sum;
+                        }
+                        
+                        team.counts[key] = values.length;
+                    }
+                });
+            });
+            
+            return teamGroups;
+        }
+        
+        // 팀별 통계를 가져오는 함수
+        async function getTeamStats(teamName) {
+            if (!playerStatsData || typeof playerStatsData !== 'object') {
+                console.log('선수 통계 데이터가 로드되지 않았습니다.');
+                return null;
+            }
+            
+            if (!leagueTeamData || typeof leagueTeamData !== 'object') {
+                console.log('League_Team 데이터가 로드되지 않았습니다.');
+                return null;
+            }
+            
+            console.log(`팀 "${teamName}"의 통계를 찾는 중...`);
+            
+            // 모든 리그에서 해당 팀의 선수들을 찾기
+            const teamPlayers = [];
+            
+            Object.entries(playerStatsData).forEach(([leagueName, leagueData]) => {
+                if (leagueData && leagueData.batters) {
+                    leagueData.batters.forEach(batter => {
+                        if (batter && batter.이름) {
+                            const teamInfo = findTeamByLeagueAndPlayer(leagueName, batter.이름);
+                            if (teamInfo.displayName === teamName || teamInfo.originalName === teamName) {
+                                teamPlayers.push({
+                                    ...batter,
+                                    league: leagueName
+                                });
+                            }
+                        }
+                    });
+                }
+                
+                if (leagueData && leagueData.pitchers) {
+                    leagueData.pitchers.forEach(pitcher => {
+                        if (pitcher && pitcher.이름) {
+                            const teamInfo = findTeamByLeagueAndPlayer(leagueName, pitcher.이름);
+                            if (teamInfo.displayName === teamName || teamInfo.originalName === teamName) {
+                                teamPlayers.push({
+                                    ...pitcher,
+                                    league: leagueName
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+            
+            if (teamPlayers.length === 0) {
+                console.log(`팀 "${teamName}"의 선수를 찾을 수 없습니다.`);
+                return null;
+            }
+            
+            console.log(`팀 "${teamName}"의 선수 ${teamPlayers.length}명 발견:`, teamPlayers);
+            
+            // 팀별로 데이터 집계
+            const teamStats = aggregateDataByTeam(teamPlayers);
+            
+            if (teamStats[teamName]) {
+                return teamStats[teamName];
+            } else {
+                // 팀명이 정확히 일치하지 않는 경우, 유사한 팀명 찾기
+                const similarTeam = Object.keys(teamStats).find(team => 
+                    team && (team.includes(teamName) || teamName.includes(team))
+                );
+                
+                if (similarTeam) {
+                    console.log(`유사한 팀명 "${similarTeam}" 발견`);
+                    return teamStats[similarTeam];
+                }
+            }
+            
+            return null;
+        }
+        
+        // 팀명으로 리그를 찾는 함수
+        function findTeamLeague(teamName) {
+            if (!leagueTeamData || typeof leagueTeamData !== 'object' || Object.keys(leagueTeamData).length === 0) {
+                console.log('League_Team 데이터가 로드되지 않았습니다.');
+                return null;
+            }
+            
+            // 모든 리그에서 해당 팀을 찾기
+            for (const [leagueName, teams] of Object.entries(leagueTeamData)) {
+                if (teams && Array.isArray(teams)) {
+                    const foundTeam = teams.find(team => 
+                        team && team.teamName === teamName || team.abbreviation === teamName
+                    );
+                    
+                    if (foundTeam) {
+                        console.log(`팀 "${teamName}"은 리그 "${leagueName}"에 속해 있습니다.`);
+                        return leagueName;
+                    }
+                }
+            }
+            
+            console.log(`팀 "${teamName}"의 리그를 찾을 수 없습니다.`);
+            return null;
+        }
+        
+        async function loadPlayerStatsData() {
+            try {
+                console.log('=== loadPlayerStatsData 시작 ===');
+                console.log('현재 시간:', new Date().toISOString());
+                
+                // 파일 경로 확인
+                const filePath = 'Data/PlayerStatsLeague.xlsx';
+                console.log('파일 경로:', filePath);
+                
+                // fetch 요청 전 상태 확인
+                console.log('fetch 요청 시작...');
+                const response = await fetch(filePath);
+                
+                console.log('응답 상태:', response.status, response.statusText);
+                console.log('응답 헤더:', Object.fromEntries(response.headers.entries()));
+                
+                if (!response.ok) {
+                    throw new Error(`PlayerStatsLeague.xlsx 파일을 불러올 수 없습니다: ${response.status} ${response.statusText}`);
+                }
+                
+                // 응답 크기 확인
+                const contentLength = response.headers.get('content-length');
+                console.log('파일 크기:', contentLength ? `${contentLength} bytes` : '알 수 없음');
+                
+                console.log('ArrayBuffer 변환 시작...');
+                const arrayBuffer = await response.arrayBuffer();
+                console.log('ArrayBuffer 크기:', arrayBuffer.byteLength, 'bytes');
+                
+                if (arrayBuffer.byteLength === 0) {
+                    throw new Error('PlayerStatsLeague.xlsx 파일이 비어있습니다 (0 bytes)');
+                }
+                
+                console.log('XLSX 파싱 시작...');
+                const workbook = XLSX.read(arrayBuffer, { 
+                    type: 'array',
+                    cellDates: true,
+                    cellNF: false,
+                    cellText: false
+                });
+                
+                console.log('=== PlayerStatsLeague.xlsx 로딩 시작 ===');
+                console.log('사용 가능한 시트들:', workbook.SheetNames);
+                console.log('시트 개수:', workbook.SheetNames.length);
+                
+                if (workbook.SheetNames.length === 0) {
+                    throw new Error('PlayerStatsLeague.xlsx 파일에 시트가 없습니다');
+                }
+                
+                const playerStats = {};
+                let totalSheetsProcessed = 0;
+                let totalPlayersProcessed = 0;
+                let sheetsWithErrors = 0;
+                
+                // 모든 시트를 순회하면서 리그별 타자/투수 정보 찾기
+                for (let sheetIndex = 0; sheetIndex < workbook.SheetNames.length; sheetIndex++) {
+                    const sheetName = workbook.SheetNames[sheetIndex];
+                    
+                    try {
+                        console.log(`\n시트 ${sheetIndex + 1}/${workbook.SheetNames.length} 처리 중: "${sheetName}"`);
+                        
+                        // 시트명에 "타자" 또는 "투수"가 포함되어 있는지 확인
+                        // 또는 시트명이 리그명만 있는 경우도 처리
+                        const isBatterSheet = sheetName.includes('타자');
+                        const isPitcherSheet = sheetName.includes('투수');
+                        const isLeagueSheet = !isBatterSheet && !isPitcherSheet && 
+                                            (sheetName.includes('리그') || 
+                                             sheetName.includes('League') ||
+                                             sheetName.includes('A') ||
+                                             sheetName.includes('B') ||
+                                             sheetName.includes('C') ||
+                                             sheetName.includes('1') ||
+                                             sheetName.includes('2') ||
+                                             sheetName.includes('3') ||
+                                             sheetName.includes('썸머') ||
+                                             sheetName.includes('Summer') ||
+                                             sheetName.includes('정규') ||
+                                             sheetName.includes('Regular'));
+                        
+                        if (isBatterSheet || isPitcherSheet || isLeagueSheet) {
+                            console.log(`${isBatterSheet ? '타자' : isPitcherSheet ? '투수' : '리그'} 시트 발견: ${sheetName}`);
+                            
+                            const worksheet = workbook.Sheets[sheetName];
+                            
+                            if (!worksheet) {
+                                console.warn(`시트 "${sheetName}"의 워크시트 객체가 null입니다`);
+                                continue;
+                            }
+                            
+                            console.log(`워크시트 범위:`, worksheet['!ref']);
+                            
+                            // header 옵션을 제거하여 raw 데이터로 파싱
+                            const sheetData = XLSX.utils.sheet_to_json(worksheet, { 
+                                header: 1,
+                                defval: '',
+                                blankrows: false
+                            });
+                            
+                            console.log(`시트 "${sheetName}" 데이터 구조:`, {
+                                행수: sheetData.length,
+                                첫행: sheetData[0] ? sheetData[0].length : 0,
+                                샘플데이터: sheetData.slice(0, 3)
+                            });
+                            
+                            if (sheetData.length === 0) {
+                                console.warn(`시트 "${sheetName}"에 데이터가 없습니다`);
+                                continue;
+                            }
+                            
+                            if (sheetData[0].length === 0) {
+                                console.warn(`시트 "${sheetName}"의 첫 행에 데이터가 없습니다`);
+                                continue;
+                            }
+                            
+                            // 1행: 헤더 (리그, 이름, ERA, IP, W, L, SV, HLD, ...)
+                            const headers = sheetData[0];
+                            
+                            // "이름" 열의 인덱스 찾기
+                            const nameColumnIndex = headers.findIndex(header => header === '이름');
+                            console.log(`"이름" 열 인덱스:`, nameColumnIndex);
+                            
+                            if (nameColumnIndex !== -1) {
+                                // 리그 이름 추출 (시트명에서 "타자" 또는 "투수" 제거)
+                                let leagueName = sheetName;
+                                if (sheetName.includes('타자')) {
+                                    leagueName = sheetName.replace('타자', '').trim();
+                                } else if (sheetName.includes('투수')) {
+                                    leagueName = sheetName.replace('투수', '').trim();
+                                }
+                                
+                                // 썸머시즌, 정규시즌 등 시즌 구분 처리
+                                if (leagueName.includes('썸머') || leagueName.includes('Summer')) {
+                                    leagueName = leagueName.replace(/썸머|Summer/gi, '').trim() + ' (썸머시즌)';
+                                } else if (leagueName.includes('정규') || leagueName.includes('Regular')) {
+                                    leagueName = leagueName.replace(/정규|Regular/gi, '').trim() + ' (정규시즌)';
+                                }
+                                
+                                console.log(`추출된 리그명: "${leagueName}"`);
+                                
+                                // 리그별로 데이터 저장
+                                if (!playerStats[leagueName]) {
+                                    playerStats[leagueName] = {};
+                                }
+                                
+                                // 선수별 스탯 정보 수집 (2행부터)
+                                const players = [];
+                                let playersInSheet = 0;
+                                
+                                for (let rowIndex = 1; rowIndex < sheetData.length; rowIndex++) {
+                                    const row = sheetData[rowIndex];
+                                    if (row && row.length > nameColumnIndex && row[nameColumnIndex] && row[nameColumnIndex] !== '') {
+                                        const playerName = row[nameColumnIndex];
+                                        
+                                        // 선수명이 숫자가 아닌 경우만 추가 (통계 값 제외)
+                                        if (isNaN(playerName) || typeof playerName === 'string') {
+                                            // 해당 선수의 모든 스탯 정보 수집
+                                            const playerStat = {};
+                                            
+                                            // "이름" 열 오른쪽의 모든 정보를 스탯으로 저장
+                                            for (let statIndex = nameColumnIndex + 1; statIndex < row.length; statIndex++) {
+                                                if (row[statIndex] !== undefined && row[statIndex] !== '') {
+                                                    const statName = headers[statIndex];
+                                                    if (statName) {
+                                                        playerStat[statName] = row[statIndex];
+                                                    }
+                                                }
+                                            }
+                                            
+                                            // 선수명과 리그 정보 추가
+                                            playerStat['이름'] = playerName;
+                                            playerStat['리그'] = leagueName;
+                                            
+                                            players.push(playerStat);
+                                            playersInSheet++;
+                                            console.log(`선수 "${playerName}" 데이터 추가`);
+                                        }
+                                    }
+                                }
+                                
+                                console.log(`시트 "${sheetName}"에서 ${playersInSheet}명의 선수 발견`);
+                                
+                                // 타자/투수 구분하여 저장
+                                if (isBatterSheet) {
+                                    playerStats[leagueName].batters = players;
+                                    console.log(`리그 "${leagueName}" 타자 데이터 저장 완료: ${players.length}명`);
+                                } else if (isPitcherSheet) {
+                                    playerStats[leagueName].pitchers = players;
+                                    console.log(`리그 "${leagueName}" 투수 데이터 저장 완료: ${players.length}명`);
+                                } else if (isLeagueSheet) {
+                                    // 리그 시트인 경우 타자와 투수를 구분하여 저장
+                                    // 헤더를 보고 타자/투수 구분
+                                    const hasBattingStats = headers.some(header => 
+                                        header && (header.includes('타율') || header.includes('안타') || header.includes('홈런') || header.includes('타점'))
+                                    );
+                                    const hasPitchingStats = headers.some(header => 
+                                        header && (header.includes('ERA') || header.includes('승') || header.includes('패') || header.includes('이닝'))
+                                    );
+                                    
+                                    if (hasBattingStats && hasPitchingStats) {
+                                        // 타자와 투수 데이터가 모두 있는 경우
+                                        playerStats[leagueName].mixed = players;
+                                        console.log(`리그 "${leagueName}" 혼합 데이터 저장 완료: ${players.length}명`);
+                                    } else if (hasBattingStats) {
+                                        // 타자 데이터만 있는 경우
+                                        playerStats[leagueName].batters = players;
+                                        console.log(`리그 "${leagueName}" 타자 데이터 저장 완료: ${players.length}명`);
+                                    } else if (hasPitchingStats) {
+                                        // 투수 데이터만 있는 경우
+                                        playerStats[leagueName].pitchers = players;
+                                        console.log(`리그 "${leagueName}" 투수 데이터 저장 완료: ${players.length}명`);
+                                    } else {
+                                        // 구분할 수 없는 경우 기본으로 저장
+                                        playerStats[leagueName].default = players;
+                                        console.log(`리그 "${leagueName}" 기본 데이터 저장 완료: ${players.length}명`);
+                                    }
+                                }
+                                
+                                totalSheetsProcessed++;
+                                totalPlayersProcessed += players.length;
+                            } else {
+                                console.warn(`시트 "${sheetName}"에서 "이름" 열을 찾을 수 없습니다.`);
+                            }
+                        }
+                    } catch (sheetError) {
+                        sheetsWithErrors++;
+                        console.error(`시트 "${sheetName}" 처리 중 오류 발생:`, sheetError);
+                        console.error('오류 스택:', sheetError.stack);
+                        console.error('오류 상세 정보:', {
+                            message: sheetError.message,
+                            name: sheetError.name,
+                            fileName: sheetError.fileName,
+                            lineNumber: sheetError.lineNumber
+                        });
+                        // 개별 시트 오류는 계속 진행
+                    }
+                }
+                
+                console.log('\n=== PlayerStatsLeague 처리 결과 요약 ===');
+                console.log('총 시트 수:', workbook.SheetNames.length);
+                console.log('처리된 시트 수:', totalSheetsProcessed);
+                console.log('오류 발생 시트 수:', sheetsWithErrors);
+                console.log('처리된 선수 수:', totalPlayersProcessed);
+                console.log('=== PlayerStatsLeague.xlsx 로딩 완료 ===');
+                console.log('최종 playerStats 구조:', playerStats);
+                console.log('데이터 구조 확인:', {
+                    리그수: Object.keys(playerStats).length,
+                    각리그별데이터: Object.fromEntries(
+                        Object.entries(playerStats).map(([league, data]) => [
+                            league, 
+                            Object.keys(data).map(type => `${type}: ${data[type]?.length || 0}명`).join(', ')
+                        ])
+                    )
+                });
+                
+                playerStatsData = playerStats;
+                return playerStats;
+                
+            } catch (error) {
+                console.error('=== PlayerStatsLeague.xlsx 로딩 실패 ===');
+                console.error('오류 메시지:', error.message);
+                console.error('오류 이름:', error.name);
+                console.error('오류 스택:', error.stack);
+                console.error('오류 상세 정보:', {
+                    fileName: error.fileName,
+                    lineNumber: error.lineNumber,
+                    columnNumber: error.columnNumber
+                });
+                
+                // 추가 디버깅 정보
+                console.error('현재 playerStatsData 상태:', playerStatsData);
+                console.error('현재 시간:', new Date().toISOString());
+                
+                // 사용자에게 오류 알림
+                if (typeof showErrorNotification === 'function') {
+                    showErrorNotification('PlayerStatsLeague 데이터 로딩에 실패했습니다. 콘솔을 확인해주세요.');
+                }
+                
+                // 오류 발생 시 빈 객체로 초기화
+                playerStatsData = {};
+                
+                throw error; // 상위 함수에서도 오류를 처리할 수 있도록 재발생
+            }
+        }
+        
+        // 팀별 통계 계산 함수 (새로운 집계 기능 활용)
+        async function calculateTeamStats(teamName) {
+            console.log('=== calculateTeamStats 디버깅 ===');
+            console.log('팀명:', teamName);
+            
+            // 새로운 팀별 집계 기능 사용
+            const teamStats = await getTeamStats(teamName);
+            
+            if (teamStats) {
+                console.log(`팀 "${teamName}"의 집계된 통계:`, teamStats);
+                return teamStats;
+            } else {
+                console.log(`팀 "${teamName}"의 통계를 찾을 수 없습니다.`);
+                return null;
+            }
+        }
+        
+        // 시즌 성적 계산 함수 (schedule.csv 기반)
+        function calculateSeasonRecord(teamName) {
+            if (!gamesData || gamesData.length === 0) {
+                return { wins: 0, draws: 0, losses: 0 };
+            }
+            
+            let wins = 0, draws = 0, losses = 0;
+            
+            for (const game of gamesData) {
+                // 경기 종료된 것만 계산 (스코어가 있는 경우)
+                if (game.home_score && game.away_score && 
+                    game.home_score !== '' && game.away_score !== '') {
+                    
+                    const homeScore = parseInt(game.home_score);
+                    const awayScore = parseInt(game.away_score);
+                    
+                    if (isNaN(homeScore) || isNaN(awayScore)) continue;
+                    
+                    if (game.home_team === teamName) {
+                        if (homeScore > awayScore) {
+                            wins++;
+                        } else if (homeScore === awayScore) {
+                            draws++;
+                        } else {
+                            losses++;
+                        }
+                    } else if (game.away_team === teamName) {
+                        if (awayScore > homeScore) {
+                            wins++;
+                        } else if (awayScore === homeScore) {
+                            draws++;
+                        } else {
+                            losses++;
+                        }
+                    }
+                }
+            }
+            
+            return { wins, draws, losses };
+        }
+        
+        // 맞대결 기록 계산 함수 (schedule.csv 기반)
+        function calculateHeadToHead(homeTeam, awayTeam) {
+            if (!gamesData || gamesData.length === 0) {
+                return { homeWins: 0, draws: 0, awayWins: 0 };
+            }
+            
+            let homeWins = 0, draws = 0, awayWins = 0;
+            
+            for (const game of gamesData) {
+                // 경기 종료된 것만 계산
+                if (game.home_score && game.away_score && 
+                    game.home_score !== '' && game.away_score !== '') {
+                    
+                    const homeScore = parseInt(game.home_score);
+                    const awayScore = parseInt(game.away_score);
+                    
+                    if (isNaN(homeScore) || isNaN(awayScore)) continue;
+                    
+                    // 두 팀 간의 맞대결인지 확인
+                    if ((game.home_team === homeTeam && game.away_team === awayTeam) ||
+                        (game.home_team === awayTeam && game.away_team === homeTeam)) {
+                        
+                        if (homeScore > awayScore) {
+                            if (game.home_team === homeTeam) {
+                                homeWins++;
+                            } else {
+                                awayWins++;
+                            }
+                        } else if (homeScore === awayScore) {
+                            draws++;
+                        } else {
+                            if (game.home_team === homeTeam) {
+                                awayWins++;
+                            } else {
+                                homeWins++;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return { homeWins, draws, awayWins };
+        }
+        
+        // 팀 순위 계산 함수 (승률 기반)
+        function calculateTeamRank(teamName) {
+            if (!gamesData || gamesData.length === 0) {
+                return 0;
+            }
+            
+            const teams = new Set();
+            const teamStats = {};
+            
+            // 모든 팀의 승률 계산
+            for (const game of gamesData) {
+                if (game.home_team && game.away_team) {
+                    teams.add(game.home_team);
+                    teams.add(game.away_team);
+                }
+            }
+            
+            for (const team of teams) {
+                const record = calculateSeasonRecord(team);
+                const totalGames = record.wins + record.draws + record.losses;
+                if (totalGames > 0) {
+                    // 승률 계산 (무승부는 0.5점으로 계산)
+                    const winRate = (record.wins + record.draws * 0.5) / totalGames;
+                    teamStats[team] = {
+                        winRate: winRate,
+                        wins: record.wins,
+                        draws: record.draws,
+                        losses: record.losses,
+                        totalGames: totalGames
+                    };
+                } else {
+                    teamStats[team] = {
+                        winRate: 0,
+                        wins: 0,
+                        draws: 0,
+                        losses: 0,
+                        totalGames: 0
+                    };
+                }
+            }
+            
+            // 승률순으로 정렬 (승률이 같으면 승수로 비교)
+            const sortedTeams = Object.entries(teamStats)
+                .sort(([,a], [,b]) => {
+                    if (b.winRate !== a.winRate) {
+                        return b.winRate - a.winRate;
+                    } else {
+                        // 승률이 같으면 승수로 비교
+                        return b.wins - a.wins;
+                    }
+                })
+                .map(([team]) => team);
+            
+            const rank = sortedTeams.indexOf(teamName) + 1;
+            
+            return rank;
+        }
+        
+        // 팀별 개인 스탯을 로그로 출력하는 함수 추가
+        function logTeamPlayerStats(leagueName, teamName) {
+            console.log(`\n=== ${teamName} 팀 개인 스탯 (${leagueName}) ===`);
+            
+            if (!playerStatsData[leagueName]) {
+                console.log('해당 리그의 선수 데이터가 없습니다.');
+                return;
+            }
+            
+            // 타자 개인 스탯 출력
+            if (playerStatsData[leagueName].batters) {
+                console.log(`\n[${teamName} 팀 타자 개인 스탯]`);
+                
+                // 해당 팀의 타자 데이터 찾기
+                const teamBatters = playerStatsData[leagueName].batters.playerStatsByTeam[teamName];
+                
+                if (teamBatters && Object.keys(teamBatters).length > 0) {
+                    for (const [playerName, playerStats] of Object.entries(teamBatters)) {
+                        console.log(`\n${playerName}:`);
+                        for (const [statName, statValue] of Object.entries(playerStats)) {
+                            if (statName !== '이름') {
+                                console.log(`  ${statName}: ${statValue}`);
+                            }
+                        }
+                    }
+                } else {
+                    console.log('해당 팀의 타자 데이터가 없습니다.');
+                }
+            }
+            
+            // 투수 개인 스탯 출력
+            if (playerStatsData[leagueName].pitchers) {
+                console.log(`\n[${teamName} 팀 투수 개인 스탯]`);
+                
+                // 해당 팀의 투수 데이터 찾기
+                const teamPitchers = playerStatsData[leagueName].pitchers.playerStatsByTeam[teamName];
+                
+                if (teamPitchers && Object.keys(teamPitchers).length > 0) {
+                    for (const [playerName, playerStats] of Object.entries(teamPitchers)) {
+                        console.log(`\n${playerName}:`);
+                        for (const [statName, statValue] of Object.entries(playerStats)) {
+                            if (statName !== '이름') {
+                                console.log(`  ${statName}: ${statValue}`);
+                            }
+                        }
+                    }
+                } else {
+                    console.log('해당 팀의 투수 데이터가 없습니다.');
+                }
+            }
+            
+            // 혼합 데이터 개인 스탯 출력 (썸머시즌 등)
+            if (playerStatsData[leagueName].mixed) {
+                console.log(`\n[${teamName} 팀 혼합 개인 스탯 (썸머시즌 등)]`);
+                
+                // 해당 팀의 혼합 데이터 찾기
+                const teamMixed = playerStatsData[leagueName].mixed.playerStatsByTeam[teamName];
+                
+                if (teamMixed && Object.keys(teamMixed).length > 0) {
+                    for (const [playerName, playerStats] of Object.entries(teamMixed)) {
+                        console.log(`\n${playerName}:`);
+                        for (const [statName, statValue] of Object.entries(playerStats)) {
+                            if (statName !== '이름') {
+                                console.log(`  ${statName}: ${statValue}`);
+                            }
+                        }
+                    }
+                } else {
+                    console.log('해당 팀의 혼합 데이터가 없습니다.');
+                }
+            }
+        }
+        
+        // 모든 팀의 개인 스탯을 로그로 출력하는 함수
+        function logAllTeamsPlayerStats(leagueName) {
+            console.log(`\n=== ${leagueName} 리그 전체 팀 개인 스탯 ===`);
+            
+            if (!playerStatsData[leagueName]) {
+                console.log('해당 리그의 선수 데이터가 없습니다.');
+                return;
+            }
+            
+            // 타자 데이터에서 모든 팀 순회
+            if (playerStatsData[leagueName].batters) {
+                console.log(`\n[${leagueName} 리그 타자 개인 스탯]`);
+                
+                for (const [teamName, players] of Object.entries(playerStatsData[leagueName].batters.playerStatsByTeam)) {
+                    console.log(`\n--- ${teamName} 팀 ---`);
+                    
+                    if (Object.keys(players).length > 0) {
+                        for (const [playerName, playerStats] of Object.entries(players)) {
+                            console.log(`\n${playerName}:`);
+                            for (const [statName, statValue] of Object.entries(playerStats)) {
+                                if (statName !== '이름') {
+                                    console.log(`  ${statName}: ${statValue}`);
+                                }
+                            }
+                        }
+                    } else {
+                        console.log('팀원이 없습니다.');
+                    }
+                }
+            }
+            
+            // 투수 데이터에서 모든 팀 순회
+            if (playerStatsData[leagueName].pitchers) {
+                console.log(`\n[${leagueName} 리그 투수 개인 스탯]`);
+                
+                for (const [teamName, players] of Object.entries(playerStatsData[leagueName].pitchers.playerStatsByTeam)) {
+                    console.log(`\n--- ${teamName} 팀 ---`);
+                    
+                    if (Object.keys(players).length > 0) {
+                        for (const [playerName, playerStats] of Object.entries(players)) {
+                            console.log(`\n${playerName}:`);
+                            for (const [statName, statValue] of Object.entries(playerStats)) {
+                                if (statName !== '이름') {
+                                    console.log(`  ${statName}: ${statValue}`);
+                                }
+                            }
+                        }
+                    } else {
+                        console.log('팀원이 없습니다.');
+                    }
+                }
+            }
+            
+            // 혼합 데이터에서 모든 팀 순회 (썸머시즌 등)
+            if (playerStatsData[leagueName].mixed) {
+                console.log(`\n[${leagueName} 리그 혼합 개인 스탯 (썸머시즌 등)]`);
+                
+                for (const [teamName, players] of Object.entries(playerStatsData[leagueName].mixed.playerStatsByTeam)) {
+                    console.log(`\n--- ${teamName} 팀 ---`);
+                    
+                    if (Object.keys(players).length > 0) {
+                        for (const [playerName, playerStats] of Object.entries(players)) {
+                            console.log(`\n${playerName}:`);
+                            for (const [statName, statValue] of Object.entries(playerStats)) {
+                                if (statName !== '이름') {
+                                    console.log(`  ${statName}: ${statValue}`);
+                                }
+                            }
+                        }
+                    } else {
+                        console.log('팀원이 없습니다.');
+                    }
+                }
+            }
+        }
+        
+        function changeDate(direction) {
+            // 현재 날짜에서 direction만큼 이동
+            const newDate = new Date(currentDate);
+            newDate.setDate(newDate.getDate() + direction);
+            
+            // 경기가 있는 날짜를 찾을 때까지 반복
+            let foundGame = false;
+            let attempts = 0;
+            const maxAttempts = 365; // 최대 1년까지 검색
+            
+            while (!foundGame && attempts < maxAttempts) {
+                const dateString = formatDateForComparison(newDate);
+                const gamesForDate = gamesData.filter(game => game.date === dateString);
+                
+                if (gamesForDate.length > 0) {
+                    foundGame = true;
+                    currentDate = new Date(newDate);
+                } else {
+                    // 다음 날짜로 이동
+                    newDate.setDate(newDate.getDate() + direction);
+                    attempts++;
+                }
+            }
+            
+            if (foundGame) {
+                // 날짜 표시 업데이트
+                updateDateDisplay();
+                
+                // 최근 버튼 상태 업데이트
+                updateRecentButton();
+                
+                // 해당 날짜의 경기 표시
+                displayGamesForDate();
+            }
+        }
+        
+        function updateDateDisplay() {
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const day = String(currentDate.getDate()).padStart(2, '0');
+            
+            document.getElementById('currentDate').textContent = `${year}.${month}.${day}`;
+        }
+        
+        function updateRecentButton() {
+            const recentBtn = document.querySelector('.recent-btn');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const currentDateOnly = new Date(currentDate);
+            currentDateOnly.setHours(0, 0, 0, 0);
+            const isToday = currentDateOnly.getTime() === today.getTime();
+            
+            if (isToday) {
+                recentBtn.classList.add('active');
+            } else {
+                recentBtn.classList.remove('active');
+            }
+        }
+        
+        function goToRecent() {
+            // 가장 최근 경기가 있는 날짜 찾기
+            if (gamesData.length > 0) {
+                // 첫 번째 경기(가장 최근)의 날짜로 설정
+                const firstGame = gamesData[0];
+                const gameDate = parseGameDate(firstGame.date);
+                if (gameDate) {
+                    currentDate = gameDate;
+                } else {
+                    currentDate = new Date();
+                }
+            } else {
+                currentDate = new Date();
+            }
+            
+            updateDateDisplay();
+            updateRecentButton();
+            displayGamesForDate();
+        }
+        
+        async function loadGamesData() {
+            try {
+                console.log('=== loadGamesData 시작 ===');
+                console.log('현재 시간:', new Date().toISOString());
+                
+                // 파일 경로 확인
+                const filePath = 'Data/schedule.csv';
+                console.log('파일 경로:', filePath);
+                
+                // fetch 요청 전 상태 확인
+                console.log('fetch 요청 시작...');
+                const response = await fetch(filePath);
+                
+                console.log('응답 상태:', response.status, response.statusText);
+                console.log('응답 헤더:', Object.fromEntries(response.headers.entries()));
+                
+                if (!response.ok) {
+                    throw new Error(`CSV 파일을 불러올 수 없습니다: HTTP ${response.status} ${response.statusText}`);
+                }
+                
+                // 응답 크기 확인
+                const contentLength = response.headers.get('content-length');
+                console.log('파일 크기:', contentLength ? `${contentLength} bytes` : '알 수 없음');
+                
+                console.log('CSV 텍스트 변환 시작...');
+                const csvText = await response.text();
+                console.log('CSV 텍스트 크기:', csvText.length, 'characters');
+                
+                if (!csvText || csvText.trim() === '') {
+                    throw new Error('CSV 파일이 비어있습니다');
+                }
+                
+                console.log('CSV 파싱 시작...');
+                const startTime = performance.now();
+                gamesData = parseCSV(csvText);
+                const endTime = performance.now();
+                
+                console.log('CSV 파싱 완료:', {
+                    처리시간: `${(endTime - startTime).toFixed(2)}ms`,
+                    경기수: gamesData.length,
+                    샘플데이터: gamesData.slice(0, 3)
+                });
+                
+                // 초기 경기 표시
+                displayGamesForDate();
+                
+                console.log('=== loadGamesData 완료 ===');
+                return gamesData;
+                
+            } catch (error) {
+                console.error('=== CSV 파일 로딩 실패 ===');
+                console.error('오류 메시지:', error.message);
+                console.error('오류 이름:', error.name);
+                console.error('오류 스택:', error.stack);
+                console.error('오류 상세 정보:', {
+                    fileName: error.fileName,
+                    lineNumber: error.lineNumber,
+                    columnNumber: error.columnNumber
+                });
+                
+                // 추가 디버깅 정보
+                console.error('현재 gamesData 상태:', gamesData);
+                console.error('현재 시간:', new Date().toISOString());
+                
+                // 오류 발생 시 빈 배열로 초기화
+                gamesData = [];
+                
+                // 사용자에게 오류 알림
+                if (typeof showErrorNotification === 'function') {
+                    showErrorNotification('경기 일정을 불러오는데 실패했습니다. 콘솔을 확인해주세요.');
+                }
+                
+                // 기본 경기 표시
+                displayGamesForDate();
+                
+                throw error; // 상위 함수에서도 오류를 처리할 수 있도록 재발생
+            }
+        }
+        
+        function parseCSV(csvText) {
+            try {
+                console.log('=== parseCSV 시작 ===');
+                console.log('입력 CSV 텍스트 길이:', csvText ? csvText.length : 'null/undefined');
+                
+                if (!csvText || csvText.trim() === '') {
+                    console.warn('CSV 텍스트가 비어있습니다');
+                    return [];
+                }
+                
+                const lines = csvText.trim().split('\n');
+                console.log('CSV 라인 수:', lines.length);
+                
+                if (lines.length < 2) {
+                    console.warn('CSV에 헤더와 데이터가 충분하지 않습니다 (최소 2줄 필요)');
+                    return [];
+                }
+                
+                const headers = lines[0].split(',');
+                console.log('CSV 헤더:', headers);
+                console.log('헤더 컬럼 수:', headers.length);
+                
+                const games = [];
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                console.log('기준 날짜 (오늘):', today.toISOString().split('T')[0]);
+                
+                let processedLines = 0;
+                let validGames = 0;
+                let invalidLines = 0;
+                
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i];
+                    processedLines++;
+                    
+                    try {
+                        // 쉼표가 포함된 팀명을 고려한 파싱
+                        const values = parseCSVLine(line);
+                        
+                        // 날짜가 있는지만 확인 (헤더 수와 값 수가 맞지 않아도 상관없음)
+                        if (values.length > 0) {
+                            // 날짜 컬럼 인덱스 찾기 (보통 첫 번째 컬럼이 날짜)
+                            let dateIndex = 0;
+                            if (headers.length > 0 && headers[0].toLowerCase().includes('date')) {
+                                dateIndex = 0;
+                            }
+                            
+                            const dateValue = values[dateIndex] ? values[dateIndex].trim() : '';
+                            const homeTeam = values[1] ? values[1].trim() : '';
+                            const awayTeam = values[2] ? values[2].trim() : '';
+                            
+                            // 디버깅을 위한 로그 (처음 몇 줄만)
+                            if (i <= 5) {
+                                console.log(`라인 ${i} 파싱 결과:`, {
+                                    날짜: dateValue,
+                                    홈팀: homeTeam,
+                                    원정팀: awayTeam,
+                                    전체값: values
+                                });
+                            }
+                            
+                            // 빈 팀명이나 특수한 경우 제외
+                            if (dateValue && homeTeam && awayTeam && 
+                                homeTeam !== 'ALLSTARS' && 
+                                awayTeam !== 'ALLSTARS' &&
+                                homeTeam !== 'PostSeason' && 
+                                awayTeam !== 'PostSeason') {
+                                
+                                // 날짜 파싱 및 미래 경기만 필터링
+                                const gameDate = parseGameDate(dateValue);
+                                
+                                if (gameDate && gameDate >= today) {
+                                    const game = {
+                                        date: dateValue,
+                                        home_team: homeTeam,
+                                        away_team: awayTeam,
+                                        home_score: values[3] ? values[3].trim() : '',
+                                        away_score: values[4] ? values[4].trim() : '',
+                                        code: values[5] ? values[5].trim() : ''
+                                    };
+                                    
+                                    games.push(game);
+                                    validGames++;
+                                    
+                                    // 디버깅을 위한 로그 (처음 몇 개만)
+                                    if (validGames <= 3) {
+                                        console.log(`유효한 경기 ${validGames}:`, game);
+                                    }
+                                } else {
+                                    if (i <= 5) {
+                                        console.log(`과거 경기 제외: ${dateValue} (${homeTeam} vs ${awayTeam})`);
+                                    }
+                                }
+                            } else {
+                                if (i <= 5) {
+                                    console.log(`유효하지 않은 라인 ${i}:`, {
+                                        날짜: dateValue,
+                                        홈팀: homeTeam,
+                                        원정팀: awayTeam
+                                    });
+                                }
+                                invalidLines++;
+                            }
+                        } else {
+                            if (i <= 5) {
+                                console.log(`빈 라인 ${i} 건너뜀`);
+                            }
+                            invalidLines++;
+                        }
+                    } catch (lineError) {
+                        console.error(`라인 ${i} 파싱 중 오류:`, lineError);
+                        console.error('문제가 된 라인:', line);
+                        invalidLines++;
+                    }
+                }
+                
+                console.log('CSV 파싱 결과:', {
+                    처리된라인: processedLines,
+                    유효한경기: validGames,
+                    무효한라인: invalidLines,
+                    성공률: `${((validGames / processedLines) * 100).toFixed(1)}%`
+                });
+                
+                // 날짜순으로 정렬
+                console.log('경기 날짜순 정렬 시작...');
+                const startTime = performance.now();
+                games.sort((a, b) => {
+                    const dateA = parseGameDate(a.date);
+                    const dateB = parseGameDate(b.date);
+                    return dateA - dateB;
+                });
+                const endTime = performance.now();
+                console.log(`정렬 완료 (${(endTime - startTime).toFixed(2)}ms)`);
+                
+                console.log('=== parseCSV 완료 ===');
+                return games;
+                
+            } catch (error) {
+                console.error('=== CSV 파싱 중 치명적 오류 발생 ===');
+                console.error('오류 메시지:', error.message);
+                console.error('오류 이름:', error.name);
+                console.error('오류 스택:', error.stack);
+                console.error('오류 상세 정보:', {
+                    fileName: error.fileName,
+                    lineNumber: error.lineNumber,
+                    columnNumber: error.columnNumber
+                });
+                
+                // 오류 발생 시 빈 배열 반환
+                return [];
+            }
+        }
+        
+        function parseCSVLine(line) {
+            // 쉼표가 포함된 팀명을 고려한 파싱
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            
+            result.push(current);
+            return result;
+        }
+        
+        function parseGameDate(dateString) {
+            if (!dateString) return null;
+            
+            // "2025.7.18" 형식을 Date 객체로 변환
+            const parts = dateString.split('.');
+            if (parts.length === 3) {
+                const year = parseInt(parts[0]);
+                const month = parseInt(parts[1]) - 1; // JavaScript는 월이 0부터 시작
+                const day = parseInt(parts[2]);
+                
+                if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+                    return new Date(year, month, day);
+                }
+            }
+            return null;
+        }
+        
+        function displayGamesForDate() {
+            const gamesContainer = document.getElementById('gamesContainer');
+            const dateString = formatDateForComparison(currentDate);
+            
+            // 해당 날짜의 경기 찾기
+            const gamesForDate = gamesData.filter(game => game.date === dateString);
+            
+            if (gamesForDate.length === 0) {
+                gamesContainer.innerHTML = '<div class="no-games">이 날에는 경기가 없습니다.</div>';
+                return;
+            }
+            
+            // 경기 카드 생성
+            const gamesHTML = gamesForDate.map(game => createGameCard(game)).join('');
+            gamesContainer.innerHTML = `<div class="games-row">${gamesHTML}</div>`;
+            
+            // 카드 클릭 이벤트 추가
+            addCardClickEvents();
+        }
+        
+        function createGameCard(game) {
+            const status = game.home_score && game.away_score ? '경기종료' : '경기전';
+            
+            return `
+                <div class="game-card" data-game-code="${game.code || ''}">
+                    <div class="game-status">${status}</div>
+                    <div class="team-row">
+                        <div class="team-info">
+                            <div class="team-logo" style="background-color: #ff4757;">${game.home_team.charAt(0)}</div>
+                            <div class="team-name">${game.home_team}</div>
+                        </div>
+                    </div>
+                    <div class="team-row">
+                        <div class="team-info">
+                            <div class="team-logo" style="background-color: #3742fa;">${game.away_team.charAt(0)}</div>
+                            <div class="team-name">${game.away_team}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function formatDateForComparison(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            return `${year}.${month}.${day}`;
+        }
+        
+        function addCardClickEvents() {
+            const gameCards = document.querySelectorAll('.game-card');
+            gameCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // 이전 선택된 카드에서 선택 상태 제거
+                    document.querySelectorAll('.game-card.selected').forEach(selectedCard => {
+                        selectedCard.classList.remove('selected');
+                    });
+                    
+                    // 현재 카드 선택 상태로 변경
+                    this.classList.add('selected');
+
+                    // 선택된 경기 코드를 가져와서 예측 패널에 표시
+                    const gameCode = this.dataset.gameCode;
+                    if (gameCode) {
+                        showPredictionPanel(gameCode);
+                    }
+                });
+            });
+        }
+
+        function showPredictionPanel(gameCode) {
+            const predictionPanel = document.getElementById('predictionPanel');
+            predictionPanel.dataset.gameCode = gameCode;
+            predictionPanel.classList.add('show');
+
+            // 선택된 경기 데이터 찾기
+            const selectedGame = gamesData.find(game => game.code === gameCode);
+            if (!selectedGame) {
+                return;
+            }
+
+            // 팀 이름 업데이트
+            document.querySelector('.home-team .team-name-small').textContent = selectedGame.home_team;
+            document.querySelector('.away-team .team-name-small').textContent = selectedGame.away_team;
+
+            // 팀 로고 업데이트
+            document.querySelector('.home-team .team-logo-small').textContent = selectedGame.home_team.charAt(0);
+            document.querySelector('.away-team .team-logo-small').textContent = selectedGame.away_team.charAt(0);
+
+            // 예시 확률 (실제로는 API에서 가져와야 함)
+            updateProbabilityBar(51.7, 48.3);
+            
+            // 팀 통계 정보 표시 (선수 스탯 포함)
+            displayTeamStats(selectedGame.home_team, selectedGame.away_team);
+        }
+        
+        function updateProbabilityBar(homeProb, awayProb) {
+            const homeSegment = document.querySelector('.home-probability');
+            const awaySegment = document.querySelector('.away-probability');
+            const homeText = document.querySelector('.home-probability .probability-text');
+            const awayText = document.querySelector('.away-probability .probability-text');
+            
+            homeSegment.style.width = homeProb + '%';
+            awaySegment.style.width = awayProb + '%';
+            homeText.textContent = homeProb + '%';
+            awayText.textContent = awayProb + '%';
+        }
+        
+        function addPredictionOptionEvents() {
+            // 이 함수는 더 이상 필요하지 않음
+        }
+        
+        function closePredictionPanel() {
+            document.getElementById('predictionPanel').classList.remove('show');
+            document.getElementById('predictionPanel').dataset.gameCode = '';
+        }
+        
+        function submitPrediction() {
+            // 이 함수는 더 이상 필요하지 않음
+        }
+        
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                console.log('=== 페이지 로드 시작 ===');
+                console.log('현재 시간:', new Date().toISOString());
+                
+                // UI 이벤트 리스너 설정
+                console.log('UI 이벤트 리스너 설정 중...');
+                const recentBtn = document.querySelector('.recent-btn');
+                if (recentBtn) {
+                    recentBtn.addEventListener('click', goToRecent);
+                    console.log('최근 경기 버튼 이벤트 리스너 설정 완료');
+                } else {
+                    console.warn('최근 경기 버튼을 찾을 수 없습니다');
+                }
+                
+                // 팀별 개인 스탯 확인 버튼 이벤트 리스너 추가
+                const checkHomeTeamStatsBtn = document.getElementById('checkHomeTeamStats');
+                if (checkHomeTeamStatsBtn) {
+                    checkHomeTeamStatsBtn.addEventListener('click', function() {
+                        const selectedGame = getSelectedGame();
+                        if (selectedGame) {
+                            const homeTeamLeague = findTeamLeague(selectedGame.home_team);
+                            if (homeTeamLeague) {
+                                logTeamPlayerStats(homeTeamLeague, selectedGame.home_team);
+                                console.log(`\n${selectedGame.home_team} 팀의 개인 스탯을 콘솔에 출력했습니다.`);
+                            } else {
+                                console.log('홈팀의 리그 정보를 찾을 수 없습니다.');
+                            }
+                        } else {
+                            console.log('먼저 경기를 선택해주세요.');
+                        }
+                    });
+                    console.log('홈팀 스탯 확인 버튼 이벤트 리스너 설정 완료');
+                } else {
+                    console.warn('홈팀 스탯 확인 버튼을 찾을 수 없습니다');
+                }
+                
+                const checkAwayTeamStatsBtn = document.getElementById('checkAwayTeamStats');
+                if (checkAwayTeamStatsBtn) {
+                    checkAwayTeamStatsBtn.addEventListener('click', function() {
+                        const selectedGame = getSelectedGame();
+                        if (selectedGame) {
+                            const awayTeamLeague = findTeamLeague(selectedGame.away_team);
+                            if (awayTeamLeague) {
+                                logTeamPlayerStats(awayTeamLeague, selectedGame.away_team);
+                                console.log(`\n${selectedGame.away_team} 팀의 개인 스탯을 콘솔에 출력했습니다.`);
+                            } else {
+                                console.log('원정팀의 리그 정보를 찾을 수 없습니다.');
+                            }
+                        } else {
+                            console.log('먼저 경기를 선택해주세요.');
+                        }
+                    });
+                    console.log('원정팀 스탯 확인 버튼 이벤트 리스너 설정 완료');
+                } else {
+                    console.warn('원정팀 스탯 확인 버튼을 찾을 수 없습니다');
+                }
+                
+                const checkAllTeamsStatsBtn = document.getElementById('checkAllTeamsStats');
+                if (checkAllTeamsStatsBtn) {
+                    checkAllTeamsStatsBtn.addEventListener('click', function() {
+                        const selectedGame = getSelectedGame();
+                        if (selectedGame) {
+                            const homeTeamLeague = findTeamLeague(selectedGame.home_team);
+                            const awayTeamLeague = findTeamLeague(selectedGame.away_team);
+                            
+                            if (homeTeamLeague) {
+                                logAllTeamsPlayerStats(homeTeamLeague);
+                                console.log(`\n${homeTeamLeague} 리그의 전체 팀 개인 스탯을 콘솔에 출력했습니다.`);
+                            }
+                            
+                            if (awayTeamLeague && awayTeamLeague !== homeTeamLeague) {
+                                logAllTeamsPlayerStats(awayTeamLeague);
+                                console.log(`\n${awayTeamLeague} 리그의 전체 팀 개인 스탯을 콘솔에 출력했습니다.`);
+                            }
+                        } else {
+                            console.log('먼저 경기를 선택해주세요.');
+                        }
+                    });
+                    console.log('전체 팀 스탯 확인 버튼 이벤트 리스너 설정 완료');
+                } else {
+                    console.warn('전체 팀 스탯 확인 버튼을 찾을 수 없습니다');
+                }
+                
+                console.log('UI 이벤트 리스너 설정 완료');
+                
+                // 데이터 초기화
+                console.log('\n--- 데이터 초기화 시작 ---');
+                await initializeData();
+                console.log('--- 데이터 초기화 완료 ---');
+                
+                // 경기 데이터 로드 후 가장 최근 경기 날짜로 이동
+                console.log('\n--- 경기 데이터 로드 시작 ---');
+                try {
+                    await loadGamesData();
+                    console.log('경기 데이터 로드 완료');
+                    
+                    // 가장 최근 경기로 이동
+                    goToRecent();
+                    console.log('최근 경기로 이동 완료');
+                    
+                    // 기본 팀 통계 표시 (테스트용)
+                    if (gamesData && gamesData.length > 0) {
+                        const firstGame = gamesData[0];
+                        console.log('첫 번째 경기 정보:', firstGame);
+                        
+                        // 기본 정보만 표시
+                        displayBasicTeamInfo(firstGame.home_team, firstGame.away_team);
+                        console.log('기본 팀 정보 표시 완료');
+                    } else {
+                        console.warn('경기 데이터가 없습니다');
+                    }
+                } catch (error) {
+                    console.error('경기 데이터 로드 실패:', error);
+                    console.error('오류 상세 정보:', {
+                        message: error.message,
+                        name: error.name,
+                        stack: error.stack
+                    });
+                    
+                    if (typeof showErrorNotification === 'function') {
+                        showErrorNotification('경기 일정을 불러오는데 실패했습니다. 콘솔을 확인해주세요.');
+                    } else {
+                        alert('경기 일정을 불러오는데 실패했습니다.');
+                    }
+                }
+                
+                console.log('=== 페이지 로드 완료 ===');
+                
+            } catch (error) {
+                console.error('=== 페이지 로드 중 치명적 오류 발생 ===');
+                console.error('오류 메시지:', error.message);
+                console.error('오류 이름:', error.name);
+                console.error('오류 스택:', error.stack);
+                console.error('오류 상세 정보:', {
+                    fileName: error.fileName,
+                    lineNumber: error.lineNumber,
+                    columnNumber: error.columnNumber
+                });
+                
+                // 사용자에게 오류 알림
+                if (typeof showErrorNotification === 'function') {
+                    showErrorNotification('페이지 로드 중 오류가 발생했습니다. 콘솔을 확인해주세요.');
+                } else {
+                    alert('페이지 로드 중 오류가 발생했습니다. 콘솔을 확인해주세요.');
+                }
+                
+                // 기본값으로 초기화
+                if (!leagueTeamData) leagueTeamData = {};
+                if (!playerStatsData) playerStatsData = {};
+                if (!gamesData) gamesData = [];
+            }
+        });
+        
+        // 선택된 경기 정보를 가져오는 함수
+        function getSelectedGame() {
+            const selectedCard = document.querySelector('.game-card.selected');
+            if (selectedCard) {
+                const gameCode = selectedCard.dataset.gameCode;
+                return gamesData.find(game => game.code === gameCode);
+            }
+            return null;
+        }
+
+        // 기본 팀 정보만 표시하는 함수 (엑셀 데이터가 없을 때)
+        function displayBasicTeamInfo(homeTeam, awayTeam) {
+            // 팀이 속한 리그 찾기
+            const homeTeamLeague = findTeamLeague(homeTeam);
+            const awayTeamLeague = findTeamLeague(awayTeam);
+            
+            // 팀명 업데이트
+            document.getElementById('homeTeamName').textContent = homeTeam;
+            document.getElementById('awayTeamName').textContent = awayTeam;
+            document.getElementById('homeTeamName2').textContent = homeTeam;
+            document.getElementById('awayTeamName2').textContent = awayTeam;
+            
+            // 팀 로고 업데이트
+            document.getElementById('homeTeamLogo').textContent = homeTeam.charAt(0);
+            document.getElementById('awayTeamLogo').textContent = awayTeam.charAt(0);
+            document.getElementById('homeTeamLogo2').textContent = homeTeam.charAt(0);
+            document.getElementById('awayTeamLogo2').textContent = awayTeam.charAt(0);
+            
+            // 기본값으로 표시
+            document.getElementById('homeTeamRank').textContent = '순위 계산 중';
+            document.getElementById('awayTeamRank').textContent = '순위 계산 중';
+            document.getElementById('homeTeamRank2').textContent = '순위 계산 중';
+            document.getElementById('awayTeamRank2').textContent = '순위 계산 중';
+            
+            // 리그 정보 표시
+            if (homeTeamLeague) {
+                document.getElementById('homeTeamLeague').textContent = homeTeamLeague;
+                document.getElementById('homeTeamLeague2').textContent = homeTeamLeague;
+            } else {
+                document.getElementById('homeTeamLeague').textContent = '리그 정보 없음';
+                document.getElementById('homeTeamLeague2').textContent = '리그 정보 없음';
+            }
+            
+            if (awayTeamLeague) {
+                document.getElementById('awayTeamLeague').textContent = awayTeamLeague;
+                document.getElementById('awayTeamLeague2').textContent = awayTeamLeague;
+            } else {
+                document.getElementById('awayTeamLeague').textContent = '리그 정보 없음';
+                document.getElementById('awayTeamLeague2').textContent = '리그 정보 없음';
+            }
+            
+            // 팀 통계 계산 및 표시
+            if (homeTeamLeague && awayTeamLeague) {
+                console.log('팀 통계 계산 시작...');
+                calculateAndDisplayTeamStatsDetailed(homeTeam, awayTeam, homeTeamLeague, awayTeamLeague);
+            } else {
+                // 모든 통계를 기본값으로 설정
+                const defaultStats = [
+                    'homeBattingAvg', 'awayBattingAvg',
+                    'homeOPS', 'awayOPS',
+                    'homeERA', 'awayERA',
+                    'homeWHIP', 'awayWHIP',
+                    'homeRunsScored', 'awayRunsScored',
+                    'homeRunsAllowed', 'awayRunsAllowed',
+                    'homeOWAR', 'awayOWAR',
+                    'homeDWAR', 'awayDWAR',
+                    'homeStartingWAR', 'awayStartingWAR',
+                    'homeBullpenWAR', 'awayBullpenWAR'
+                ];
+                
+                defaultStats.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.textContent = '데이터 없음';
+                    }
+                });
+            }
+            
+            // 시즌 성적과 맞대결 기록 계산 및 표시 (리그 정보와 관계없이)
+            calculateAndDisplaySeasonStats(homeTeam, awayTeam);
+        }
+
+        // UI 표시용 기본 팀 통계 함수
+        function getBasicTeamStats() {
+            return {
+                battingAvg: 0.250,
+                ops: 0.700,
+                era: 4.50,
+                whip: 1.40,
+                runsScored: 500,
+                runsAllowed: 500,
+                owar: 10.0,
+                dwar: 5.0,
+                startingWar: 8.0,
+                bullpenWar: 3.0
+            };
+        }
+
+        // 선수가 속한 팀을 찾는 함수 (새로운 팀별 집계 기능으로 대체됨)
+        // function findPlayerTeam(playerName, leagueName) { ... } - 제거됨
+
+        // 팀별 통계 계산 함수
+        
+        // 페이지 로드 시 데이터 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            // 데이터 초기화
+            initializeData().then(() => {
+                // 팀 통계 계산 테스트 (샘플 팀으로)
+                setTimeout(() => {
+                    testTeamStatsCalculation();
+                }, 1000);
+                
+            }).catch(error => {
+                console.error('데이터 초기화 실패:', error);
+            });
+        });
+
+        // 팀 통계 계산 테스트 함수
+        function testTeamStatsCalculation() {
+            try {
+                // 사용 가능한 리그 확인
+                if (playerStatsData && Object.keys(playerStatsData).length > 0) {
+                    const leagues = Object.keys(playerStatsData);
+                    
+                    // 각 리그별로 팀 통계 출력
+                    leagues.forEach(leagueName => {
+                        const leagueData = playerStatsData[leagueName];
+                        
+                        if (leagueData && leagueData.length > 0) {
+                            // 리그 내 모든 팀 찾기
+                            const teams = new Set();
+                            leagueData.forEach(player => {
+                                if (player && player.팀) {
+                                    teams.add(player.팀);
+                                }
+                            });
+                            
+                            if (teams.size > 0) {
+                                console.log(`\n=== ${leagueName} 리그 팀별 통계 ===`);
+                                
+                                // 각 팀의 통계 계산 및 출력
+                                Array.from(teams).forEach(teamName => {
+                                    const teamStats = calculateTeamStatsDetailed(teamName, leagueName);
+                                    if (teamStats && teamStats.playerCount > 0) {
+                                        console.log(`${teamName}: 타율 ${teamStats.battingAvg}, OPS ${teamStats.ops}, ERA ${teamStats.era}, WHIP ${teamStats.whip} (선수 ${teamStats.playerCount}명)`);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+                
+            } catch (error) {
+                console.error('팀 통계 계산 테스트 중 오류:', error);
+            }
+        }
+
+        // 팀별 통계 계산 및 표시 함수
+        function calculateAndDisplayTeamStatsDetailed(homeTeam, awayTeam, homeTeamLeague, awayTeamLeague) {
+            console.log('팀 통계 계산 시작:', { homeTeam, awayTeam, homeTeamLeague, awayTeamLeague });
+            
+            try {
+                // 홈팀 통계 계산
+                const homeStats = calculateTeamStatsDetailed(homeTeam, homeTeamLeague);
+                const awayStats = calculateTeamStatsDetailed(awayTeam, awayTeamLeague);
+                
+                // 경기 미리보기에 통계 표시
+                displayTeamStatsDetailed(homeStats, awayStats);
+                
+                console.log('팀 통계 계산 완료:', { homeStats, awayStats });
+                
+            } catch (error) {
+                console.error('팀 통계 계산 중 오류 발생:', error);
+                // 오류 발생 시 기본값 표시
+                displayDefaultTeamStatsDetailed();
+            }
+        }
+
+        // 특정 팀의 통계를 계산하는 함수
+        function calculateTeamStatsDetailed(teamName, leagueName) {
+            if (!teamName || !leagueName) {
+                console.warn('팀명 또는 리그명이 없습니다:', { teamName, leagueName });
+                return getDefaultTeamStatsDetailed();
+            }
+
+            console.log(`팀 "${teamName}"의 통계 계산 시작 (리그: ${leagueName})`);
+            
+            try {
+                // 해당 리그의 선수 데이터 가져오기
+                const leagueData = playerStatsData[leagueName];
+                if (!leagueData || !Array.isArray(leagueData)) {
+                    console.warn(`리그 "${leagueName}"의 데이터를 찾을 수 없습니다`);
+                    return getDefaultTeamStatsDetailed();
+                }
+
+                // 해당 팀의 선수들만 필터링
+                const teamPlayers = leagueData.filter(player => {
+                    if (!player || typeof player !== 'object') return false;
+                    
+                    // 팀명 매칭 (정확한 매칭 또는 부분 매칭)
+                    const playerTeam = player.팀 || '';
+                    return playerTeam === teamName || 
+                           playerTeam.includes(teamName) || 
+                           teamName.includes(playerTeam);
+                });
+
+                if (teamPlayers.length === 0) {
+                    console.warn(`팀 "${teamName}"의 선수를 찾을 수 없습니다`);
+                    return getDefaultTeamStatsDetailed();
+                }
+
+                console.log(`팀 "${teamName}"에서 ${teamPlayers.length}명의 선수 발견`);
+
+                // 팀 통계 계산
+                const stats = calculateAggregatedTeamStatsDetailed(teamPlayers);
+                
+                // 팀 순위 계산
+                const rank = calculateTeamRankDetailed(teamName, leagueName, stats);
+                
+                return {
+                    ...stats,
+                    rank: rank,
+                    playerCount: teamPlayers.length
+                };
+
+            } catch (error) {
+                console.error(`팀 "${teamName}" 통계 계산 중 오류:`, error);
+                return getDefaultTeamStatsDetailed();
+            }
+        }
+
+        // 팀 통계를 집계하는 함수
+        function calculateAggregatedTeamStatsDetailed(teamPlayers) {
+            if (!teamPlayers || teamPlayers.length === 0) {
+                return getDefaultTeamStatsDetailed();
+            }
+
+            let totalPA = 0;
+            let totalHits = 0;
+            let totalAB = 0;
+            let totalBB = 0;
+            let totalHBP = 0;
+            let totalSF = 0;
+            let totalSingles = 0;
+            let totalDoubles = 0;
+            let totalTriples = 0;
+            let totalHR = 0;
+            let totalRBI = 0;
+            let totalRuns = 0;
+            let totalSB = 0;
+            let totalCS = 0;
+            let totalOWAR = 0;
+            let totalDWAR = 0;
+            
+            // 투수 통계
+            let totalIP = 0;
+            let totalER = 0;
+            let totalHitsAllowed = 0;
+            let totalBBAllowed = 0;
+            let totalSO = 0;
+            let totalStartingWAR = 0;
+            let totalBullpenWAR = 0;
+
+            teamPlayers.forEach(player => {
+                if (!player || typeof player !== 'object') return;
+
+                // 타격 통계
+                const pa = parseFloat(player.PA) || 0;
+                const hits = parseFloat(player.H) || 0;
+                const ab = parseFloat(player.AB) || 0;
+                const bb = parseFloat(player.BB) || 0;
+                const hbp = parseFloat(player.HBP) || 0;
+                const sf = parseFloat(player.SF) || 0;
+                const singles = parseFloat(player['1B']) || 0;
+                const doubles = parseFloat(player['2B']) || 0;
+                const triples = parseFloat(player['3B']) || 0;
+                const hr = parseFloat(player.HR) || 0;
+                const rbi = parseFloat(player.RBI) || 0;
+                const runs = parseFloat(player.R) || 0;
+                const sb = parseFloat(player.SB) || 0;
+                const cs = parseFloat(player.CS) || 0;
+                const owar = parseFloat(player['oWAR']) || 0;
+                const dwar = parseFloat(player['dWAR']) || 0;
+
+                totalPA += pa;
+                totalHits += hits;
+                totalAB += ab;
+                totalBB += bb;
+                totalHBP += hbp;
+                totalSF += sf;
+                totalSingles += singles;
+                totalDoubles += doubles;
+                totalTriples += triples;
+                totalHR += hr;
+                totalRBI += rbi;
+                totalRuns += runs;
+                totalSB += sb;
+                totalCS += cs;
+                totalOWAR += owar;
+                totalDWAR += dwar;
+
+                // 투수 통계
+                const ip = parseFloat(player.IP) || 0;
+                const er = parseFloat(player.ER) || 0;
+                const hitsAllowed = parseFloat(player['H_allowed']) || 0;
+                const bbAllowed = parseFloat(player['BB_allowed']) || 0;
+                const so = parseFloat(player.SO) || 0;
+                const startingWAR = parseFloat(player['Starting_WAR']) || 0;
+                const bullpenWAR = parseFloat(player['Bullpen_WAR']) || 0;
+
+                totalIP += ip;
+                totalER += er;
+                totalHitsAllowed += hitsAllowed;
+                totalBBAllowed += bbAllowed;
+                totalSO += so;
+                totalStartingWAR += startingWAR;
+                totalBullpenWAR += bullpenWAR;
+            });
+
+            // 팀 통계 계산
+            const battingAvg = totalAB > 0 ? (totalHits / totalAB).toFixed(3) : '0.000';
+            const obp = totalPA > 0 ? ((totalHits + totalBB + totalHBP) / (totalAB + totalBB + totalHBP + totalSF)).toFixed(3) : '0.000';
+            const slg = totalAB > 0 ? ((totalSingles + totalDoubles * 2 + totalTriples * 3 + totalHR * 4) / totalAB).toFixed(3) : '0.000';
+            const ops = (parseFloat(obp) + parseFloat(slg)).toFixed(3);
+            
+            const era = totalIP > 0 ? ((totalER * 9) / totalIP).toFixed(2) : '0.00';
+            const whip = totalIP > 0 ? ((totalHitsAllowed + totalBBAllowed) / totalIP).toFixed(2) : '0.00';
+
+            return {
+                battingAvg: battingAvg,
+                obp: obp,
+                slg: slg,
+                ops: ops,
+                era: era,
+                whip: whip,
+                runsScored: totalRuns,
+                runsAllowed: totalER, // 간단한 근사치
+                owar: totalOWAR.toFixed(2),
+                dwar: totalDWAR.toFixed(2),
+                startingWAR: totalStartingWAR.toFixed(2),
+                bullpenWAR: totalBullpenWAR.toFixed(2),
+                playerCount: teamPlayers.length
+            };
+        }
+
+        // 팀 순위를 계산하는 함수
+        function calculateTeamRankDetailed(teamName, leagueName, teamStats) {
+            if (!leagueName || !playerStatsData[leagueName]) {
+                return '순위 계산 불가';
+            }
+
+            try {
+                const leagueData = playerStatsData[leagueName];
+                const allTeams = new Set();
+                
+                // 모든 팀명 수집
+                leagueData.forEach(player => {
+                    if (player && player.팀) {
+                        allTeams.add(player.팀);
+                    }
+                });
+
+                const teamList = Array.from(allTeams);
+                if (teamList.length === 0) return '순위 계산 불가';
+
+                // 각 팀의 통계 계산
+                const teamRankings = teamList.map(team => {
+                    const teamPlayers = leagueData.filter(p => p && p.팀 === team);
+                    if (teamPlayers.length === 0) return { team, stats: getDefaultTeamStatsDetailed() };
+                    
+                    const stats = calculateAggregatedTeamStatsDetailed(teamPlayers);
+                    return { team, stats };
+                });
+
+                // 타율 기준으로 정렬 (내림차순)
+                teamRankings.sort((a, b) => parseFloat(b.stats.battingAvg) - parseFloat(a.stats.battingAvg));
+                
+                // 현재 팀의 순위 찾기
+                const currentTeamIndex = teamRankings.findIndex(t => 
+                    t.team === teamName || 
+                    t.team.includes(teamName) || 
+                    teamName.includes(t.team)
+                );
+
+                if (currentTeamIndex === -1) return '순위 계산 불가';
+                
+                const rank = currentTeamIndex + 1;
+                const totalTeams = teamRankings.length;
+                
+                return `${rank}위`;
+                
+            } catch (error) {
+                console.error('팀 순위 계산 중 오류:', error);
+                return '순위 계산 불가';
+            }
+        }
+
+        // 기본 팀 통계 반환 함수
+        function getDefaultTeamStatsDetailed() {
+            return {
+                battingAvg: '0.000',
+                obp: '0.000',
+                slg: '0.000',
+                ops: '0.000',
+                era: '0.00',
+                whip: '0.00',
+                runsScored: 0,
+                runsAllowed: 0,
+                owar: '0.00',
+                dwar: '0.00',
+                startingWAR: '0.00',
+                bullpenWAR: '0.00',
+                rank: '순위 계산 불가',
+                playerCount: 0
+            };
+        }
+
+        // 팀 통계를 UI에 표시하는 함수
+        function displayTeamStatsDetailed(homeStats, awayStats) {
+            try {
+                // 경기 미리보기 통계 업데이트
+                updateElement('homeBattingAvg', `${homeStats.rank} ${homeStats.battingAvg}`);
+                updateElement('awayBattingAvg', `${awayStats.battingAvg} ${awayStats.rank}`);
+                
+                updateElement('homeOPS', `${homeStats.rank} ${homeStats.ops}`);
+                updateElement('awayOPS', `${awayStats.ops} ${awayStats.rank}`);
+                
+                updateElement('homeERA', `${homeStats.rank} ${homeStats.era}`);
+                updateElement('awayERA', `${awayStats.era} ${awayStats.rank}`);
+                
+                updateElement('homeWHIP', `${homeStats.rank} ${homeStats.whip}`);
+                updateElement('awayWHIP', `${awayStats.whip} ${awayStats.rank}`);
+
+                // 팀 전력 비교 통계 업데이트
+                updateElement('homeRunsScored', homeStats.runsScored);
+                updateElement('awayRunsScored', awayStats.runsScored);
+                
+                updateElement('homeRunsAllowed', homeStats.runsAllowed);
+                updateElement('awayRunsAllowed', awayStats.runsAllowed);
+                
+                updateElement('homeOWAR', homeStats.owar);
+                updateElement('awayOWAR', awayStats.owar);
+                
+                updateElement('homeDWAR', homeStats.dwar);
+                updateElement('awayDWAR', awayStats.dwar);
+                
+                updateElement('homeStartingWAR', homeStats.startingWAR);
+                updateElement('awayStartingWAR', awayStats.startingWAR);
+                
+                updateElement('homeBullpenWAR', homeStats.bullpenWAR);
+                updateElement('awayBullpenWAR', awayStats.bullpenWAR);
+
+                console.log('팀 통계 UI 업데이트 완료');
+                
+            } catch (error) {
+                console.error('팀 통계 UI 업데이트 중 오류:', error);
+                displayDefaultTeamStatsDetailed();
+            }
+        }
+
+        // 기본 팀 통계를 UI에 표시하는 함수
+        function displayDefaultTeamStatsDetailed() {
+            const defaultStats = [
+                'homeBattingAvg', 'awayBattingAvg',
+                'homeOPS', 'awayOPS',
+                'homeERA', 'awayERA',
+                'homeWHIP', 'awayWHIP',
+                'homeRunsScored', 'awayRunsScored',
+                'homeRunsAllowed', 'awayRunsAllowed',
+                'homeOWAR', 'awayOWAR',
+                'homeDWAR', 'awayDWAR',
+                'homeStartingWAR', 'awayStartingWAR',
+                'homeBullpenWAR', 'awayBullpenWAR'
+            ];
+
+            defaultStats.forEach(id => {
+                updateElement(id, '데이터 없음');
+            });
+        }
+
+        // DOM 요소 업데이트 헬퍼 함수
+        function updateElement(id, value) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value;
+            } else {
+                console.warn(`요소를 찾을 수 없습니다: ${id}`);
+            }
+        }
+
+        // UI 표시용 기본 팀 통계 함수
+        function getBasicTeamStats() {
+            return {
+                battingAvg: 0.250,
+                ops: 0.700,
+                era: 4.50,
+                whip: 1.40,
+                runsScored: 500,
+                runsAllowed: 500,
+                owar: 10.0,
+                dwar: 5.0,
+                startingWar: 8.0,
+                bullpenWar: 3.0
+            };
+        }
+
+        // 시즌 성적과 맞대결 기록을 계산하고 표시하는 함수
+        function calculateAndDisplaySeasonStats(homeTeam, awayTeam) {
+            try {
+                // 시즌 성적 계산
+                const homeRecord = calculateSeasonRecord(homeTeam);
+                const awayRecord = calculateSeasonRecord(awayTeam);
+                
+                // 맞대결 기록 계산
+                const headToHead = calculateHeadToHead(homeTeam, awayTeam);
+                
+                // UI에 표시
+                updateElement('homeSeasonRecord', `${homeRecord.wins}승 ${homeRecord.draws}무 ${homeRecord.losses}패`);
+                updateElement('awaySeasonRecord', `${awayRecord.wins}승 ${awayRecord.draws}무 ${awayRecord.losses}패`);
+                
+                updateElement('homeHeadToHead', `${headToHead.homeWins}승 ${headToHead.draws}무 ${headToHead.awayWins}패`);
+                updateElement('awayHeadToHead', `${headToHead.awayWins}승 ${headToHead.draws}무 ${headToHead.homeWins}패`);
+                
+                console.log('시즌 통계 표시 완료:', { homeRecord, awayRecord, headToHead });
+                
+            } catch (error) {
+                console.error('시즌 통계 계산 중 오류:', error);
+                // 오류 발생 시 기본값 표시
+                updateElement('homeSeasonRecord', '데이터 없음');
+                updateElement('awaySeasonRecord', '데이터 없음');
+                updateElement('homeHeadToHead', '데이터 없음');
+                updateElement('awayHeadToHead', '데이터 없음');
+            }
+        }
+
+        // 팀 통계를 UI에 표시하는 함수 (기본 버전)
+        function displayTeamStats(homeTeam, awayTeam) {
+            try {
+                console.log(`${homeTeam} vs ${awayTeam} 팀 통계 표시 중...`);
+                
+                // 기본 팀 통계 가져오기
+                const homeStats = getBasicTeamStats();
+                const awayStats = getBasicTeamStats();
+                
+                // 팀 통계를 UI에 표시
+                displayTeamStatsDetailed(homeStats, awayStats);
+                
+                console.log('기본 팀 통계 표시 완료');
+                
+            } catch (error) {
+                console.error('팀 통계 표시 중 오류:', error);
+                displayDefaultTeamStatsDetailed();
+            }
+        }
+    </script>
+</body>
+</html> 
