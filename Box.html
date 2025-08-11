@@ -302,13 +302,13 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const csv = e.target.result;
+                const csv = e.target.result;
                     console.log('CSV 내용 (처음 500자):', csv.substring(0, 500));
                     
-                    const data = parseCSV(csv);
+                const data = parseCSV(csv);
                     console.log('파싱된 데이터:', data);
                     
-                    renderBoxscore(data);
+                renderBoxscore(data);
                 } catch (error) {
                     console.error('CSV 파싱 오류:', error);
                     alert('CSV 파일을 파싱하는 중 오류가 발생했습니다: ' + error.message);
@@ -453,63 +453,63 @@
                     console.warn('홈팀 투수 데이터가 없습니다.');
                     data.homePitching = [];
                 }
-                
-                container.innerHTML = `
-                    <div class="header">
-                        <div class="game-info">
-                            <div class="team-logo">NC</div>
-                            <div>
-                                <div class="team-name">${data.gameInfo.awayTeam || 'NC'}</div>
-                                <div class="team-record">${data.gameInfo.awayRecord || ''}</div>
-                            </div>
-                            <div class="result lose">LOSE</div>
+            
+            container.innerHTML = `
+                <div class="header">
+                    <div class="game-info">
+                        <div class="team-logo">NC</div>
+                        <div>
+                            <div class="team-name">${data.gameInfo.awayTeam || 'NC'}</div>
+                            <div class="team-record">${data.gameInfo.awayRecord || ''}</div>
                         </div>
-                        <div style="text-align: center;">
-                            <div style="font-size: 20px; font-weight: bold;">${data.gameInfo.date || ''}</div>
-                            <div style="font-size: 14px; margin-top: 5px;">${data.gameInfo.location || ''}</div>
-                        </div>
-                        <div class="game-info">
-                            <div class="result win">WIN</div>
-                            <div>
-                                <div class="team-name">${data.gameInfo.homeTeam || '삼성'}</div>
-                                <div class="team-record">${data.gameInfo.homeRecord || ''}</div>
-                            </div>
-                            <div class="team-logo">삼성</div>
-                        </div>
+                        <div class="result lose">LOSE</div>
                     </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 20px; font-weight: bold;">${data.gameInfo.date || ''}</div>
+                        <div style="font-size: 14px; margin-top: 5px;">${data.gameInfo.location || ''}</div>
+                    </div>
+                    <div class="game-info">
+                        <div class="result win">WIN</div>
+                        <div>
+                            <div class="team-name">${data.gameInfo.homeTeam || '삼성'}</div>
+                            <div class="team-record">${data.gameInfo.homeRecord || ''}</div>
+                        </div>
+                        <div class="team-logo">삼성</div>
+                    </div>
+                </div>
 
-                    <div class="scoreboard">
-                        ${renderScoreboard(data.scoreByInning)}
-                    </div>
+                <div class="scoreboard">
+                    ${renderScoreboard(data.scoreByInning)}
+                </div>
 
-                    <div class="batting-stats">
-                        <div class="stats-header">
-                            <span>🏏</span> NC 다이노스 타자 기록
-                        </div>
-                        ${renderBattingStats(data.awayBatting)}
+                <div class="batting-stats">
+                    <div class="stats-header">
+                        <span>🏏</span> NC 다이노스 타자 기록
                     </div>
+                    ${renderBattingStats(data.awayBatting)}
+                </div>
 
-                    <div class="batting-stats">
-                        <div class="stats-header">
-                            <span>🏏</span> 삼성 타자 기록
-                        </div>
-                        ${renderBattingStats(data.homeBatting)}
+                <div class="batting-stats">
+                    <div class="stats-header">
+                        <span>🏏</span> 삼성 타자 기록
                     </div>
+                    ${renderBattingStats(data.homeBatting)}
+                </div>
 
-                    <div class="pitching-stats">
-                        <div class="stats-header">
-                            <span>⚾</span> NC 다이노스 투수 기록
-                        </div>
-                        ${renderPitchingStats(data.awayPitching)}
+                <div class="pitching-stats">
+                    <div class="stats-header">
+                        <span>⚾</span> NC 다이노스 투수 기록
                     </div>
+                    ${renderPitchingStats(data.awayPitching)}
+                </div>
 
-                    <div class="pitching-stats">
-                        <div class="stats-header">
-                            <span>⚾</span> 삼성 투수 기록
-                        </div>
-                        ${renderPitchingStats(data.homePitching)}
+                <div class="pitching-stats">
+                    <div class="stats-header">
+                        <span>⚾</span> 삼성 투수 기록
                     </div>
-                `;
+                    ${renderPitchingStats(data.homePitching)}
+                </div>
+            `;
                 
                 console.log('박스스코어 렌더링 완료');
                 
@@ -534,29 +534,29 @@
             }
             
             try {
-                let html = '<table>';
-                
-                scoreData.forEach((row, index) => {
+            let html = '<table>';
+            
+            scoreData.forEach((row, index) => {
                     console.log(`스코어보드 행 ${index}:`, row);
                     
-                    if (index === 0) {
-                        html += '<tr>';
-                        row.forEach(cell => {
-                            html += `<th class="inning-score">${cell}</th>`;
-                        });
-                        html += '</tr>';
-                    } else {
-                        html += `<tr class="team-row">`;
-                        row.forEach((cell, cellIndex) => {
-                            const className = cellIndex >= row.length - 4 ? 'final-stats' : '';
-                            html += `<td class="${className}">${cell}</td>`;
-                        });
-                        html += '</tr>';
-                    }
-                });
-                
-                html += '</table>';
-                return html;
+                if (index === 0) {
+                    html += '<tr>';
+                    row.forEach(cell => {
+                        html += `<th class="inning-score">${cell}</th>`;
+                    });
+                    html += '</tr>';
+                } else {
+                    html += `<tr class="team-row">`;
+                    row.forEach((cell, cellIndex) => {
+                        const className = cellIndex >= row.length - 4 ? 'final-stats' : '';
+                        html += `<td class="${className}">${cell}</td>`;
+                    });
+                    html += '</tr>';
+                }
+            });
+            
+            html += '</table>';
+            return html;
                 
             } catch (error) {
                 console.error('스코어보드 렌더링 오류:', error);
@@ -573,42 +573,42 @@
             }
             
             try {
-                let html = '<table class="stats-table">';
-                
-                battingData.forEach((row, index) => {
+            let html = '<table class="stats-table">';
+            
+            battingData.forEach((row, index) => {
                     console.log(`타자 기록 행 ${index}:`, row);
                     
-                    if (index === 0) {
-                        html += '<tr>';
-                        row.forEach(cell => {
-                            html += `<th>${cell}</th>`;
-                        });
-                        html += '</tr>';
-                    } else {
-                        const isTotal = row[2] === 'TOTAL' || (row.length > 2 && row[2] === 'TOTAL');
-                        const rowClass = isTotal ? 'total-row' : '';
-                        html += `<tr class="${rowClass}">`;
-                        
-                        row.forEach((cell, cellIndex) => {
-                            if (cellIndex === 0) {
-                                // 타순
-                                html += `<td class="batting-order">${cell}</td>`;
-                            } else if (cellIndex === 1) {
-                                // 포지션
-                                html += `<td class="position">${cell}</td>`;
-                            } else if (cellIndex === 2) {
-                                // 선수명
-                                html += `<td class="player-name">${cell}</td>`;
-                            } else {
-                                html += `<td>${cell}</td>`;
-                            }
-                        });
-                        html += '</tr>';
-                    }
-                });
-                
-                html += '</table>';
-                return html;
+                if (index === 0) {
+                    html += '<tr>';
+                    row.forEach(cell => {
+                        html += `<th>${cell}</th>`;
+                    });
+                    html += '</tr>';
+                } else {
+                    const isTotal = row[2] === 'TOTAL' || (row.length > 2 && row[2] === 'TOTAL');
+                    const rowClass = isTotal ? 'total-row' : '';
+                    html += `<tr class="${rowClass}">`;
+                    
+                    row.forEach((cell, cellIndex) => {
+                        if (cellIndex === 0) {
+                            // 타순
+                            html += `<td class="batting-order">${cell}</td>`;
+                        } else if (cellIndex === 1) {
+                            // 포지션
+                            html += `<td class="position">${cell}</td>`;
+                        } else if (cellIndex === 2) {
+                            // 선수명
+                            html += `<td class="player-name">${cell}</td>`;
+                        } else {
+                            html += `<td>${cell}</td>`;
+                        }
+                    });
+                    html += '</tr>';
+                }
+            });
+            
+            html += '</table>';
+            return html;
                 
             } catch (error) {
                 console.error('타자 기록 렌더링 오류:', error);
@@ -625,35 +625,35 @@
             }
             
             try {
-                let html = '<table class="stats-table">';
-                
-                pitchingData.forEach((row, index) => {
+            let html = '<table class="stats-table">';
+            
+            pitchingData.forEach((row, index) => {
                     console.log(`투수 기록 행 ${index}:`, row);
                     
-                    if (index === 0) {
-                        html += '<tr>';
-                        row.forEach(cell => {
-                            html += `<th>${cell}</th>`;
-                        });
-                        html += '</tr>';
-                    } else {
-                        const isTotal = row[0] === '';
-                        const rowClass = isTotal ? 'total-row' : '';
-                        html += `<tr class="${rowClass}">`;
-                        
-                        row.forEach((cell, cellIndex) => {
-                            if (cellIndex === 0) {
-                                html += `<td class="player-name">${cell}</td>`;
-                            } else {
-                                html += `<td>${cell}</td>`;
-                            }
-                        });
-                        html += '</tr>';
-                    }
-                });
-                
-                html += '</table>';
-                return html;
+                if (index === 0) {
+                    html += '<tr>';
+                    row.forEach(cell => {
+                        html += `<th>${cell}</th>`;
+                    });
+                    html += '</tr>';
+                } else {
+                    const isTotal = row[0] === '';
+                    const rowClass = isTotal ? 'total-row' : '';
+                    html += `<tr class="${rowClass}">`;
+                    
+                    row.forEach((cell, cellIndex) => {
+                        if (cellIndex === 0) {
+                            html += `<td class="player-name">${cell}</td>`;
+                        } else {
+                            html += `<td>${cell}</td>`;
+                        }
+                    });
+                    html += '</tr>';
+                }
+            });
+            
+            html += '</table>';
+            return html;
                 
             } catch (error) {
                 console.error('투수 기록 렌더링 오류:', error);
