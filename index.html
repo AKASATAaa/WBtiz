@@ -1242,135 +1242,7 @@
             
             <!-- 우측 사이드바 - 5개 영역 -->
             <div class="right-sidebar">
-                <div class="sidebar-section">
-                    <div class="sidebar-header">2025 Top Performers - Fielding</div>
-                    <div class="sidebar-content">
-                        <div class="sidebar-item">
-                            <span class="name">강민호</span>
-                            <span class="value">1.627</span>
-                                </div>
-                        <div class="sidebar-item">
-                            <span class="name">박민우</span>
-                            <span class="value">1.201</span>
-                                </div>
-                        <div class="sidebar-item">
-                            <span class="name">고종욱</span>
-                            <span class="value">1.000</span>
-                                </div>
-                        <div class="sidebar-item">
-                            <span class="name">이정후</span>
-                            <span class="value">0.854</span>
-                                </div>
-                        <div class="sidebar-item">
-                            <span class="name">김혜성</span>
-                            <span class="value">0.504</span>
-                                </div>
-                            </div>
-                                </div>
-                                
-                <div class="sidebar-section">
-                    <div class="sidebar-header">Batting - RAA Batting</div>
-                    <div class="sidebar-content">
-                        <div class="sidebar-item">
-                            <span class="name">김도영</span>
-                            <span class="value">42.099</span>
-                                </div>
-                        <div class="sidebar-item">
-                            <span class="name">윤석민</span>
-                            <span class="value">32.975</span>
-                                </div>
-                        <div class="sidebar-item">
-                            <span class="name">박병호</span>
-                            <span class="value">28.667</span>
-                                </div>
-                        <div class="sidebar-item">
-                            <span class="name">윤동희</span>
-                            <span class="value">25.671</span>
-                                </div>
-                        <div class="sidebar-item">
-                            <span class="name">황재균</span>
-                            <span class="value">22.066</span>
-                </div>
-            </div>
-        </div>
-        
-                <div class="sidebar-section">
-                    <div class="sidebar-header">Batting - Total Average</div>
-                    <div class="sidebar-content">
-                        <div class="sidebar-item">
-                            <span class="name">김도영</span>
-                            <span class="value">0.573</span>
-                        </div>
-                        <div class="sidebar-item">
-                            <span class="name">윤석민</span>
-                            <span class="value">0.711</span>
-                    </div>
-                        <div class="sidebar-item">
-                            <span class="name">나성범</span>
-                            <span class="value">0.703</span>
-                        </div>
-                        <div class="sidebar-item">
-                            <span class="name">박병호</span>
-                            <span class="value">0.702</span>
-                    </div>
-                        <div class="sidebar-item">
-                            <span class="name">윤석민</span>
-                            <span class="value">0.681</span>
-                        </div>
-                    </div>
-                    </div>
-                    
-                <div class="sidebar-section">
-                    <div class="sidebar-header">Batting - RPI</div>
-                    <div class="sidebar-content">
-                        <div class="sidebar-item">
-                            <span class="name">박민우</span>
-                            <span class="value">172</span>
-                        </div>
-                        <div class="sidebar-item">
-                            <span class="name">윤석민</span>
-                            <span class="value">170</span>
-                    </div>
-                        <div class="sidebar-item">
-                            <span class="name">나성범</span>
-                            <span class="value">166</span>
-                        </div>
-                        <div class="sidebar-item">
-                            <span class="name">고종욱</span>
-                            <span class="value">158</span>
-                    </div>
-                        <div class="sidebar-item">
-                            <span class="name">김혜성</span>
-                            <span class="value">149</span>
-                </div>
-            </div>
-        </div>
-        
-                <div class="sidebar-section">
-                    <div class="sidebar-header">Batting - Power Speed</div>
-                    <div class="sidebar-content">
-                        <div class="sidebar-item">
-                            <span class="name">윤석민</span>
-                            <span class="value">16.00</span>
-                </div>
-                        <div class="sidebar-item">
-                            <span class="name">노시환</span>
-                            <span class="value">13.33</span>
-            </div>
-                        <div class="sidebar-item">
-                            <span class="name">김혜성</span>
-                            <span class="value">12.32</span>
-        </div>
-                        <div class="sidebar-item">
-                            <span class="name">김하성</span>
-                            <span class="value">11.25</span>
-                    </div>
-                        <div class="sidebar-item">
-                            <span class="name">윤동희</span>
-                            <span class="value">11.22</span>
-                    </div>
-                </div>
-                </div>
+                <!-- 사이드바 내용이 JavaScript로 동적 생성됨 -->
             </div>
         </div>
     </main>
@@ -1617,19 +1489,36 @@
         // 선수 이름으로 팀 추정 (실제 데이터에 맞게 수정 필요)
         function getTeamFromName(name) {
             const teamMap = {
-                '안현민': 'kt-wiz',
-                '김성윤': 'lions',
-                '레이예스': 'giants',
-                '디아즈': 'lions',
-                '최형우': 'tigers',
-                '위즈덤': 'tigers',
-                '문보경': 'twins',
-                '구자욱': 'lions',
-                '김주원': 'dinos',
-                '박해민': 'twins',
-                '정준재': 'landers'
+                // 실제 데이터에서 팀 정보를 가져와야 함
             };
             return teamMap[name] || 'unknown';
+        }
+        
+        // 이미지 로딩 상태 확인 함수
+        function checkImageLoading(playerName) {
+            const img = new Image();
+            img.onload = function() {
+                console.log(`✅ 이미지 로딩 성공: ${playerName}.png`);
+            };
+            img.onerror = function() {
+                console.log(`❌ 이미지 로딩 실패: ${playerName}.png`);
+                // 대체 이미지도 확인
+                const defaultImg = new Image();
+                defaultImg.onload = function() {
+                    console.log(`✅ 기본 이미지 로딩 성공: Default.png`);
+                };
+                defaultImg.onerror = function() {
+                    console.log(`❌ 기본 이미지도 로딩 실패: Default.png`);
+                };
+                defaultImg.src = './Image/PlayerProfile/Default.png';
+            };
+            img.src = `./Image/PlayerProfile/${playerName}.png`;
+        }
+        
+        // 선수 이미지 파일명 가져오기 (확장자 포함)
+        function getPlayerImageName(playerName) {
+            if (!playerName || playerName === 'N/A') return 'Default.png';
+            return `${playerName}.png`;
         }
         
         // 투수 주요순위 데이터 로드 함수
@@ -1800,13 +1689,18 @@
                 for (let i = 0; i < 3; i++) {
                     const player = top3[i] || { name: 'N/A', stat: '0.000', team: 'unknown' };
                     
+                    // 이미지 로딩 확인 (디버깅용)
+                    if (player.name !== 'N/A') {
+                        checkImageLoading(player.name);
+                    }
+                    
                     const playerItem = document.createElement('div');
                     playerItem.className = 'player-item';
                     playerItem.innerHTML = `
                         <div class="player-photo">
                             <img src="./Image/PlayerProfile/${player.name}.png" 
                                  alt="${player.name}" 
-                                 onerror="this.src='./Image/PlayerProfile/Default.png'"
+                                 onerror="this.onerror=null; this.src='./Image/PlayerProfile/Default.png'; console.log('이미지 로딩 실패:', '${player.name}.png');"
                                  style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
                             <div class="team-logo ${player.team}"></div>
                         </div>
@@ -1855,13 +1749,18 @@
                 for (let i = 0; i < 3; i++) {
                     const player = top3[i] || { name: 'N/A', stat: '0.00', team: 'unknown' };
                     
+                    // 이미지 로딩 확인 (디버깅용)
+                    if (player.name !== 'N/A') {
+                        checkImageLoading(player.name);
+                    }
+                    
                     const playerItem = document.createElement('div');
                     playerItem.className = 'player-item';
                     playerItem.innerHTML = `
                         <div class="player-photo">
                             <img src="./Image/PlayerProfile/${player.name}.png" 
                                  alt="${player.name}" 
-                                 onerror="this.src='./Image/PlayerProfile/Default.png'"
+                                 onerror="this.onerror=null; this.src='./Image/PlayerProfile/Default.png'; console.log('이미지 로딩 실패:', '${player.name}.png');"
                                  style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
                             <div class="team-logo ${getTeamClass(player.team)}"></div>
                     </div>
@@ -1925,6 +1824,12 @@
         
         // 페이지 로드 시 모든 데이터 로드
         document.addEventListener('DOMContentLoaded', () => {
+            // 기본 사이드바 표시
+            showDefaultSidebar();
+            
+            // 이미지 경로 확인
+            checkImagePaths();
+            
             loadWARData();
             loadBattingRankings();
             loadPitchingExcellence();
@@ -1933,6 +1838,30 @@
             loadNextGames();
             loadRandomSidebarStats();
         });
+        
+        // 이미지 경로 확인 함수
+        function checkImagePaths() {
+            console.log('🔍 이미지 경로 확인 시작...');
+            
+            // 기본 이미지 확인
+            const defaultImg = new Image();
+            defaultImg.onload = function() {
+                console.log('✅ 기본 이미지 경로 정상: ./Image/PlayerProfile/Default.png');
+            };
+            defaultImg.onerror = function() {
+                console.log('❌ 기본 이미지 경로 오류: ./Image/PlayerProfile/Default.png');
+                console.log('💡 Image/PlayerProfile 폴더와 Default.png 파일이 존재하는지 확인하세요.');
+            };
+            defaultImg.src = './Image/PlayerProfile/Default.png';
+            
+            // 폴더 구조 확인
+            console.log('📁 예상 폴더 구조:');
+            console.log('  ./Image/PlayerProfile/');
+            console.log('  ├── Default.png');
+            console.log('  ├── 선수이름1.png');
+            console.log('  ├── 선수이름2.png');
+            console.log('  └── ...');
+        }
         
         // 최근 경기 결과 로드 함수
         async function loadRecentGames() {
@@ -2177,7 +2106,7 @@
                     { name: 'WAR', key: 'WAR', lowerBetter: false }
                 ];
                 
-                // 타자-투수-타자-투수-타자 순서로 랜덤 선택
+                // 타자-투수-타자-투수-타자 순서로 선택
                 const selectedStats = [];
                 const usedStats = new Set();
                 
@@ -2204,16 +2133,34 @@
                             type: pattern.type,
                             stat: randomStat,
                             players: topPlayers
-                                    });
-                                }
-                            }
+                        });
+                    }
+                }
                 
                 // 사이드바 업데이트
                 updateSidebarSections(selectedStats);
                 
             } catch (error) {
                 console.error('사이드바 데이터 로딩 실패:', error);
+                // 에러 시 기본 사이드바 표시
+                showDefaultSidebar();
             }
+        }
+        
+        // 기본 사이드바 표시 함수
+        function showDefaultSidebar() {
+            const sidebarContainer = document.querySelector('.right-sidebar');
+            sidebarContainer.innerHTML = `
+                <div class="sidebar-section">
+                    <div class="sidebar-header">데이터 로딩 중...</div>
+                    <div class="sidebar-content">
+                        <div class="sidebar-item">
+                            <span class="name">데이터를 불러오는 중입니다</span>
+                            <span class="value">...</span>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
         
         // 타자 데이터 로드 함수
@@ -2348,21 +2295,22 @@
         
         // 사이드바 섹션 업데이트
         function updateSidebarSections(selectedStats) {
-            const sidebarSections = document.querySelectorAll('.sidebar-section');
+            const sidebarContainer = document.querySelector('.right-sidebar');
+            sidebarContainer.innerHTML = '';
             
             selectedStats.forEach((statGroup, index) => {
-                if (index >= sidebarSections.length) return;
+                const section = document.createElement('div');
+                section.className = 'sidebar-section';
                 
-                const section = sidebarSections[index];
-                const header = section.querySelector('.sidebar-header');
-                const content = section.querySelector('.sidebar-content');
-                
-                // 헤더 업데이트
+                const header = document.createElement('div');
+                header.className = 'sidebar-header';
                 const typeText = statGroup.type === 'batting' ? '타자' : '투수';
                 header.textContent = `${typeText} - ${statGroup.stat.name}`;
                 
+                const content = document.createElement('div');
+                content.className = 'sidebar-content';
+                
                 // 콘텐츠 업데이트
-                content.innerHTML = '';
                 statGroup.players.forEach(player => {
                     const item = document.createElement('div');
                     item.className = 'sidebar-item';
@@ -2371,13 +2319,17 @@
                             <img src="./Image/PlayerProfile/${player.image}" 
                                  alt="${player.name}" 
                                  class="player-image"
-                                 onerror="this.src='./Image/PlayerProfile/Default.PNG'">
+                                 onerror="this.onerror=null; this.src='./Image/PlayerProfile/Default.png'; console.log('사이드바 이미지 로딩 실패:', '${player.image}');">
                             <span class="name">${player.name}</span>
                         </div>
                         <span class="value">${player.value}</span>
                     `;
                     content.appendChild(item);
                 });
+                
+                section.appendChild(header);
+                section.appendChild(content);
+                sidebarContainer.appendChild(section);
             });
         }
     </script>
