@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>트래커</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 300;
+            color: #2c3e50;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 15px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin: 40px 0 20px 0;
+            font-size: 1.8em;
+            font-weight: 400;
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .strike-zone-container {
+            flex: 1;
+            min-width: 400px;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .strike-zone {
+            width: 400px;
+            height: 500px;
+            background: #f8f9fa;
+            border: 2px solid #6c757d;
+            border-radius: 4px;
+            position: relative;
+            margin: 0 auto;
+            cursor: crosshair;
+        }
+
+        .home-plate {
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 20px solid #6c757d;
+            border-radius: 3px;
+        }
+
+        .strike-zone-box {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            width: 200px;
+            height: 300px;
+            border: 2px solid #495057;
+            background: rgba(108, 117, 125, 0.05);
+            border-radius: 2px;
+        }
+
+        .pitch-dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            cursor: default;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            margin-left: -12px;
+            margin-top: -10px;
+            pointer-events: none;
+        }
+
+        .controls {
+            flex: 0 0 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(5px);
+        }
+
+        .current-pitch-display {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .fastball-display { background: #ff6b6b; color: white; }
+
+        .instruction-text {
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .stats {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .control-buttons {
+            margin-top: 20px;
+        }
+
+        .control-btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .clear-btn {
+            background: #ff4757;
+            color: white;
+        }
+
+        .undo-btn {
+            background: #ffa502;
+            color: white;
+        }
+
+        .export-btn {
+            background: #2ed573;
+            color: white;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .zone-labels {
+            position: absolute;
+            top: -30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-weight: 600;
+            color: #495057;
+            font-size: 16px;
+        }
+
+        .pitch-count {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #495057;
+        }
+
+        /* 선수명 입력 그룹 스타일 */
+        .player-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .player-input-group label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .player-input-group input {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            min-width: 200px;
+        }
+
+        .player-input-group input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .player-input-group input::placeholder {
+            color: #adb5bd;
+        }
+
+        /* 스프레이차트 스타일 */
+        .spray-chart-container {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            margin-top: 30px;
+        }
+
+        .spray-chart-content {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .field-container {
+            flex: 1;
+            min-width: 500px;
+            max-width: 500px;
+            position: relative;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .baseball-field {
+            width: 500px;
+            height: 500px;
+            background-image: url('SprayBG.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            cursor: crosshair;
+            border-radius: 8px;
+            /* 이미지 로드 실패 시 기본 야구장 배경 */
+            background-color: #68d391;
+        }
+
+        /* 이미지 로드 실패 시 기본 야구장 모양 */
+        .baseball-field::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
+            z-index: -1;
+        }
+
+        /* 기본 야구장 요소들 */
+        .baseball-field::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background: #d4a574;
+            border: 3px solid #a0522d;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            z-index: -1;
+        }
+
+        .hit-marker {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            animation: popIn 0.3s ease;
+            transition: transform 0.2s ease;
+            border: 2px solid #fff;
+        }
+
+        .hit-marker.single { background: #48bb78; }
+        .hit-marker.double { background: #4299e1; }
+        .hit-marker.triple { background: #9f7aea; }
+        .hit-marker.homerun { background: #f56565; }
+
+        @keyframes popIn {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .spray-controls {
+            flex: 0 0 250px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .hit-type-controls {
+            margin-bottom: 20px;
+        }
+
+        .hit-type-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .hit-type-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .hit-type-btn.active {
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .hit-type-btn[data-type="single"] { border-color: #48bb78; }
+        .hit-type-btn[data-type="single"].active { background: #48bb78; }
+
+        .hit-type-btn[data-type="double"] { border-color: #4299e1; }
+        .hit-type-btn[data-type="double"].active { background: #4299e1; }
+
+        .hit-type-btn[data-type="triple"] { border-color: #9f7aea; }
+        .hit-type-btn[data-type="triple"].active { background: #9f7aea; }
+
+        .hit-type-btn[data-type="homerun"] { border-color: #f56565; }
+        .hit-type-btn[data-type="homerun"].active { background: #f56565; }
+
+        .spray-stats {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .spray-stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 5px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .spray-stat-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .spray-stat-value {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .spray-control-buttons {
+            margin-top: 20px;
+        }
+
+        .spray-control-btn {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 8px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .spray-clear-btn {
+            background: #ff4757;
+            color: white;
+        }
+
+        .spray-export-btn {
+            background: #2ed573;
+            color: white;
+        }
+
+        .spray-control-btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+
+
+        @media (max-width: 768px) {
+            .player-input-group input {
+                min-width: 250px;
+            }
+
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .controls {
+                flex: 1;
+                min-width: unset;
+            }
+            
+            .strike-zone {
+                width: 300px;
+                height: 400px;
+            }
+            
+            .strike-zone-box {
+                top: 80px;
+                left: 75px;
+                width: 150px;
+                height: 240px;
+            }
+
+            .spray-chart-content {
+                flex-direction: column;
+            }
+
+            .field-container {
+                min-width: unset;
+                max-width: 400px;
+            }
+
+            .baseball-field {
+                width: 400px;
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+            <div class="container">
+            <h1>야구 투구 위치 트래커</h1>
+            
+            <div class="main-content">
+                <div class="strike-zone-container">
+                    <div class="player-input-group">
+                        <label for="pitchPlayerName">투구 선수명:</label>
+                        <input type="text" id="pitchPlayerName" placeholder="선수명을 입력하세요" maxlength="20">
+                    </div>
+                    <div class="zone-labels">스트라이크 존</div>
+                    <div class="pitch-count" id="pitchCount">총 투구 수: 0개</div>
+                    <div class="strike-zone" id="strikeZone">
+                        <div class="strike-zone-box"></div>
+                        <div class="home-plate"></div>
+                    </div>
+                </div>
+
+            <div class="controls">
+                <h3 style="margin-top: 0; text-align: center;">현재 선택된 구종</h3>
+                <div class="current-pitch-display fastball-display" id="currentPitchDisplay">
+                    직구
+                </div>
+                <div class="instruction-text">
+                    키보드로 구종 선택 후 스트라이크 존을 클릭하여 투구 위치를 기록하세요<br>
+                    <strong>D</strong>-직구 <strong>E</strong>-라이징 <strong>C</strong>-스플리터 <strong>S</strong>-슬라이더 <strong>X</strong>-커브 <strong>V</strong>-스크류<br>
+                    <strong>F</strong>-싱커 <strong>W</strong>-라이징슬라 <strong>R</strong>-라이징싱커 <strong>Q</strong>-라이징커터 <strong>T</strong>-라이징체인지업 <strong>A</strong>-커터 <strong>G</strong>-체인지업
+                </div>
+
+                <div class="stats" id="stats">
+                    <div class="stat-item">
+                        <span>총 투구 수:</span>
+                        <span id="totalPitchCount">0</span>
+                    </div>
+                </div>
+
+                <div class="control-buttons">
+                    <button class="control-btn undo-btn" id="undoBtn">마지막 투구 취소</button>
+                    <button class="control-btn clear-btn" id="clearBtn">모든 투구 지우기</button>
+                    <button class="control-btn export-btn" id="exportBtn">데이터 내보내기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 스프레이차트 섹션 -->
+        <h2 class="section-title">타구 스프레이차트</h2>
+        
+        <div class="spray-chart-container">
+            <div class="player-input-group">
+                <label for="hitPlayerName">타구 선수명:</label>
+                <input type="text" id="hitPlayerName" placeholder="선수명을 입력하세요" maxlength="20">
+            </div>
+            <div class="spray-chart-content">
+                <div class="field-container">
+                    <div class="baseball-field" id="baseballField"></div>
+                </div>
+
+                <div class="spray-controls">
+                    <div class="hit-type-controls">
+                        <h3 style="margin-top: 0; text-align: center; margin-bottom: 15px;">타구 종류 선택</h3>
+                        <button class="hit-type-btn active" data-type="single">
+                            1루타
+                        </button>
+                        <button class="hit-type-btn" data-type="double">
+                            2루타
+                        </button>
+                        <button class="hit-type-btn" data-type="triple">
+                            3루타
+                        </button>
+                        <button class="hit-type-btn" data-type="homerun">
+                            홈런
+                        </button>
+                    </div>
+
+                    <div class="spray-stats">
+                        <h4 style="margin-top: 0; text-align: center; margin-bottom: 15px;">타구 통계</h4>
+                        <div class="spray-stat-item">
+                            <span class="spray-stat-label">1루타:</span>
+                            <span class="spray-stat-value" id="single-count">0</span>
+                        </div>
+                        <div class="spray-stat-item">
+                            <span class="spray-stat-label">2루타:</span>
+                            <span class="spray-stat-value" id="double-count">0</span>
+                        </div>
+                        <div class="spray-stat-item">
+                            <span class="spray-stat-label">3루타:</span>
+                            <span class="spray-stat-value" id="triple-count">0</span>
+                        </div>
+                        <div class="spray-stat-item">
+                            <span class="spray-stat-label">홈런:</span>
+                            <span class="spray-stat-value" id="homerun-count">0</span>
+                        </div>
+                        <div class="spray-stat-item">
+                            <span class="spray-stat-label">총 안타:</span>
+                            <span class="spray-stat-value" id="total-hit-count">0</span>
+                        </div>
+                    </div>
+
+                    <div class="spray-control-buttons">
+                        <button class="spray-control-btn spray-clear-btn" id="sprayClearBtn">모든 타구 지우기</button>
+                        <button class="spray-control-btn spray-export-btn" id="sprayExportBtn">타구 데이터 내보내기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class PitchTracker {
+            constructor() {
+                this.currentPitchType = 'fastball';
+                this.pitches = [];
+                this.pitchColors = {
+                    fastball: '#dc3545',        // d - 직구 (빨강)
+                    rising: '#fd7e14',          // e - 라이징 (주황)
+                    splitter: '#ffc107',        // c - 스플리터 (노랑)
+                    slider: '#28a745',          // s - 슬라이더 (초록)
+                    curveball: '#17a2b8',       // x - 커브 (청록)
+                    screwball: '#007bff',       // v - 스크류 (파랑)
+                    sinker: '#6f42c1',          // f - 싱커 (보라)
+                    'rising-slider': '#e83e8c', // w - 라이징슬라 (분홍)
+                    'rising-sinker': '#6610f2', // r - 라이징싱커 (인디고)
+                    'rising-cutter': '#20c997', // q - 라이징커터 (청록)
+                    'rising-changeup': '#fd7e14', // t - 라이징체인지업 (주황계)
+                    cutter: '#6c757d',          // a - 커터 (회색)
+                    changeup: '#495057'         // g - 체인지업 (진한회색)
+                };
+                
+                this.isMouseDown = false;
+                this.initialClickX = 0;
+                this.initialClickY = 0;
+                
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.updateStats();
+                this.updateCurrentPitchDisplay();
+            }
+
+            bindEvents() {
+                const strikeZone = document.getElementById('strikeZone');
+
+                // 스트라이크 존 클릭 - 바로 투구 추가
+                strikeZone.addEventListener('click', (e) => {
+                    // 투구 점을 클릭했는지 확인
+                    if (e.target.classList.contains('pitch-dot')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return; // 투구 점 클릭 시 아무것도 하지 않음
+                    }
+                    
+                    const rect = strikeZone.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    this.addPitch(x, y);
+                });
+
+                // 키보드 이벤트
+                document.addEventListener('keydown', (e) => {
+                    this.handleKeyPress(e.key.toLowerCase());
+                });
+
+                // 컨트롤 버튼들
+                document.getElementById('undoBtn').addEventListener('click', () => this.undoLastPitch());
+                document.getElementById('clearBtn').addEventListener('click', () => this.clearAllPitches());
+                document.getElementById('exportBtn').addEventListener('click', () => this.exportData());
+            }
+
+            handleKeyPress(key) {
+                const keyMap = {
+                    'd': 'fastball',        // 직구
+                    'e': 'rising',          // 라이징
+                    'c': 'splitter',        // 스플리터
+                    's': 'slider',          // 슬라이더
+                    'x': 'curveball',       // 커브
+                    'v': 'screwball',       // 스크류
+                    'f': 'sinker',          // 싱커
+                    'w': 'rising-slider',   // 라이징슬라
+                    'r': 'rising-sinker',   // 라이징싱커
+                    'q': 'rising-cutter',   // 라이징커터
+                    't': 'rising-changeup', // 라이징체인지업
+                    'a': 'cutter',          // 커터
+                    'g': 'changeup'         // 체인지업
+                };
+
+                if (keyMap[key]) {
+                    this.currentPitchType = keyMap[key];
+                    this.updateCurrentPitchDisplay();
+                }
+            }
+
+            addPitch(x, y) {
+                const playerName = document.getElementById('pitchPlayerName').value.trim() || '미입력';
+                const pitch = {
+                    id: Date.now(),
+                    playerName: playerName,
+                    type: this.currentPitchType,
+                    x: x,
+                    y: y,
+                    color: this.pitchColors[this.currentPitchType]
+                };
+
+                this.pitches.push(pitch);
+                this.renderPitch(pitch);
+                this.updateStats();
+            }
+
+            renderPitch(pitch) {
+                const dot = document.createElement('div');
+                dot.className = 'pitch-dot';
+                dot.style.backgroundColor = pitch.color;
+                dot.style.left = pitch.x + 'px';  // CSS transform으로 중심 맞춤
+                dot.style.top = pitch.y + 'px';   // CSS transform으로 중심 맞춤
+                dot.dataset.id = pitch.id;
+                dot.title = `${pitch.playerName} - ${this.getPitchTypeName(pitch.type)} - (${Math.round(pitch.x)}, ${Math.round(pitch.y)})`;
+
+                document.getElementById('strikeZone').appendChild(dot);
+            }
+
+            removePitch(pitchId) {
+                this.pitches = this.pitches.filter(p => p.id !== pitchId);
+                const dot = document.querySelector(`[data-id="${pitchId}"]`);
+                if (dot) dot.remove();
+                this.updateStats();
+            }
+
+            updateCurrentPitchDisplay() {
+                const display = document.getElementById('currentPitchDisplay');
+                const pitchName = this.getPitchTypeName(this.currentPitchType);
+                
+                display.textContent = pitchName;
+                display.className = `current-pitch-display ${this.currentPitchType}-display`;
+            }
+
+            undoLastPitch() {
+                if (this.pitches.length === 0) return;
+                
+                const lastPitch = this.pitches.pop();
+                const dot = document.querySelector(`[data-id="${lastPitch.id}"]`);
+                if (dot) dot.remove();
+                this.updateStats();
+            }
+
+            clearAllPitches() {
+                if (confirm('모든 투구 데이터를 삭제하시겠습니까?')) {
+                    this.pitches = [];
+                    document.querySelectorAll('.pitch-dot').forEach(dot => dot.remove());
+                    this.updateStats();
+                }
+            }
+
+            updateStats() {
+                const total = this.pitches.length;
+                document.getElementById('pitchCount').textContent = `총 투구 수: ${total}개`;
+                document.getElementById('totalPitchCount').textContent = total;
+
+                // 기존 통계 항목들 제거
+                const statsContainer = document.getElementById('stats');
+                if (statsContainer) {
+                    const existingItems = statsContainer.querySelectorAll('.stat-item');
+                    existingItems.forEach(item => item.remove());
+
+                    // 실제 사용된 구종들만 표시
+                    const usedPitchTypes = [...new Set(this.pitches.map(p => p.type))];
+                    
+                    usedPitchTypes.forEach(type => {
+                        const count = this.pitches.filter(p => p.type === type).length;
+                        const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+                        
+                        const statItem = document.createElement('div');
+                        statItem.className = 'stat-item';
+                        statItem.innerHTML = `
+                            <span>${this.getPitchTypeName(type).split(' (')[0]}:</span>
+                            <span>${count}개 (${percentage}%)</span>
+                        `;
+                        statsContainer.appendChild(statItem);
+                    });
+                }
+            }
+
+            getPitchTypeName(type) {
+                const names = {
+                    fastball: '직구 (D)',
+                    rising: '라이징 (E)',
+                    splitter: '스플리터 (C)',
+                    curveball: '커브 (X)',
+                    screwball: '스크류 (V)',
+                    sinker: '싱커 (F)',
+                    'rising-slider': '라이징슬라 (W)',
+                    'rising-sinker': '라이징싱커 (R)',
+                    'rising-cutter': '라이징커터 (Q)',
+                    'rising-changeup': '라이징체인지업 (T)',
+                    cutter: '커터 (A)',
+                    changeup: '체인지업 (G)'
+                };
+                return names[type] || type;
+            }
+
+            exportData() {
+                const playerName = document.getElementById('pitchPlayerName').value.trim() || '미입력';
+                const data = {
+                    playerName: playerName,
+                    totalPitches: this.pitches.length,
+                    timestamp: new Date().toISOString(),
+                    pitches: this.pitches.map(p => ({
+                        playerName: p.playerName,
+                        type: this.getPitchTypeName(p.type),
+                        x: Math.round(p.x),
+                        y: Math.round(p.y)
+                    }))
+                };
+
+                const jsonString = JSON.stringify(data, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `pitch-data-${playerName}-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                alert('투구 데이터가 성공적으로 내보내졌습니다!');
+            }
+        }
+
+        class SprayChart {
+            constructor() {
+                this.currentHitType = 'single';
+                this.hits = [];
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.updateStats();
+                
+                // 이미지 로드 상태 확인
+                this.checkImageLoad();
+            }
+
+            checkImageLoad() {
+                const field = document.getElementById('baseballField');
+                const img = new Image();
+                
+                img.onload = () => {
+                    console.log('SprayBG.png 이미지가 성공적으로 로드되었습니다.');
+                    field.style.backgroundImage = 'url("SprayBG.png")';
+                };
+                
+                img.onerror = () => {
+                    console.log('SprayBG.png 이미지를 로드할 수 없습니다. 기본 야구장 배경을 사용합니다.');
+                    field.style.backgroundImage = 'none';
+                };
+                
+                img.src = 'SprayBG.png';
+            }
+
+            bindEvents() {
+                // 타구 종류 선택 버튼들
+                document.querySelectorAll('.hit-type-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.selectHitType(btn.dataset.type);
+                    });
+                });
+
+                // 야구장 클릭 이벤트
+                document.getElementById('baseballField').addEventListener('click', (e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    this.addHit(x, y, this.currentHitType);
+                });
+
+                // 키보드 이벤트
+                document.addEventListener('keydown', (e) => {
+                    this.handleKeyPress(e.key);
+                });
+
+                // 컨트롤 버튼들
+                document.getElementById('sprayClearBtn').addEventListener('click', () => this.clearAllHits());
+                document.getElementById('sprayExportBtn').addEventListener('click', () => this.exportHitData());
+            }
+
+            handleKeyPress(key) {
+                switch(key) {
+                    case '1':
+                        this.selectHitType('single');
+                        break;
+                    case '2':
+                        this.selectHitType('double');
+                        break;
+                    case '3':
+                        this.selectHitType('triple');
+                        break;
+                    case '4':
+                    case 'h':
+                    case 'H':
+                        this.selectHitType('homerun');
+                        break;
+                }
+            }
+
+            selectHitType(type) {
+                this.currentHitType = type;
+                document.querySelectorAll('.hit-type-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`.hit-type-btn[data-type="${type}"]`).classList.add('active');
+            }
+
+            addHit(x, y, type) {
+                const playerName = document.getElementById('hitPlayerName').value.trim() || '미입력';
+                const hit = { 
+                    id: Date.now(),
+                    playerName: playerName,
+                    x: x, 
+                    y: y, 
+                    type: type 
+                };
+                
+                this.hits.push(hit);
+                this.renderHit(hit);
+                this.updateStats();
+            }
+
+            renderHit(hit) {
+                const marker = document.createElement('div');
+                marker.className = `hit-marker ${hit.type}`;
+                marker.style.left = hit.x + 'px';
+                marker.style.top = hit.y + 'px';
+                marker.dataset.id = hit.id;
+                marker.title = `${hit.playerName} - ${this.getHitTypeName(hit.type)} - (${Math.round(hit.x)}, ${Math.round(hit.y)})`;
+
+                document.getElementById('baseballField').appendChild(marker);
+            }
+
+            removeHit(hitId) {
+                this.hits = this.hits.filter(h => h.id !== hitId);
+                const marker = document.querySelector(`[data-id="${hitId}"]`);
+                if (marker) {
+                    marker.style.animation = 'popIn 0.3s ease reverse';
+                    setTimeout(() => marker.remove(), 300);
+                }
+                this.updateStats();
+            }
+
+            updateStats() {
+                const counts = {
+                    single: 0,
+                    double: 0,
+                    triple: 0,
+                    homerun: 0
+                };
+                
+                this.hits.forEach(hit => {
+                    counts[hit.type]++;
+                });
+                
+                document.getElementById('single-count').textContent = counts.single;
+                document.getElementById('double-count').textContent = counts.double;
+                document.getElementById('triple-count').textContent = counts.triple;
+                document.getElementById('homerun-count').textContent = counts.homerun;
+                document.getElementById('total-hit-count').textContent = this.hits.length;
+            }
+
+            clearAllHits() {
+                if (confirm('모든 타구 기록을 삭제하시겠습니까?')) {
+                    this.hits = [];
+                    document.querySelectorAll('.hit-marker').forEach(marker => {
+                        marker.style.animation = 'popIn 0.3s ease reverse';
+                        setTimeout(() => marker.remove(), 300);
+                    });
+                    this.updateStats();
+                }
+            }
+
+            exportHitData() {
+                const playerName = document.getElementById('hitPlayerName').value.trim() || '미입력';
+                const data = {
+                    playerName: playerName,
+                    totalHits: this.hits.length,
+                    timestamp: new Date().toISOString(),
+                    hits: this.hits.map(h => ({
+                        playerName: h.playerName,
+                        type: this.getHitTypeName(h.type),
+                        x: Math.round(h.x),
+                        y: Math.round(h.y)
+                    }))
+                };
+
+                const jsonString = JSON.stringify(data, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `hit-data-${playerName}-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                alert('타구 데이터가 성공적으로 내보내졌습니다!');
+            }
+
+            getHitTypeName(type) {
+                const names = {
+                    single: '1루타',
+                    double: '2루타',
+                    triple: '3루타',
+                    homerun: '홈런'
+                };
+                return names[type] || type;
+            }
+        }
+
+        // 앱 시작
+        document.addEventListener('DOMContentLoaded', () => {
+            new PitchTracker();
+            new SprayChart();
+        });
+    </script>
+</body>
+</html>
