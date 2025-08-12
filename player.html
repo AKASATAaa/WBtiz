@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>선수정보 - WBD 기록실</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .header {
+            background-color: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 0;
+        }
+        
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #ff4757, #ff3742);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .search-icon, .user-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .search-icon svg, .user-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: #666;
+        }
+        
+        .user-icon {
+            background-color: #ff4757;
+            border-radius: 50%;
+        }
+        
+        .user-icon svg {
+            fill: white;
+        }
+        
+        .nav-container {
+            background-color: white;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 20px;
+        }
+        
+        .nav-item {
+            padding: 16px 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-item:hover {
+            color: #333;
+            border-bottom-color: #ff4757;
+        }
+        
+        .nav-item.active {
+            color: #333;
+            border-bottom-color: #ff4757;
+        }
+
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .content-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #ff4757;
+        }
+
+        .stats-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .stats-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .player-count {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .player-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .player-table th {
+            background-color: #f8f9fa;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e9ecef;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .player-table th:hover {
+            background-color: #e9ecef;
+        }
+
+        .player-table th.sortable::after {
+            content: '↕';
+            margin-left: 8px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .player-table th.sort-asc::after {
+            content: '↑';
+            color: #ff4757;
+        }
+
+        .player-table th.sort-desc::after {
+            content: '↓';
+            color: #ff4757;
+        }
+
+        .player-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e9ecef;
+            color: #333;
+        }
+
+        .player-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .player-name {
+            font-weight: 500;
+            color: #333;
+            text-align: center;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .player-name:hover {
+            color: #ff4757;
+        }
+
+        .player-detail-row {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .player-detail-cell {
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        .detail-panel {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+        }
+
+        .detail-left, .detail-center, .detail-right {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+            min-height: 200px;
+        }
+
+        .detail-panel-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid #ff4757;
+            padding-bottom: 10px;
+        }
+
+        .detail-content {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .detail-content p {
+            margin-bottom: 12px;
+        }
+
+        .player-profile {
+            text-align: center;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .player-photo {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            border: 3px solid #ff4757;
+            margin: 60px auto 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .player-photo span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 72px;
+            color: #999;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1;
+            margin: 0;
+            padding: 0;
+            width: auto;
+            height: auto;
+        }
+
+        .player-name-large {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .player-name-english {
+            font-size: 18px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .stat-item {
+            margin-bottom: 15px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-percentage {
+            font-size: 12px;
+            font-weight: 600;
+            color: #ff4757;
+            background-color: #fff;
+            border: 2px solid #ff4757;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            position: relative;
+            overflow: visible;
+            cursor: pointer;
+        }
+
+        .stat-tooltip {
+            position: absolute;
+            background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .stat-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #333;
+        }
+
+        .stat-bar:hover .stat-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .stat-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4757, #ff3742);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .stat-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .team-name {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .league-name {
+            color: #999;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            background-color: #fee;
+            color: #c33;
+            padding: 16px;
+            border-radius: 6px;
+            border: 1px solid #fcc;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .content-container {
+                padding: 0 12px;
+            }
+            
+            .player-table {
+                font-size: 14px;
+            }
+            
+            .player-table th,
+            .player-table td {
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">W</div>
+                <span class="logo-text">WBD 기록실</span>
+            </a>
+        </div>
+    </header>
+    
+    <nav class="nav-container">
+        <div class="nav">
+            <a href="record_bat_basic.html" class="nav-item">기록실</a>
+            <a href="season.html" class="nav-item">시즌정보</a>
+            <a href="team.html" class="nav-item">팀정보</a>
+            <a href="player.html" class="nav-item active">선수정보</a>
+            <a href="schedule.html" class="nav-item">경기일정</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="content-container">
+            <h1 class="page-title">선수정보</h1>
+            
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="선수명을 입력하세요..." id="searchInput">
+            </div>
+            
+            <div class="stats-container">
+                <div class="stats-header">
+                    <h2 class="stats-title">전체 선수 목록</h2>
+                    <span class="player-count" id="playerCount">총 0명</span>
+                </div>
+                
+                <div id="playerTableContainer">
+                    <div class="loading">선수 데이터를 불러오는 중...</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        let allPlayers = [];
+        let filteredPlayers = [];
+        let currentSortColumn = '이름';
+        let currentSortDirection = 'asc';
+        let expandedPlayers = new Set(); // 확장된 선수들을 추적
+
+        // Excel 파일에서 선수 데이터를 로드하는 함수
+        async function loadPlayerData() {
+            try {
+                // PlayerStatsLeague 파일 로드
+                const response = await fetch('./Data/PlayerStatsLeague.xlsx');
+                if (!response.ok) {
+                    throw new Error('PlayerStatsLeague 파일을 불러올 수 없습니다');
+                }
+
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                
+                console.log('PlayerStatsLeague 파일의 모든 시트:', workbook.SheetNames);
+                
+                // League_Team 파일 로드
+                const teamResponse = await fetch('./Data/League_Team.xlsx');
+                if (!teamResponse.ok) {
+                    throw new Error('League_Team 파일을 불러올 수 없습니다');
+                }
+
+                const teamArrayBuffer = await teamResponse.arrayBuffer();
+                const teamWorkbook = XLSX.read(teamArrayBuffer, { type: 'array' });
+                
+                console.log('League_Team 파일의 모든 시트:', teamWorkbook.SheetNames);
+                
+                const allPlayerData = [];
+                
+                // 각 시트(리그)의 선수 통계를 파싱
+                workbook.SheetNames.forEach(sheetName => {
+                    if (sheetName !== '~$PlayerStatsLeague') { // 임시 파일 제외
+                        console.log(`시트 "${sheetName}" 처리 중...`);
+                        
+                        const worksheet = workbook.Sheets[sheetName];
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                        
+                        if (jsonData.length < 2) return; // 헤더만 있는 경우 스킵
+                        
+                        const headers = jsonData[0];
+                        const players = [];
+                        
+                        // 1행부터 데이터 파싱 (0행은 헤더)
+                        for (let rowIndex = 1; rowIndex < jsonData.length; rowIndex++) {
+                            const row = jsonData[rowIndex];
+                            if (row.length === 0) continue;
+                            
+                            const playerData = {};
+                            headers.forEach((header, index) => {
+                                playerData[header] = row[index] || '';
+                            });
+                            
+                            // 이름 필드가 있으면 선수로 추가
+                            if (playerData.이름 && playerData.이름.trim()) {
+                                // 백분위 관련 컬럼 찾기
+                                const percentileColumns = headers.filter(header => 
+                                    header && (header.includes('%') || header.includes('퍼센트') || header.includes('백분위'))
+                                );
+                                
+                                // 백분위 데이터를 선수 데이터에 추가
+                                percentileColumns.forEach(column => {
+                                    const columnIndex = headers.indexOf(column);
+                                    const value = row[columnIndex];
+                                    if (value !== undefined && value !== null && value !== '') {
+                                        // 백분위 값 정규화 (0-100 범위)
+                                        let normalizedValue = parseFloat(value);
+                                        if (!isNaN(normalizedValue)) {
+                                            if (normalizedValue > 1) {
+                                                // 이미 백분위 값인 경우
+                                                playerData[column] = Math.min(Math.max(normalizedValue, 0), 100);
+                                            } else {
+                                                // 소수점 값인 경우 백분위로 변환
+                                                playerData[column] = Math.min(Math.max(normalizedValue * 100, 0), 100);
+                                            }
+                                        }
+                                    }
+                                });
+                                
+                                // PlayerStatsLeague에서 선수의 "리그" 컬럼 값을 읽어와서 League_Team에서 같은 이름의 시트 찾기
+                                const playerLeague = playerData.리그;
+                                console.log(`선수 "${playerData.이름}"의 리그: "${playerLeague}"`);
+                                
+                                if (playerLeague && teamWorkbook.SheetNames.includes(playerLeague)) {
+                                    console.log(`League_Team에서 시트 "${playerLeague}" 찾음`);
+                                    
+                                    // 해당 시트에서 팀 정보 파싱
+                                    const teamSheet = teamWorkbook.Sheets[playerLeague];
+                                    const teamJsonData = XLSX.utils.sheet_to_json(teamSheet, { header: 1 });
+                                    
+                                    if (teamJsonData.length >= 3) {
+                                        // 1열(A열)은 헤더, 2열(B열)부터: 팀명, 3열(C열)부터: 줄임말, 4열(D열)부터: 팀원들
+                                        const teamNames = teamJsonData[0]; // 1행의 팀명들 (B열부터)
+                                        const abbreviations = teamJsonData[1]; // 2행의 줄임말들 (B열부터)
+                                        
+                                        // 각 팀별로 정보 구성 (B열부터 시작)
+                                        for (let colIndex = 1; colIndex < teamNames.length; colIndex++) {
+                                            const teamName = teamNames[colIndex];
+                                            if (!teamName || !teamName.trim()) continue;
+                                            
+                                            const abbreviation = abbreviations[colIndex] || '';
+                                            const teamMembers = [];
+                                            
+                                            // 3행부터 팀원들 수집 (B열부터)
+                                            for (let rowIndex = 2; rowIndex < teamJsonData.length; rowIndex++) {
+                                                const memberName = teamJsonData[rowIndex][colIndex];
+                                                if (memberName && memberName.trim()) {
+                                                    teamMembers.push(memberName.trim());
+                                                }
+                                            }
+                                            
+                                            // 선수가 이 팀에 속하는지 확인
+                                            const isMember = teamMembers.some(member => 
+                                                member === playerData.이름 || 
+                                                member === playerData.선수명
+                                            );
+                                            
+                                            if (isMember) {
+                                                playerData.팀 = teamName; // 팀명을 팀 컬럼에 저장
+                                                console.log(`선수 "${playerData.이름}"을 팀 "${teamName}"에서 찾음`);
+                                                break; // 첫 번째 매칭되는 팀을 찾으면 중단
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    console.log(`League_Team에서 시트 "${playerLeague}"을 찾을 수 없음`);
+                                }
+                                
+                                players.push(playerData);
+                                console.log(`선수 추가: "${playerData.이름}" (팀: ${playerData.팀})`, playerData);
+                            }
+                        }
+                        
+                        allPlayerData.push(...players);
+                        console.log(`시트 "${sheetName}"의 선수 데이터 (${players.length}명):`, players.slice(0, 3));
+                    }
+                });
+                
+                // 중복 제거 (이름 기준)
+                const uniquePlayers = [];
+                const seenNames = new Set();
+                
+                allPlayerData.forEach(player => {
+                    const playerName = player.이름.trim();
+                    if (!seenNames.has(playerName)) {
+                        seenNames.add(playerName);
+                        uniquePlayers.push(player);
+                    }
+                });
+                
+                allPlayers = uniquePlayers;
+                filteredPlayers = [...allPlayers];
+                
+                console.log('전체 선수 데이터:', allPlayers);
+                console.log('중복 제거 후 선수 수:', allPlayers.length);
+                
+                renderPlayerTable();
+                updatePlayerCount();
+                
+            } catch (error) {
+                console.error('선수 데이터 로딩 실패:', error);
+                document.getElementById('playerTableContainer').innerHTML = 
+                    '<div class="error">선수 데이터를 불러오는데 실패했습니다. 다시 시도해주세요.</div>';
+            }
+        }
+
+        // 선수 테이블 렌더링
+        function renderPlayerTable() {
+            const container = document.getElementById('playerTableContainer');
+            
+            if (filteredPlayers.length === 0) {
+                container.innerHTML = '<div class="loading">검색 결과가 없습니다.</div>';
+                return;
+            }
+            
+            let tableRows = '';
+            
+            filteredPlayers.forEach(player => {
+                // 선수 행
+                tableRows += `
+                    <tr>
+                        <td class="player-name" onclick="togglePlayerDetail('${player.이름}')">${player.이름 || 'N/A'}</td>
+                        <td class="team-name">${player.팀 || 'N/A'}</td>
+                    </tr>
+                `;
+                
+                // 확장된 선수의 상세 정보 행
+                if (expandedPlayers.has(player.이름)) {
+                    tableRows += `
+                        <tr class="player-detail-row">
+                            <td colspan="2" class="player-detail-cell">
+                                <div class="detail-panel">
+                                    <div class="detail-left">
+                                        <div class="detail-panel-title">기본 정보</div>
+                                        <div class="detail-content">
+                                            <div class="player-profile">
+                                                <div class="player-photo">
+                                                    ${getPlayerProfileImage(player.이름) ? 
+                                                        `<img src="${getPlayerProfileImage(player.이름)}" alt="${player.이름}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">` :
+                                                        `<span>${player.이름 ? player.이름.charAt(0) : '?'}</span>`
+                                                    }
+                                                </div>
+                                                <div class="player-name-large">${player.이름 || 'N/A'}</div>
+                                                <div class="player-name-english">${player.영문이름 || ''}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="detail-center">
+                                        <div class="detail-panel-title">투수 통계</div>
+                                        <div class="detail-content" id="pitcher-stats-${player.이름}">
+                                            <div class="loading">투수 통계를 불러오는 중...</div>
+                                        </div>
+                                    </div>
+                                    <div class="detail-right">
+                                        <div class="detail-panel-title">타자 통계</div>
+                                        <div class="detail-content" id="batter-stats-${player.이름}">
+                                            <div class="loading">타자 통계를 불러오는 중...</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+            
+            const table = `
+                <table class="player-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-sort="이름">선수명</th>
+                            <th class="sortable" data-sort="팀">팀</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tableRows}
+                    </tbody>
+                </table>
+            `;
+            
+            container.innerHTML = table;
+            
+            // 정렬 이벤트 리스너 추가
+            document.querySelectorAll('.sortable').forEach(th => {
+                th.addEventListener('click', () => {
+                    const column = th.dataset.sort;
+                    if (currentSortColumn === column) {
+                        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentSortColumn = column;
+                        currentSortDirection = 'asc';
+                    }
+                    
+                    sortPlayers();
+                    renderPlayerTable();
+                });
+            });
+        }
+
+        // 선수 정렬
+        function sortPlayers() {
+            filteredPlayers.sort((a, b) => {
+                let aValue = a[currentSortColumn] || '';
+                let bValue = b[currentSortColumn] || '';
+                
+                // 숫자 정렬
+                if (!isNaN(aValue) && !isNaN(bValue)) {
+                    aValue = parseFloat(aValue) || 0;
+                    bValue = parseFloat(bValue) || 0;
+                } else {
+                    // 문자열 정렬
+                    aValue = String(aValue).toLowerCase();
+                    bValue = String(bValue).toLowerCase();
+                }
+                
+                if (currentSortDirection === 'asc') {
+                    return aValue > bValue ? 1 : -1;
+                } else {
+                    return aValue < bValue ? 1 : -1;
+                }
+            });
+        }
+
+        // 검색 기능
+        function filterPlayers(searchTerm) {
+            if (!searchTerm.trim()) {
+                filteredPlayers = [...allPlayers];
+            } else {
+                filteredPlayers = allPlayers.filter(player => 
+                    player.이름 && player.이름.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    player.팀 && player.팀.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            }
+            
+            renderPlayerTable();
+            updatePlayerCount();
+        }
+
+        // 선수 수 업데이트
+        function updatePlayerCount() {
+            const countElement = document.getElementById('playerCount');
+            countElement.textContent = `총 ${filteredPlayers.length}명`;
+        }
+
+        // 검색 입력 이벤트
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            filterPlayers(e.target.value);
+        });
+
+        // 선수 이름 클릭 시 상세 정보 토글
+        function togglePlayerDetail(playerName) {
+            // 다른 선수가 열려있으면 닫기
+            if (expandedPlayers.size > 0 && !expandedPlayers.has(playerName)) {
+                expandedPlayers.clear();
+            }
+            
+            // 현재 선수 토글
+            if (expandedPlayers.has(playerName)) {
+                expandedPlayers.delete(playerName);
+            } else {
+                expandedPlayers.add(playerName);
+            }
+            
+            renderPlayerTable();
+            
+            // 상세 정보가 열릴 때 해당 선수의 통계 데이터 로드
+            if (expandedPlayers.has(playerName)) {
+                loadPlayerStats(playerName);
+            }
+        }
+
+        // 선수의 통계 데이터를 로드하고 차트 생성
+        function loadPlayerStats(playerName) {
+            const pitcherStatsContainer = document.getElementById(`pitcher-stats-${playerName}`);
+            if (!pitcherStatsContainer) return;
+            
+            // 해당 선수의 데이터 찾기
+            const playerData = allPlayers.find(player => player.이름 === playerName);
+            if (!playerData) {
+                pitcherStatsContainer.innerHTML = '<div class="error">선수 데이터를 찾을 수 없습니다.</div>';
+                return;
+            }
+            
+            // 투수 통계 생성 (실제 데이터가 있으면 사용, 없으면 기본값)
+            const pitcherStats = generatePitcherStats(playerData);
+            pitcherStatsContainer.innerHTML = pitcherStats;
+
+            const batterStatsContainer = document.getElementById(`batter-stats-${playerName}`);
+            if (!batterStatsContainer) return;
+
+            // 타자 통계 생성 (실제 데이터가 있으면 사용, 없으면 기본값)
+            const batterStats = generateBatterStats(playerData);
+            batterStatsContainer.innerHTML = batterStats;
+        }
+
+        // 선수 이름에 해당하는 프로필 사진 경로 생성
+        function getPlayerProfileImage(playerName) {
+            if (!playerName) return null;
+            
+            // 선수 이름에 .png를 바로 붙여서 경로 생성
+            return `./Image/PlayerProfile/${playerName}.png`;
+        }
+
+        // 투수 통계 HTML 생성
+        function generatePitcherStats(playerData) {
+            // 투수 핵심 통계 지표들
+            const pitcherStats = [
+                { name: 'WAR', key: 'WAR', value: playerData.WAR || 0 },
+                { name: 'ERA', key: 'ERA', value: playerData.ERA || 0 },
+                { name: 'AVG', key: 'AVG', value: playerData.AVG || 0 },
+                { name: 'OBP', key: 'OBP', value: playerData.OBP || 0 },
+                { name: 'K9', key: 'K9', value: playerData.K9 || 0 }
+            ];
+            
+            // 백분위 계산을 위해 전체 선수들의 해당 통계 수집
+            const allStats = {};
+            pitcherStats.forEach(stat => {
+                allStats[stat.key] = [];
+            });
+            
+            // 모든 선수에서 해당 통계 수집
+            allPlayers.forEach(player => {
+                pitcherStats.forEach(stat => {
+                    const value = player[stat.key];
+                    if (value !== undefined && value !== null && value !== '' && !isNaN(parseFloat(value))) {
+                        allStats[stat.key].push(parseFloat(value));
+                    }
+                });
+            });
+            
+            // 각 통계의 백분위 계산
+            const finalStats = pitcherStats.map(stat => {
+                const values = allStats[stat.key];
+                if (values.length === 0) {
+                    return { ...stat, percentile: 50 }; // 데이터가 없으면 중간값
+                }
+                
+                // 값 정렬 (WAR, K9은 높을수록 좋음, ERA, AVG, OBP는 낮을수록 좋음)
+                values.sort((a, b) => {
+                    if (stat.key === 'WAR' || stat.key === 'K9') {
+                        return b - a; // 내림차순 (높을수록 좋음)
+                    } else {
+                        return a - b; // 오름차순 (낮을수록 좋음)
+                    }
+                });
+                
+                // 백분위 계산
+                const currentValue = parseFloat(stat.value) || 0;
+                let betterCount = 0;
+                
+                if (stat.key === 'WAR' || stat.key === 'K9') {
+                    // 높을수록 좋은 지표
+                    betterCount = values.filter(v => v > currentValue).length;
+                } else {
+                    // 낮을수록 좋은 지표
+                    betterCount = values.filter(v => v < currentValue).length;
+                }
+                
+                const percentile = Math.round((betterCount / values.length) * 100);
+                return { ...stat, percentile: Math.min(Math.max(percentile, 0), 100) };
+            });
+            
+            let statsHTML = '';
+            finalStats.forEach(stat => {
+                const formattedValue = parseFloat(stat.value).toFixed(2);
+                statsHTML += `
+                    <div class="stat-item">
+                        <div class="stat-label">
+                            <span>${stat.name}</span>
+                            <div class="stat-percentage">${stat.percentile}</div>
+                        </div>
+                        <div class="stat-bar">
+                            <div class="stat-fill" style="width: ${stat.percentile}%"></div>
+                            <div class="stat-tooltip">
+                                ${stat.name}: ${formattedValue}
+                            </div>
+                        </div>
+                        <div class="stat-scale">
+                            <span>Poor</span>
+                            <span>Avg</span>
+                            <span>Great</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            return statsHTML;
+        }
+
+        // 타자 통계 HTML 생성
+        function generateBatterStats(playerData) {
+            // 타자 핵심 통계 지표들
+            const batterStats = [
+                { name: 'AVG', key: 'AVG', value: playerData.AVG || 0 },
+                { name: 'OPS', key: 'OPS', value: playerData.OPS || 0 },
+                { name: 'wRC+', key: 'wRC+', value: playerData['wRC+'] || 0 },
+                { name: 'WAR', key: 'WAR', value: playerData.WAR || 0 },
+                { name: 'H', key: 'H', value: playerData.H || 0 }
+            ];
+            
+            // 백분위 계산을 위해 전체 선수들의 해당 통계 수집
+            const allStats = {};
+            batterStats.forEach(stat => {
+                allStats[stat.key] = [];
+            });
+            
+            // 모든 선수에서 해당 통계 수집
+            allPlayers.forEach(player => {
+                batterStats.forEach(stat => {
+                    const value = player[stat.key];
+                    if (value !== undefined && value !== null && value !== '' && !isNaN(parseFloat(value))) {
+                        allStats[stat.key].push(parseFloat(value));
+                    }
+                });
+            });
+            
+            // 각 통계의 백분위 계산
+            const finalStats = batterStats.map(stat => {
+                const values = allStats[stat.key];
+                if (values.length === 0) {
+                    return { ...stat, percentile: 50 }; // 데이터가 없으면 중간값
+                }
+                
+                // 값 정렬 (AVG, OPS, wRC+는 높을수록 좋음, WAR, H는 낮을수록 좋음)
+                values.sort((a, b) => {
+                    if (stat.key === 'AVG' || stat.key === 'OPS' || stat.key === 'wRC+') {
+                        return b - a; // 내림차순 (높을수록 좋음)
+                    } else {
+                        return a - b; // 오름차순 (낮을수록 좋음)
+                    }
+                });
+                
+                // 백분위 계산
+                const currentValue = parseFloat(stat.value) || 0;
+                let betterCount = 0;
+                
+                if (stat.key === 'AVG' || stat.key === 'OPS' || stat.key === 'wRC+') {
+                    // 높을수록 좋은 지표
+                    betterCount = values.filter(v => v > currentValue).length;
+                } else {
+                    // 낮을수록 좋은 지표
+                    betterCount = values.filter(v => v < currentValue).length;
+                }
+                
+                const percentile = Math.round((betterCount / values.length) * 100);
+                return { ...stat, percentile: Math.min(Math.max(percentile, 0), 100) };
+            });
+            
+            let statsHTML = '';
+            finalStats.forEach(stat => {
+                const formattedValue = parseFloat(stat.value).toFixed(2);
+                statsHTML += `
+                    <div class="stat-item">
+                        <div class="stat-label">
+                            <span>${stat.name}</span>
+                            <div class="stat-percentage">${stat.percentile}</div>
+                        </div>
+                        <div class="stat-bar">
+                            <div class="stat-fill" style="width: ${stat.percentile}%"></div>
+                            <div class="stat-tooltip">
+                                ${stat.name}: ${formattedValue}
+                            </div>
+                        </div>
+                        <div class="stat-scale">
+                            <span>Poor</span>
+                            <span>Avg</span>
+                            <span>Great</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            return statsHTML;
+        }
+
+        // 페이지 로드 시 데이터 로드
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPlayerData();
+        });
+    </script>
+</body>
+</html> 
