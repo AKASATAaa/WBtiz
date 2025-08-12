@@ -263,16 +263,29 @@
             display: flex;
             gap: 10px;
             padding: 15px;
+            flex-wrap: wrap;
         }
 
         .detail-left, .detail-center, .detail-right {
             flex: 1;
             background-color: white;
             border-radius: 8px;
-            padding: 25px;
+            padding: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             border: 1px solid #e9ecef;
             min-height: 200px;
+            min-width: 250px;
+        }
+
+        .detail-bottom {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+            min-height: 200px;
+            min-width: 250px;
         }
 
         .detail-panel-title {
@@ -475,6 +488,122 @@
             .player-table td {
                 padding: 8px 12px;
             }
+        }
+
+        /* 투구 정보 스타일 */
+        .pitching-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .pitching-stat-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .pitching-stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .pitching-stat-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .pitch-types {
+            border-top: 1px solid #e9ecef;
+            padding-top: 15px;
+        }
+
+        .pitch-types h4 {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .pitch-type-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+
+        .pitch-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .pitch-speed {
+            font-weight: 600;
+            color: #ff4757;
+        }
+
+        /* 히트스프레이 스타일 */
+        .spray-chart-container {
+            text-align: center;
+        }
+
+        .spray-chart {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            margin-bottom: 15px;
+        }
+
+        .spray-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .spray-stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 12px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+
+        .spray-stat-item .stat-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .spray-stat-item .stat-value {
+            font-size: 12px;
+            color: #ff4757;
+            font-weight: 600;
+        }
+
+        /* Placeholder 스타일 */
+        .pitching-info-placeholder,
+        .hit-spray-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 150px;
+            color: #999;
+            font-size: 16px;
+            font-style: italic;
+            background: #f8f9fa;
+            border: 2px dashed #e9ecef;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -744,6 +873,20 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="detail-panel">
+                                    <div class="detail-bottom">
+                                        <div class="detail-panel-title">투구 정보</div>
+                                        <div class="detail-content" id="pitching-info-${player.이름}">
+                                            <div class="loading">투구 정보를 불러오는 중...</div>
+                                        </div>
+                                    </div>
+                                    <div class="detail-bottom">
+                                        <div class="detail-panel-title">히트스프레이</div>
+                                        <div class="detail-content" id="hit-spray-${player.이름}">
+                                            <div class="loading">히트스프레이를 불러오는 중...</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     `;
@@ -877,6 +1020,20 @@
             // 타자 통계 생성 (실제 데이터가 있으면 사용, 없으면 기본값)
             const batterStats = generateBatterStats(playerData);
             batterStatsContainer.innerHTML = batterStats;
+
+            // 투구 정보 생성
+            const pitchingInfoContainer = document.getElementById(`pitching-info-${playerName}`);
+            if (pitchingInfoContainer) {
+                const pitchingInfo = generatePitchingInfo(playerData);
+                pitchingInfoContainer.innerHTML = pitchingInfo;
+            }
+
+            // 히트스프레이 생성
+            const hitSprayContainer = document.getElementById(`hit-spray-${playerName}`);
+            if (hitSprayContainer) {
+                const hitSpray = generateHitSpray(playerData);
+                hitSprayContainer.innerHTML = hitSpray;
+            }
         }
 
         // 선수 이름에 해당하는 프로필 사진 경로 생성
@@ -1057,6 +1214,18 @@
             });
             
             return statsHTML;
+        }
+
+        // 투구 정보 HTML 생성
+        function generatePitchingInfo(playerData) {
+            // 아직 내용을 넣지 않고 영역만 생성
+            return '<div class="pitching-info-placeholder">투구 정보 영역</div>';
+        }
+
+        // 히트스프레이 HTML 생성
+        function generateHitSpray(playerData) {
+            // 아직 내용을 넣지 않고 영역만 생성
+            return '<div class="hit-spray-placeholder">히트스프레이 영역</div>';
         }
 
         // 페이지 로드 시 데이터 로드
