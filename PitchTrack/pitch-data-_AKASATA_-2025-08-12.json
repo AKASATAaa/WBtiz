@@ -1,0 +1,19 @@
+{
+  "playerName": "_AKASATA_",
+  "totalPitches": 2,
+  "timestamp": "2025-08-12T11:57:39.161Z",
+  "pitches": [
+    {
+      "playerName": "미입력",
+      "type": "직구 (D)",
+      "x": 237,
+      "y": 249
+    },
+    {
+      "playerName": "미입력",
+      "type": "직구 (D)",
+      "x": 113,
+      "y": 129
+    }
+  ]
+}

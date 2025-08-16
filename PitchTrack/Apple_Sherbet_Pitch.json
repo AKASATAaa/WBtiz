@@ -1,0 +1,61 @@
+{
+  "playerName": "Apple_Sherbet",
+  "totalPitches": 9,
+  "timestamp": "2025-08-12T12:24:07.335Z",
+  "pitches": [
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "직구",
+      "x": 153,
+      "y": 154
+    },
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "직구",
+      "x": 353,
+      "y": 152
+    },
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "직구",
+      "x": 355,
+      "y": 354
+    },
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "직구 (D)",
+      "x": 153,
+      "y": 354
+    },
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "직구 (D)",
+      "x": 254,
+      "y": 256
+    },
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "직구 (D)",
+      "x": 425,
+      "y": 81
+    },
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "직구 (D)",
+      "x": 80,
+      "y": 80
+    },
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "직구 (D)",
+      "x": 80,
+      "y": 420
+    },
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "직구 (D)",
+      "x": 423,
+      "y": 430
+    }
+  ]
+}

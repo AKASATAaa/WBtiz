@@ -1,0 +1,67 @@
+{
+  "playerName": "HANA_ARASHI",
+  "totalHits": 10,
+  "timestamp": "2025-08-12T12:10:15.773Z",
+  "hits": [
+    {
+      "playerName": "HANA_ARASHI",
+      "type": "1루타",
+      "x": 210,
+      "y": 326
+    },
+    {
+      "playerName": "HANA_ARASHI",
+      "type": "1루타",
+      "x": 296,
+      "y": 315
+    },
+    {
+      "playerName": "HANA_ARASHI",
+      "type": "1루타",
+      "x": 357,
+      "y": 265
+    },
+    {
+      "playerName": "HANA_ARASHI",
+      "type": "1루타",
+      "x": 401,
+      "y": 249
+    },
+    {
+      "playerName": "HANA_ARASHI",
+      "type": "1루타",
+      "x": 296,
+      "y": 178
+    },
+    {
+      "playerName": "HANA_ARASHI",
+      "type": "2루타",
+      "x": 244,
+      "y": 397
+    },
+    {
+      "playerName": "HANA_ARASHI",
+      "type": "2루타",
+      "x": 251,
+      "y": 143
+    },
+    {
+      "playerName": "HANA_ARASHI",
+      "type": "2루타",
+      "x": 334,
+      "y": 136
+    },
+    {
+      "playerName": "HANA_ARASHI",
+      "type": "2루타",
+      "x": 354,
+      "y": 129
+    },
+    {
+      "playerName": "HANA_ARASHI",
+      "type": "2루타",
+      "x": 370,
+      "y": 218
+    }
+  ]
+}

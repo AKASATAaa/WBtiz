@@ -52,7 +52,7 @@
 
         .strike-zone-container {
             flex: 1;
-            min-width: 400px;
+            min-width: 500px;
             background: #ffffff;
             border-radius: 8px;
             padding: 20px;
@@ -60,7 +60,7 @@
         }
 
         .strike-zone {
-            width: 400px;
+            width: 500px;
             height: 500px;
             background: #f8f9fa;
             border: 2px solid #6c757d;
@@ -85,10 +85,10 @@
 
         .strike-zone-box {
             position: absolute;
-            top: 100px;
-            left: 100px;
+            top: 150px;
+            left: 150px;
             width: 200px;
-            height: 300px;
+            height: 200px;
             border: 2px solid #495057;
             background: rgba(108, 117, 125, 0.05);
             border-radius: 2px;
@@ -460,15 +460,15 @@
             }
             
             .strike-zone {
-                width: 300px;
+                width: 400px;
                 height: 400px;
             }
             
             .strike-zone-box {
-                top: 80px;
-                left: 75px;
-                width: 150px;
-                height: 240px;
+                top: 120px;
+                left: 120px;
+                width: 160px;
+                height: 160px;
             }
 
             .spray-chart-content {
@@ -485,11 +485,29 @@
                 height: 400px;
             }
         }
+        
+        @media (max-width: 480px) {
+            .strike-zone {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .strike-zone-box {
+                top: 90px;
+                left: 90px;
+                width: 120px;
+                height: 120px;
+            }
+            
+            .strike-zone-container {
+                min-width: unset;
+            }
+        }
     </style>
 </head>
 <body>
             <div class="container">
-            <h1>야구 투구 위치 트래커</h1>
+            <h1>피치 트래커</h1>
             
             <div class="main-content">
                 <div class="strike-zone-container">
@@ -807,7 +825,7 @@
                 
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `pitch-data-${playerName}-${new Date().toISOString().split('T')[0]}.json`;
+                a.download = `${playerName}_Pitch.json`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -988,7 +1006,7 @@
                 
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `hit-data-${playerName}-${new Date().toISOString().split('T')[0]}.json`;
+                a.download = `${playerName}_HitSpray.json`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);

@@ -288,6 +288,12 @@
             min-width: 250px;
         }
 
+        /* 투구정보와 히트스프레이를 각각 한 줄 전체로 표시 */
+        .detail-bottom.full-width {
+            flex: 1 1 100%;
+            min-width: 100%;
+        }
+
         .detail-panel-title {
             font-size: 18px;
             font-weight: 600;
@@ -605,6 +611,425 @@
             border: 2px dashed #e9ecef;
             border-radius: 8px;
         }
+
+        /* 투구정보 스타일 */
+        .pitching-info-content {
+            padding: 15px 0;
+        }
+
+        .pitch-layout {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .pitch-type-controls {
+            flex: 0 0 500px; /* 카드 너비 - 이 값을 조절하면 카드 너비가 바뀝니다 */
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px; /* 카드 내부 여백 - 이 값을 조절하면 내부 공간이 바뀝니다 */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+            /* 카드 높이를 조절하려면 아래 속성 추가:
+            min-height: 400px; 
+            max-height: 600px; */
+        }
+
+        .pitch-type-controls h4 {
+            font-size: 16px; /* 제목 글자 크기 - 이 값을 조절하면 제목 크기가 바뀝니다 */
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px; /* 제목 아래 여백 - 이 값을 조절하면 제목과 버튼 사이 간격이 바뀝니다 */
+            text-align: center;
+            border-bottom: 2px solid #ff4757;
+            padding-bottom: 10px;
+        }
+
+        .pitch-type-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 2열 배치 - 1fr 1fr 1fr로 하면 3열, 1fr로 하면 1열 */
+            gap: 10px; /* 버튼 사이 간격 - 이 값을 조절하면 버튼 간격이 바뀝니다 */
+        }
+
+        .pitch-type-button {
+            padding: 8px 12px; /* 버튼 내부 여백 - 이 값을 조절하면 버튼 크기가 바뀝니다 */
+            background-color: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            min-height: auto; /* 버튼 최소 높이 - 이 값을 조절하면 버튼 높이가 바뀝니다 */
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px; /* 버튼 글자 크기 - 이 값을 조절하면 버튼 텍스트 크기가 바뀝니다 */
+        }
+
+        .pitch-type-button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .pitch-type-button.active {
+            background-color: #ff4757;
+            color: white;
+            border-color: #ff4757;
+        }
+
+        .pitch-type-button.active .stat-label {
+            color: white;
+        }
+
+        .pitch-type-button.active .stat-percentage {
+            background-color: #fff;
+            border: 2px solid white;
+        }
+
+        .pitch-type-button.active .stat-bar .stat-fill {
+            background: linear-gradient(90deg, white, #fff);
+        }
+
+        .pitch-type-button.active .stat-bar .stat-tooltip {
+            background-color: white;
+            color: #333;
+        }
+
+        .pitch-type-button.active .stat-bar .stat-tooltip::after {
+            border-top-color: white;
+        }
+
+        .pitch-type-button.active .stat-bar:hover .stat-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .pitch-type-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 0;
+        }
+
+        .pitch-type-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .pitch-count {
+            font-size: 12px;
+            color: #666;
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .pitch-type-button.active .pitch-count {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .pitch-type-stats {
+            display: none;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .pitch-zone-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .pitch-zone {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 10px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+
+        .strike-zone-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-47%, -47%);
+            width: 200px;
+            height: 200px;
+            border: 2px solid #495057;
+            background: rgba(108, 117, 125, 0.05);
+            border-radius: 2px;
+        }
+
+        .home-plate {
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 20px solid #6c757d;
+            border-radius: 3px;
+        }
+
+        
+        .pitch-zone-info {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+
+        /* 투구 점 스타일 */
+        .pitch-dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            cursor: default;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            margin-left: -6px;
+            margin-top: -6px;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .pitch-dot:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Tracker.html과 동일한 투구 구역 스타일 */
+        .strike-zone-container {
+            flex: 1;
+            min-width: 500px;
+            max-width: 700px;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .strike-zone {
+            width: 500px;
+            height: 500px;
+            background: #f8f9fa;
+            border: 2px solid #6c757d;
+            border-radius: 4px;
+            position: relative;
+            margin: 0 auto;
+            cursor: crosshair;
+            box-sizing: border-box;
+        }
+
+        /* 히트스프레이 스타일 */
+        .hit-spray-content {
+            padding: 15px 0;
+        }
+
+        .hit-spray-layout {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .field-container {
+            flex: 1;
+            min-width: 500px;
+            max-width: 700px;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .field-container h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 2px solid #ff4757;
+            padding-bottom: 10px;
+        }
+
+        .baseball-field {
+            width: 500px;
+            height: 500px;
+            background-image: url('SprayBG.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 2px solid #6c757d;
+            border-radius: 4px;
+            position: relative;
+            margin: 0 auto;
+            cursor: crosshair;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* 이미지 로드 실패 시 기본 야구장 배경 */
+        .baseball-field::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
+            z-index: -1;
+        }
+
+        /* 기본 야구장 요소들 */
+        .baseball-field::after {
+            display: none; /* 중간의 갈색 다이아몬드 제거 */
+        }
+
+        .field-info {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #666;
+            z-index: 2;
+        }
+
+        .hit-type-controls {
+            flex: 0 0 500px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+        }
+
+        .hit-type-controls h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 2px solid #ff4757;
+            padding-bottom: 10px;
+        }
+
+        .hit-type-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .hit-type-button {
+            padding: 8px 12px;
+            background-color: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            min-height: auto;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .hit-type-button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .hit-type-button.active {
+            background-color: #ff4757;
+            color: white;
+            border-color: #ff4757;
+        }
+
+        .hit-type-button.active .hit-count {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .hit-type-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .hit-count {
+            font-size: 12px;
+            color: #666;
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        /* 타구 점 스타일 - 각 타구별로 다른 색상 적용 */
+        .hit-marker {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            cursor: default;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            margin-left: -6px;
+            margin-top: -6px;
+            pointer-events: none;
+            z-index: 3;
+            background-color: #999 !important; /* 기본 색상 (회색) - 최고 우선순위 */
+        }
+
+        .hit-marker:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        /* 1루타, 2루타, 3루타, 홈런 각각 다른 색상 - 최고 우선순위 */
+        .hit-marker.single { 
+            background-color: #48bb78 !important;      /* 1루타: 초록색 */
+        }
+        .hit-marker.double { 
+            background-color: #4299e1 !important;      /* 2루타: 파란색 */
+        }
+        .hit-marker.triple { 
+            background-color: #9f7aea !important;      /* 3루타: 보라색 */
+        }
+        .hit-marker.homerun { 
+            background-color: #f56565 !important;     /* 홈런: 빨간색 */
+        }
+
+        /* 한국어 타구 타입도 지원 */
+        .hit-marker.\31루타 { 
+            background-color: #48bb78 !important;      /* 1루타: 초록색 */
+        }
+        .hit-marker.\32루타 { 
+            background-color: #4299e1 !important;      /* 2루타: 파란색 */
+        }
+        .hit-marker.\33루타 { 
+            background-color: #9f7aea !important;      /* 3루타: 보라색 */
+        }
+        .hit-marker.홈런 { 
+            background-color: #f56565 !important;     /* 홈런: 빨간색 */
+        }
     </style>
 </head>
 <body>
@@ -880,7 +1305,7 @@
                                             <div class="loading">투구 정보를 불러오는 중...</div>
                                         </div>
                                     </div>
-                                    <div class="detail-bottom">
+                                    <div class="detail-bottom full-width">
                                         <div class="detail-panel-title">히트스프레이</div>
                                         <div class="detail-content" id="hit-spray-${player.이름}">
                                             <div class="loading">히트스프레이를 불러오는 중...</div>
@@ -1026,6 +1451,8 @@
             if (pitchingInfoContainer) {
                 const pitchingInfo = generatePitchingInfo(playerData);
                 pitchingInfoContainer.innerHTML = pitchingInfo;
+                // 투구 미리보기 로드
+                renderPitchZone(playerName);
             }
 
             // 히트스프레이 생성
@@ -1033,6 +1460,8 @@
             if (hitSprayContainer) {
                 const hitSpray = generateHitSpray(playerData);
                 hitSprayContainer.innerHTML = hitSpray;
+                // 히트스프레이 데이터 로드
+                loadHitSprayData(playerName);
             }
         }
 
@@ -1218,14 +1647,458 @@
 
         // 투구 정보 HTML 생성
         function generatePitchingInfo(playerData) {
-            // 아직 내용을 넣지 않고 영역만 생성
-            return '<div class="pitching-info-placeholder">투구 정보 영역</div>';
+            // Tracker.html과 동일한 투구 구역 HTML 생성
+            return `
+                <div class="pitching-info-content">
+                    <div class="pitch-layout">
+                        <div class="strike-zone-container">
+                            <h4>투구 구역</h4>
+                            <div class="strike-zone" id="strike-zone-${playerData.이름}">
+                                <div class="strike-zone-box"></div>
+                            </div>
+                            <div class="pitch-zone-info">
+                                <small>PitchTrack 폴더의 JSON 파일에서 투구 위치를 점으로 표시합니다.</small>
+                            </div>
+                        </div>
+                        <div class="pitch-type-controls">
+                            <h4>구종별 보기</h4>
+                            <div class="pitch-type-buttons" id="pitch-type-buttons-${playerData.이름}">
+                                <div class="loading">구종 데이터를 불러오는 중...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         // 히트스프레이 HTML 생성
         function generateHitSpray(playerData) {
-            // 아직 내용을 넣지 않고 영역만 생성
-            return '<div class="hit-spray-placeholder">히트스프레이 영역</div>';
+            // Tracker.html과 동일한 히트스프레이 HTML 생성
+            return `
+                <div class="hit-spray-content">
+                    <div class="hit-spray-layout">
+                        <div class="field-container">
+                            <h4>히트스프레이</h4>
+                            <div class="baseball-field" id="baseball-field-${playerData.이름}">
+                                <div class="field-info">
+                                    <small>PitchTrack 폴더의 JSON 파일에서 타구 위치를 점으로 표시합니다.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hit-type-controls">
+                            <h4>타구별 보기</h4>
+                            <div class="hit-type-buttons" id="hit-type-buttons-${playerData.이름}">
+                                <div class="loading">타구 데이터를 불러오는 중...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 투구 구역에 점 출력
+        function renderPitchZone(playerName) {
+            const pitchZoneContainer = document.getElementById(`strike-zone-${playerName}`);
+            if (!pitchZoneContainer) return;
+            
+            try {
+                // PitchTrack 폴더에서 해당 선수의 JSON 파일 로드 시도
+                const fileName = `${playerName}_Pitch.json`;
+                const filePath = `./PitchTrack/${fileName}`;
+                
+                fetch(filePath)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error('파일을 찾을 수 없습니다');
+                        }
+                    })
+                    .then(data => {
+                        // 기존 투구 점들 제거
+                        const existingPitches = pitchZoneContainer.querySelectorAll('.pitch-dot');
+                        existingPitches.forEach(dot => dot.remove());
+                        
+                        // 투구 데이터가 있으면 점으로 표시
+                        if (data.pitches && data.pitches.length > 0) {
+                            data.pitches.forEach(pitch => {
+                                const pitchDot = document.createElement('div');
+                                pitchDot.className = 'pitch-dot';
+                                pitchDot.style.left = `${pitch.x}px`;
+                                pitchDot.style.top = `${pitch.y}px`;
+                                pitchDot.title = `${pitch.type} - (${pitch.x}, ${pitch.y})`;
+                                
+                                // 구종별 색상 설정
+                                pitchDot.style.backgroundColor = getPitchColor(pitch.type);
+                                
+                                pitchZoneContainer.appendChild(pitchDot);
+                            });
+                        }
+                        
+                        // 구종별 버튼 생성
+                        generatePitchTypeButtons(playerName, data);
+                    })
+                    .catch(error => {
+                        console.log(`${playerName}의 투구 데이터를 찾을 수 없습니다:`, error);
+                        // 투구 구역에 안내 메시지 표시
+                        const infoDiv = pitchZoneContainer.querySelector('.pitch-zone-info');
+                        if (infoDiv) {
+                            infoDiv.innerHTML = '<small>투구 데이터를 찾을 수 없습니다. PitchTrack 폴더에 JSON 파일이 있는지 확인해주세요.</small>';
+                        }
+                        
+                        // 구종별 버튼도 안내 메시지로 변경
+                        const buttonsContainer = document.getElementById(`pitch-type-buttons-${playerName}`);
+                        if (buttonsContainer) {
+                            buttonsContainer.innerHTML = '<div class="no-data">투구 데이터를 찾을 수 없습니다.</div>';
+                        }
+                    });
+                    
+            } catch (error) {
+                console.error('투구 구역 렌더링 실패:', error);
+            }
+        }
+
+        // 구종별 버튼 생성
+        function generatePitchTypeButtons(playerName, data) {
+            const buttonsContainer = document.getElementById(`pitch-type-buttons-${playerName}`);
+            if (!buttonsContainer) return;
+            
+            if (!data.pitches || data.pitches.length === 0) {
+                buttonsContainer.innerHTML = '<div class="no-data">투구 기록이 없습니다.</div>';
+                return;
+            }
+            
+            // 구종별 투구 수 계산
+            const pitchCounts = {};
+            data.pitches.forEach(pitch => {
+                const type = pitch.type;
+                pitchCounts[type] = (pitchCounts[type] || 0) + 1;
+            });
+            
+            const totalPitches = data.pitches.length;
+            
+            // 전체보기 버튼을 맨 위에 추가 (2열 그리드에서 첫 번째 행 차지)
+            let buttonsHTML = `
+                <button class="pitch-type-button active" data-type="all" onclick="filterPitchesByType('${playerName}', 'all')" style="grid-column: 1 / -1;">
+                    <span class="pitch-type-name">전체보기</span>
+                    <span class="pitch-count">${totalPitches}개</span>
+                </button>
+            `;
+            
+            // 각 구종별 버튼 생성
+            Object.entries(pitchCounts).forEach(([type, count]) => {
+                const percentage = Math.round((count / totalPitches) * 100);
+                
+                buttonsHTML += `
+                    <button class="pitch-type-button" data-type="${type}" onclick="filterPitchesByType('${playerName}', '${type}')">
+                        <span class="pitch-type-name">${type}</span>
+                        <span class="pitch-count">${percentage}%</span>
+                    </button>
+                `;
+            });
+            
+            buttonsContainer.innerHTML = buttonsHTML;
+        }
+
+        // 구종별로 투구 점 필터링
+        function filterPitchesByType(playerName, pitchType) {
+            const pitchZoneContainer = document.getElementById(`strike-zone-${playerName}`);
+            const buttonsContainer = document.getElementById(`pitch-type-buttons-${playerName}`);
+            
+            if (!pitchZoneContainer || !buttonsContainer) return;
+            
+            // 모든 버튼에서 active 클래스 제거
+            buttonsContainer.querySelectorAll('.pitch-type-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 클릭된 버튼에 active 클래스 추가
+            const clickedButton = buttonsContainer.querySelector(`[data-type="${pitchType}"]`);
+            if (clickedButton) {
+                clickedButton.classList.add('active');
+            }
+            
+            // 모든 투구 점 숨기기
+            const allPitchDots = pitchZoneContainer.querySelectorAll('.pitch-dot');
+            allPitchDots.forEach(dot => {
+                dot.style.display = 'none';
+            });
+            
+            // 선택된 구종의 투구 점만 표시
+            if (pitchType === 'all') {
+                allPitchDots.forEach(dot => {
+                    dot.style.display = 'block';
+                });
+            } else {
+                allPitchDots.forEach(dot => {
+                    const dotType = dot.title.split(' - ')[0];
+                    if (dotType === pitchType) {
+                        dot.style.display = 'block';
+                    }
+                });
+            }
+        }
+
+        // 구종별 색상 반환 함수
+        function getPitchColor(pitchType) {
+            const colorMap = {
+                '직구': '#ff4757',           // 빨강
+                '라이징': '#8B4513',         // 갈색
+                '커터': '#800020',           // 버건디
+                '슬라이더': '#2ed573',       // 초록
+                '싱커': '#ffa502',           // 주황
+                '스플리터': '#00CED1',       // 청록
+                '스크류볼': '#8A2BE2',       // 보라
+                '라이징커터': '#8B4513',     // 갈색
+                '라이징슬라이더': '#006400', // 짙은녹색
+                '라이징싱커': '#FF69B4',     // 분홍색
+                // 영어 이름도 지원
+                'Fastball': '#ff4757',
+                'Rising': '#8B4513',
+                'Cutter': '#800020',
+                'Slider': '#2ed573',
+                'Sinker': '#ffa502',
+                'Splitter': '#00CED1',
+                'Screwball': '#8A2BE2',
+                'Rising Cutter': '#8B4513',
+                'Rising Slider': '#006400',
+                'Rising Sinker': '#FF69B4'
+            };
+            
+            // 구종 이름에서 색상 찾기
+            for (const [key, color] of Object.entries(colorMap)) {
+                if (pitchType.includes(key)) {
+                    return color;
+                }
+            }
+            
+            // 기본 색상 (회색)
+            return '#747d8c';
+        }
+
+        // 타구별 색상 반환 함수
+        function getHitColor(hitType) {
+            const colorMap = {
+                'single': '#48bb78',      // 1루타: 초록색
+                'double': '#4299e1',      // 2루타: 파란색
+                'triple': '#9f7aea',      // 3루타: 보라색
+                'homerun': '#f56565',     // 홈런: 빨간색
+                // 한국어 타구 타입도 지원
+                '1루타': '#48bb78',       // 1루타: 초록색
+                '2루타': '#4299e1',       // 2루타: 파란색
+                '3루타': '#9f7aea',       // 3루타: 보라색
+                '홈런': '#f56565'         // 홈런: 빨간색
+            };
+            
+            return colorMap[hitType] || '#999'; // 기본 색상 (회색)
+        }
+
+        // 히트스프레이 데이터를 로드하고 타구별 버튼을 생성하는 함수
+        async function loadHitSprayData(playerName) {
+            const fieldContainer = document.getElementById(`baseball-field-${playerName}`);
+            if (!fieldContainer) return;
+
+            // 이미지 로드 상태 확인
+            checkImageLoad(fieldContainer);
+
+            try {
+                // HitSpray 폴더에서 해당 선수의 JSON 파일 로드 시도
+                const fileName = `${playerName}_HitSpray.json`;
+                const filePath = `./HitSpray/${fileName}`;
+                
+                console.log(`파일 경로 시도: ${filePath}`);
+                
+                const response = await fetch(filePath);
+                if (!response.ok) {
+                    // 다른 경로도 시도
+                    const altPath = `../HitSpray/${fileName}`;
+                    console.log(`대체 경로 시도: ${altPath}`);
+                    const altResponse = await fetch(altPath);
+                    if (!altResponse.ok) {
+                        throw new Error('파일을 찾을 수 없습니다');
+                    }
+                    // 대체 경로로 데이터 로드
+                    const data = await altResponse.json();
+                    console.log(`${playerName}의 히트스프레이 데이터 (대체 경로):`, data);
+                    
+                    // 기존 타구 점들 제거
+                    const existingHits = fieldContainer.querySelectorAll('.hit-marker');
+                    existingHits.forEach(marker => marker.remove());
+                    
+                    // 타구 데이터가 있으면 점으로 표시
+                    if (data.hits && data.hits.length > 0) {
+                        data.hits.forEach(hit => {
+                            const hitMarker = document.createElement('div');
+                            hitMarker.className = `hit-marker ${hit.type}`;
+                            hitMarker.style.left = `${hit.x}px`;
+                            hitMarker.style.top = `${hit.y}px`;
+                            hitMarker.title = `${hit.type} - (${hit.x}, ${hit.y})`;
+                            
+                            // 인라인 스타일로 색상 직접 적용
+                            const hitColor = getHitColor(hit.type);
+                            hitMarker.style.backgroundColor = hitColor;
+                            
+                            // 디버깅을 위한 콘솔 로그
+                            console.log(`타구 점 생성:`, {
+                                type: hit.type,
+                                className: hitMarker.className,
+                                x: hit.x,
+                                y: hit.y,
+                                color: hitColor
+                            });
+                            
+                            fieldContainer.appendChild(hitMarker);
+                        });
+                    }
+                    
+                    // 타구별 버튼 생성
+                    generateHitTypeButtons(playerName, data);
+                    return;
+                }
+
+                const data = await response.json();
+                console.log(`${playerName}의 히트스프레이 데이터:`, data);
+                
+                // 기존 타구 점들 제거
+                const existingHits = fieldContainer.querySelectorAll('.hit-marker');
+                existingHits.forEach(marker => marker.remove());
+                
+                // 타구 데이터가 있으면 점으로 표시
+                if (data.hits && data.hits.length > 0) {
+                    data.hits.forEach(hit => {
+                        const hitMarker = document.createElement('div');
+                        hitMarker.className = `hit-marker ${hit.type}`;
+                        hitMarker.style.left = `${hit.x}px`;
+                        hitMarker.style.top = `${hit.y}px`;
+                        hitMarker.title = `${hit.type} - (${hit.x}, ${hit.y})`;
+                        
+                        // 디버깅을 위한 콘솔 로그
+                        console.log(`타구 점 생성:`, {
+                            type: hit.type,
+                            className: hitMarker.className,
+                            x: hit.x,
+                            y: hit.y
+                        });
+                        
+                        fieldContainer.appendChild(hitMarker);
+                    });
+                }
+                
+                // 타구별 버튼 생성
+                generateHitTypeButtons(playerName, data);
+
+            } catch (error) {
+                console.log(`${playerName}의 히트스프레이 데이터를 찾을 수 없습니다:`, error);
+                // 히트스프레이 구역에 안내 메시지 표시
+                const infoDiv = fieldContainer.querySelector('.field-info');
+                if (infoDiv) {
+                    infoDiv.innerHTML = '<small>히트스프레이 데이터를 찾을 수 없습니다. HitSpray 폴더에 JSON 파일이 있는지 확인해주세요.<br>파일명: ' + playerName + '_HitSpray.json</small>';
+                }
+                
+                // 타구별 버튼도 안내 메시지로 변경
+                const buttonsContainer = document.getElementById(`hit-type-buttons-${playerName}`);
+                if (buttonsContainer) {
+                    buttonsContainer.innerHTML = '<div class="no-data">히트스프레이 데이터를 찾을 수 없습니다.</div>';
+                }
+            }
+        }
+
+        // 이미지 로드 상태 확인
+        function checkImageLoad(field) {
+            const img = new Image();
+            
+            img.onload = () => {
+                console.log('SprayBG.png 이미지가 성공적으로 로드되었습니다.');
+                field.style.backgroundImage = 'url("SprayBG.png")';
+            };
+            
+            img.onerror = () => {
+                console.log('SprayBG.png 이미지를 로드할 수 없습니다. 기본 야구장 배경을 사용합니다.');
+                field.style.backgroundImage = 'none';
+            };
+            
+            img.src = 'SprayBG.png';
+        }
+
+        // 타구별 버튼 생성
+        function generateHitTypeButtons(playerName, data) {
+            const buttonsContainer = document.getElementById(`hit-type-buttons-${playerName}`);
+            if (!buttonsContainer) return;
+            
+            if (!data || !data.hits || data.hits.length === 0) {
+                buttonsContainer.innerHTML = '<div class="no-data">타구 기록이 없습니다.</div>';
+                return;
+            }
+            
+            // 타구별 히트 수 계산
+            const hitCounts = {};
+            data.hits.forEach(hit => {
+                const type = hit.type;
+                hitCounts[type] = (hitCounts[type] || 0) + 1;
+            });
+            
+            const totalHits = data.hits.length;
+            
+            // 전체보기 버튼을 맨 위에 추가 (2열 그리드에서 첫 번째 행 차지)
+            let buttonsHTML = `
+                <button class="hit-type-button active" data-type="all" onclick="filterHitsByType('${playerName}', 'all')" style="grid-column: 1 / -1;">
+                    <span class="hit-type-name">전체보기</span>
+                    <span class="hit-count">${totalHits}개</span>
+                </button>
+            `;
+            
+            // 각 타구별 버튼 생성
+            Object.entries(hitCounts).forEach(([type, count]) => {
+                const percentage = Math.round((count / totalHits) * 100);
+                
+                buttonsHTML += `
+                    <button class="hit-type-button" data-type="${type}" onclick="filterHitsByType('${playerName}', '${type}')">
+                        <span class="hit-type-name">${type}</span>
+                        <span class="hit-count">${percentage}%</span>
+                    </button>
+                `;
+            });
+            
+            buttonsContainer.innerHTML = buttonsHTML;
+        }
+
+        // 타구별로 히트 점 필터링
+        function filterHitsByType(playerName, hitType) {
+            const fieldContainer = document.getElementById(`baseball-field-${playerName}`);
+            const buttonsContainer = document.getElementById(`hit-type-buttons-${playerName}`);
+            
+            if (!fieldContainer || !buttonsContainer) return;
+            
+            // 모든 버튼에서 active 클래스 제거
+            buttonsContainer.querySelectorAll('.hit-type-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 클릭된 버튼에 active 클래스 추가
+            const clickedButton = buttonsContainer.querySelector(`[data-type="${hitType}"]`);
+            if (clickedButton) {
+                clickedButton.classList.add('active');
+            }
+            
+            // 모든 히트 점 숨기기
+            const allHitMarkers = fieldContainer.querySelectorAll('.hit-marker');
+            allHitMarkers.forEach(marker => {
+                marker.style.display = 'none';
+            });
+            
+            // 선택된 타구의 히트 점만 표시
+            if (hitType === 'all') {
+                allHitMarkers.forEach(marker => {
+                    marker.style.display = 'block';
+                });
+            } else {
+                allHitMarkers.forEach(marker => {
+                    const markerType = marker.title.split(' - ')[0];
+                    if (markerType === hitType) {
+                        marker.style.display = 'block';
+                    }
+                });
+            }
         }
 
         // 페이지 로드 시 데이터 로드
@@ -1234,4 +2107,4 @@
         });
     </script>
 </body>
-</html> 
+</html>

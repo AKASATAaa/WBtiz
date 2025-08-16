@@ -1,0 +1,55 @@
+{
+  "playerName": "Apple_Sherbet",
+  "totalHits": 8,
+  "timestamp": "2025-08-12T12:26:24.903Z",
+  "hits": [
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "홈런",
+      "x": 50,
+      "y": 218
+    },
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "홈런",
+      "x": 448,
+      "y": 220
+    },
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "1루타",
+      "x": 248,
+      "y": 316
+    },
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "1루타",
+      "x": 251,
+      "y": 422
+    },
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "1루타",
+      "x": 190,
+      "y": 180
+    },
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "1루타",
+      "x": 320,
+      "y": 181
+    },
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "1루타",
+      "x": 249,
+      "y": 131
+    },
+    {
+      "playerName": "Apple_Sherbet",
+      "type": "1루타",
+      "x": 249,
+      "y": 232
+    }
+  ]
+}

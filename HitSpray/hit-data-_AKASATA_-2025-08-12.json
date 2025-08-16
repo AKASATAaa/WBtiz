@@ -1,0 +1,31 @@
+{
+  "playerName": "_AKASATA_",
+  "totalHits": 4,
+  "timestamp": "2025-08-12T11:57:41.921Z",
+  "hits": [
+    {
+      "playerName": "미입력",
+      "type": "1루타",
+      "x": 356,
+      "y": 203
+    },
+    {
+      "playerName": "미입력",
+      "type": "1루타",
+      "x": 230,
+      "y": 100
+    },
+    {
+      "playerName": "미입력",
+      "type": "1루타",
+      "x": 172,
+      "y": 193
+    },
+    {
+      "playerName": "미입력",
+      "type": "1루타",
+      "x": 242,
+      "y": 253
+    }
+  ]
+}
