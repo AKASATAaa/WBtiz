@@ -17,22 +17,21 @@ date,home_team,away_team,home_score,away_score,time,league,code
 2025.8.9,Florian T-Shirts,Leroleros,1,2,21:30,팀리그
 2025.8.10,Leroleros,Ishikawa Fighting Folks,4,2,21:30,팀리그
 2025.8.10,Nyanko Avengers,Bubble Stars,1,11,21:30,팀리그
-2025.8.13,Nyanko Avengers,MoonShot Spirits,,,21:30,팀리그
-2025.8.15,Florian T-Shirts,Bubble Stars,,,21:30,팀리그
-2025.8.15,Nyanko Avengers,Leroleros,,,21:30,팀리그
-2025.8.16,Ishikawa Fighting Folks,Nyanko Avengers,,,21:30,팀리그
-2025.8.16,MoonShot Spirits,Bubble Stars,,,21:30,팀리그
-2025.8.17,Florian T-Shirts,Ishikawa Fighting Folks,,,21:30,팀리그
-2025.8.17,Leroleros,MoonShot Spirits,,,21:30,팀리그
+2025.8.13,Nyanko Avengers,MoonShot Spirits,7,9,21:30,팀리그
+2025.8.15,Florian T-Shirts,Bubble Stars,1,8,21:30,팀리그
+2025.8.15,Nyanko Avengers,Leroleros,2,7,21:30,팀리그
+2025.8.16,Ishikawa Fighting Folks,Nyanko Avengers,10,11,21:30,팀리그
+2025.8.16,MoonShot Spirits,Bubble Stars,6,3,21:30,팀리그
+2025.8.17,Florian T-Shirts,Ishikawa Fighting Folks,3,8,21:30,팀리그
+2025.8.17,Leroleros,MoonShot Spirits,10,1,21:30,팀리그
 2025.8.22,Florian T-Shirts,Nyanko Avengers,,,21:30,팀리그
 2025.8.22,Ishikawa Fighting Folks,MoonShot Spirits,,,21:30,팀리그
 2025.8.23,Ishikawa Fighting Folks,Bubble Stars,,,21:30,팀리그
 2025.8.23,Leroleros,Florian T-Shirts,,,21:30,팀리그
 2025.8.24,MoonShot Spirits,Nyanko Avengers,,,21:30,팀리그
 2025.8.24,Bubble Stars,Leroleros,,,21:30,팀리그
-2025.8.29,PostSeason,,,,
-2025.8.30,PostSeason,,,,
-2025.8.30,PostSeason,,,,
-2025.9.5,PostSeason,,,,
-2025.9.6,PostSeason,,,,
-2025.9.7,PostSeason,,,,
+2025.8.29,2위,3위,,
+2025.8.30,1위,R1승자,,
+2025.8.31,R1패자,4위,,
+2025.9.5,R2패자,R3승자,,
+2025.9.6,R2승자,R4승자,,

@@ -561,6 +561,39 @@
                 font-size: 12px;
             }
         }
+
+        /* 툴팁 스타일 */
+        .tooltip {
+            position: absolute;
+            background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 400;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            max-width: 300px;
+            white-space: normal;
+            line-height: 1.4;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #333;
+        }
     </style>
 </head>
 <body>
@@ -610,7 +643,7 @@
                 <div class="stats-nav-container">
                     <a href="record_bat_basic.html" class="stats-nav-item active" data-tab="basic">기본</a>
                     <a href="record_bat_advanced.html" class="stats-nav-item" data-tab="advanced">심화</a>
-                    <a href="record_bat_value.html" class="stats-nav-item" data-tab="value">가치</a>
+                    <!-- <a href="record_bat_value.html" class="stats-nav-item" data-tab="value">가치</a> -->
                 </div>
             </div>
 
@@ -622,10 +655,7 @@
                             <th data-sort="Rank">Rank</th>
                             <th data-sort="이름">Name</th>
                             <th data-sort="팀">Team</th>
-                            <th class="sortable sort-desc" data-sort="WAR">WAR</th>
-                            <th class="sortable" data-sort="G">G</th>
-                            <th class="sortable" data-sort="oWAR">oWAR</th>
-                            <th class="sortable" data-sort="dWAR">dWAR</th>
+                            <th class="sortable sort-desc" data-sort="OPS">OPS</th>
                             <th class="sortable" data-sort="PA">PA</th>
                             <th class="sortable" data-sort="ePA">ePA</th>
                             <th class="sortable" data-sort="AB">AB</th>
@@ -649,9 +679,7 @@
                             <th class="sortable" data-sort="OBP">OBP</th>
                             <th class="sortable" data-sort="SLG">SLG</th>
                             <th class="sortable" data-sort="OPS">OPS</th>
-                            <th class="sortable" data-sort="R/ePA">R/ePA</th>
                             <th class="sortable" data-sort="wRC+">wRC+</th>
-                            <th class="sortable" data-sort="WAR">WAR</th>
                         </tr>
                     </thead>
                     <tbody id="statsTableBody">
@@ -662,12 +690,16 @@
         </div>
     </main>
 
+    <!-- 툴팁 요소 -->
+    <div id="tooltip" class="tooltip"></div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         let playerData = [];
         let leagueTeamData = {}; // 리그별 팀 정보를 저장할 객체
-        let currentSortColumn = 'WAR';
+        let currentSortColumn = 'OPS';
         let currentSortDirection = 'desc';
+        let statDescriptions = {}; // 스탯 설명을 저장할 객체
 
         // League_Team 파일에서 리그별 팀 정보를 로드하는 함수
         async function loadLeagueTeamData() {
@@ -775,6 +807,52 @@
             }
         }
 
+        // 스탯 설명을 로드하는 함수
+        async function loadStatDescriptions() {
+            try {
+                const response = await fetch('./Data/Bat_StatName.csv');
+                if (!response.ok) {
+                    throw new Error('Bat_StatName 파일을 불러올 수 없습니다');
+                }
+                
+                const csvText = await response.text();
+                const lines = csvText.split('\n');
+                
+                // CSV 헤더 제거하고 데이터 파싱
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line) {
+                        const [stat, description] = line.split(',');
+                        if (stat && description) {
+                            statDescriptions[stat.trim()] = description.trim();
+                        }
+                    }
+                }
+                
+                console.log('로드된 스탯 설명:', statDescriptions);
+                
+            } catch (error) {
+                console.error('스탯 설명 로딩 실패:', error);
+            }
+        }
+
+        // 툴팁을 표시하는 함수
+        function showTooltip(event, statName) {
+            const tooltip = document.getElementById('tooltip');
+            const description = statDescriptions[statName] || '설명이 없습니다';
+            
+            tooltip.textContent = description;
+            tooltip.style.left = event.pageX + 10 + 'px';
+            tooltip.style.top = event.pageY - 40 + 'px';
+            tooltip.classList.add('show');
+        }
+
+        // 툴팁을 숨기는 함수
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.classList.remove('show');
+        }
+
         // 반복되는 헤더 클릭 이벤트를 동적으로 추가
         function addHeaderClickEvents() {
             document.querySelectorAll('.stats-table tbody th.sortable').forEach(th => {
@@ -800,11 +878,32 @@
             });
         }
 
+        // 헤더에 툴팁 이벤트를 추가하는 함수
+        function addHeaderTooltipEvents() {
+            // 기본 헤더에 툴팁 이벤트 추가
+            document.querySelectorAll('.stats-table thead th').forEach(th => {
+                const sortColumn = th.getAttribute('data-sort');
+                if (sortColumn && sortColumn !== 'Rank' && sortColumn !== '이름' && sortColumn !== '팀') {
+                    th.addEventListener('mouseenter', (e) => showTooltip(e, sortColumn));
+                    th.addEventListener('mouseleave', hideTooltip);
+                }
+            });
+            
+            // 반복 헤더에 툴팁 이벤트 추가
+            document.querySelectorAll('.stats-table tbody th').forEach(th => {
+                const sortColumn = th.getAttribute('data-sort');
+                if (sortColumn && sortColumn !== 'Rank' && sortColumn !== 'Name' && sortColumn !== 'Team') {
+                    th.addEventListener('mouseenter', (e) => showTooltip(e, sortColumn));
+                    th.addEventListener('mouseleave', hideTooltip);
+                }
+            });
+        }
+
         // Excel 파일에서 선수 데이터를 로드하는 함수
         async function loadPlayerStats() {
             try {
-                // 먼저 League_Team 데이터 로드
-                await loadLeagueTeamData();
+                // 먼저 League_Team 데이터와 스탯 설명 로드
+                await Promise.all([loadLeagueTeamData(), loadStatDescriptions()]);
                 
                 const response = await fetch('./Data/PlayerStatsLeague.xlsx');
                 if (!response.ok) {
@@ -840,6 +939,9 @@
                 
                 // 반복 헤더에 클릭 이벤트 추가
                 addHeaderClickEvents();
+                
+                // 반복 헤더에 툴팁 이벤트 추가
+                addHeaderTooltipEvents();
                 
             } catch (error) {
                 console.error('선수 데이터 로딩 실패:', error);
@@ -937,10 +1039,7 @@
                         <th>Rank</th>
                         <th>Name</th>
                         <th>Team</th>
-                        <th class="sortable" data-sort="WAR">WAR</th>
-                        <th class="sortable" data-sort="G">G</th>
-                        <th class="sortable" data-sort="oWAR">oWAR</th>
-                        <th class="sortable" data-sort="dWAR">dWAR</th>
+                        <th class="sortable" data-sort="OPS">OPS</th>
                         <th class="sortable" data-sort="PA">PA</th>
                         <th class="sortable" data-sort="ePA">ePA</th>
                         <th class="sortable" data-sort="AB">AB</th>
@@ -964,11 +1063,21 @@
                         <th class="sortable" data-sort="OBP">OBP</th>
                         <th class="sortable" data-sort="SLG">SLG</th>
                         <th class="sortable" data-sort="OPS">OPS</th>
-                        <th class="sortable" data-sort="R/ePA">R/ePA</th>
                         <th class="sortable" data-sort="wRC+">wRC+</th>
-                        <th class="sortable" data-sort="WAR">WAR</th>
                     `;
                     tbody.appendChild(headerRow);
+                    
+                    // 반복 헤더에 툴팁 이벤트 추가
+                    setTimeout(() => {
+                        const newHeader = tbody.querySelector(`tr:nth-child(${tbody.children.length}) th`);
+                        if (newHeader) {
+                            const sortColumn = newHeader.getAttribute('data-sort');
+                            if (sortColumn) {
+                                newHeader.addEventListener('mouseenter', (e) => showTooltip(e, sortColumn));
+                                newHeader.addEventListener('mouseleave', hideTooltip);
+                            }
+                        }
+                    }, 0);
                 }
                 
                 // 리그와 선수명을 기반으로 팀명 찾기
@@ -997,10 +1106,7 @@
                             <span class="team-name">${displayTeamName}</span>
                         </div>
                     </td>
-                    <td class="war-value">${parseFloat(player.WAR || 0).toFixed(2)}</td>
-                    <td>${player.G || 0}</td>
-                    <td>${parseFloat(player.oWAR || 0).toFixed(2)}</td>
-                    <td>${parseFloat(player.dWAR || 0).toFixed(2)}</td>
+                    <td class="war-value">${parseFloat(player.OPS || 0).toFixed(3)}</td>
                     <td>${player.PA || 0}</td>
                     <td>${player.ePA || 0}</td>
                     <td>${player.AB || 0}</td>
@@ -1024,9 +1130,7 @@
                     <td>${parseFloat(player.OBP || 0).toFixed(3)}</td>
                     <td>${parseFloat(player.SLG || 0).toFixed(3)}</td>
                     <td>${parseFloat(player.OPS || 0).toFixed(3)}</td>
-                    <td>${parseFloat(player['R/ePA'] || 0).toFixed(3)}</td>
                     <td>${parseFloat(player['wRC+'] || 0).toFixed(1)}</td>
-                    <td class="war-value">${parseFloat(player.WAR || 0).toFixed(2)}</td>
                 `;
                 tbody.appendChild(row);
             });

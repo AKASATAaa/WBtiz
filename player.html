@@ -1477,7 +1477,7 @@
         function generatePitcherStats(playerData) {
             // 투수 핵심 통계 지표들
             const pitcherStats = [
-                { name: 'WAR', key: 'WAR', value: playerData.WAR || 0 },
+                { name: 'WHIP', key: 'WHIP', value: playerData.WHIP || 0 },
                 { name: 'ERA', key: 'ERA', value: playerData.ERA || 0 },
                 { name: 'AVG', key: 'AVG', value: playerData.AVG || 0 },
                 { name: 'OBP', key: 'OBP', value: playerData.OBP || 0 },
@@ -1507,9 +1507,9 @@
                     return { ...stat, percentile: 50 }; // 데이터가 없으면 중간값
                 }
                 
-                // 값 정렬 (WAR, K9은 높을수록 좋음, ERA, AVG, OBP는 낮을수록 좋음)
+                // 값 정렬 (K9은 높을수록 좋음, WHIP, ERA, AVG, OBP는 낮을수록 좋음)
                 values.sort((a, b) => {
-                    if (stat.key === 'WAR' || stat.key === 'K9') {
+                    if (stat.key === 'K9') {
                         return b - a; // 내림차순 (높을수록 좋음)
                     } else {
                         return a - b; // 오름차순 (낮을수록 좋음)
@@ -1520,7 +1520,7 @@
                 const currentValue = parseFloat(stat.value) || 0;
                 let betterCount = 0;
                 
-                if (stat.key === 'WAR' || stat.key === 'K9') {
+                if (stat.key === 'K9') {
                     // 높을수록 좋은 지표
                     betterCount = values.filter(v => v > currentValue).length;
                 } else {
@@ -1566,7 +1566,7 @@
                 { name: 'AVG', key: 'AVG', value: playerData.AVG || 0 },
                 { name: 'OPS', key: 'OPS', value: playerData.OPS || 0 },
                 { name: 'wRC+', key: 'wRC+', value: playerData['wRC+'] || 0 },
-                { name: 'WAR', key: 'WAR', value: playerData.WAR || 0 },
+                { name: 'SLG', key: 'SLG', value: playerData.SLG || 0 },
                 { name: 'H', key: 'H', value: playerData.H || 0 }
             ];
             
@@ -1593,9 +1593,9 @@
                     return { ...stat, percentile: 50 }; // 데이터가 없으면 중간값
                 }
                 
-                // 값 정렬 (AVG, OPS, wRC+는 높을수록 좋음, WAR, H는 낮을수록 좋음)
+                // 값 정렬 (AVG, OPS, wRC+, SLG는 높을수록 좋음, H는 낮을수록 좋음)
                 values.sort((a, b) => {
-                    if (stat.key === 'AVG' || stat.key === 'OPS' || stat.key === 'wRC+') {
+                    if (stat.key === 'AVG' || stat.key === 'OPS' || stat.key === 'wRC+' || stat.key === 'SLG') {
                         return b - a; // 내림차순 (높을수록 좋음)
                     } else {
                         return a - b; // 오름차순 (낮을수록 좋음)
@@ -1606,7 +1606,7 @@
                 const currentValue = parseFloat(stat.value) || 0;
                 let betterCount = 0;
                 
-                if (stat.key === 'AVG' || stat.key === 'OPS' || stat.key === 'wRC+') {
+                if (stat.key === 'AVG' || stat.key === 'OPS' || stat.key === 'wRC+' || stat.key === 'SLG') {
                     // 높을수록 좋은 지표
                     betterCount = values.filter(v => v > currentValue).length;
                 } else {

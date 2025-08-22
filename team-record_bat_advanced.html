@@ -496,6 +496,39 @@
                 font-size: 12px;
             }
         }
+
+        /* 툴팁 스타일 */
+        .tooltip {
+            position: absolute;
+            background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 400;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            max-width: 300px;
+            white-space: normal;
+            line-height: 1.4;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #333;
+        }
     </style>
 </head>
 <body>
@@ -507,16 +540,7 @@
                 <div class="logo-text">WBD 기록실</div>
             </a>
             <div class="header-actions">
-                <div class="search-icon">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5s2.91 6.5 6.5 6.5c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                    </svg>
-                </div>
-                <div class="user-icon">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                    </svg>
-                </div>
+               
             </div>
         </div>
     </header>
@@ -562,7 +586,7 @@
                 <div class="stats-nav-container">
                     <a href="team-record_bat_basic.html" class="stats-nav-item" data-tab="basic">기본</a>
                     <a href="team-record_bat_advanced.html" class="stats-nav-item active" data-tab="advanced">심화</a>
-                    <a href="team-record_bat_value.html" class="stats-nav-item" data-tab="value">가치</a>
+                    <!-- <a href="team-record_bat_value.html" class="stats-nav-item" data-tab="value">가치</a> -->
                 </div>
             </div>
 
@@ -580,7 +604,6 @@
                             <th class="sortable" data-sort="BABIP">BABIP</th>
                             <th class="sortable" data-sort="IsoP">IsoP</th>
                             <th class="sortable" data-sort="IsoD">IsoD</th>
-                            <th class="sortable" data-sort="R/ePA">R/ePA</th>
                             <th class="sortable" data-sort="wOBA">wOBA</th>
                             <th class="sortable" data-sort="wRC">wRC</th>
                             <th class="sortable" data-sort="RC27">RC27</th>
@@ -595,6 +618,9 @@
         </div>
     </main>
 
+    <!-- 툴팁 요소 -->
+    <div id="tooltip" class="tooltip"></div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         let playerData = [];
@@ -602,59 +628,7 @@
         let currentSortDirection = 'desc';
         let leagueTeamData = {}; // 리그별 팀 데이터를 저장할 객체
         let teamStatsData = []; // 팀별 통계 데이터를 저장할 배열
-
-        // Excel 파일에서 선수 데이터를 로드하는 함수
-        async function loadPlayerStats() {
-            try {
-                // 먼저 League_Team 데이터 로드
-                await loadLeagueTeamData();
-                
-                // 진행중인 리그 찾기
-                const activeLeague = findActiveLeague();
-                if (!activeLeague) {
-                    throw new Error('진행중인 리그를 찾을 수 없습니다');
-                }
-                
-                console.log('진행중인 리그:', activeLeague);
-                
-                // PlayerStatsLeague에서 해당 리그의 타자 시트 찾기
-                const response = await fetch('./Data/PlayerStatsLeague.xlsx');
-                if (!response.ok) {
-                    throw new Error('Excel 파일을 불러올 수 없습니다');
-                }
-                
-                const arrayBuffer = await response.arrayBuffer();
-                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                
-                console.log('PlayerStatsLeague 파일의 모든 시트:', workbook.SheetNames);
-                
-                // "(리그) 타자" 형태의 시트 찾기
-                const targetSheet = workbook.SheetNames.find(sheet => 
-                    sheet.includes(activeLeague) && sheet.includes('타자')
-                );
-                
-                if (!targetSheet) {
-                    throw new Error(`"${activeLeague} 타자" 시트를 찾을 수 없습니다`);
-                }
-                
-                console.log('찾은 타자 시트:', targetSheet);
-                
-                // 해당 시트의 데이터 파싱
-                playerData = parseExcelFileBySheet(arrayBuffer, targetSheet);
-                
-                // 팀별 통계 데이터 생성
-                generateTeamStats();
-                
-                // 초기 정렬 및 표시
-                sortAndDisplayData();
-                
-            } catch (error) {
-                console.error('선수 데이터 로딩 실패:', error);
-                document.getElementById('statsTableBody').innerHTML = `
-                    <tr><td colspan="14" style="text-align: center; color: #666;">데이터를 불러올 수 없습니다</td></tr>
-                `;
-            }
-        }
+        let statDescriptions = {}; // 스탯 설명을 저장할 객체
 
         // League_Team 파일에서 리그별 팀 정보를 로드하는 함수
         async function loadLeagueTeamData() {
@@ -786,6 +760,111 @@
             }
         }
 
+        // 스탯 설명을 로드하는 함수
+        async function loadStatDescriptions() {
+            try {
+                const response = await fetch('./Data/Bat_StatName.csv');
+                if (!response.ok) {
+                    throw new Error('Bat_StatName 파일을 불러올 수 없습니다');
+                }
+                
+                const csvText = await response.text();
+                const lines = csvText.split('\n');
+                
+                // CSV 헤더 제거하고 데이터 파싱
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line) {
+                        const [stat, description] = line.split(',');
+                        if (stat && description) {
+                            statDescriptions[stat.trim()] = description.trim();
+                        }
+                    }
+                }
+                
+                console.log('로드된 스탯 설명:', statDescriptions);
+                
+            } catch (error) {
+                console.error('스탯 설명 로딩 실패:', error);
+            }
+        }
+
+        // 툴팁을 표시하는 함수
+        function showTooltip(event, statName) {
+            const tooltip = document.getElementById('tooltip');
+            const description = statDescriptions[statName] || '설명이 없습니다';
+            
+            tooltip.textContent = description;
+            tooltip.style.left = event.pageX + 10 + 'px';
+            tooltip.style.top = event.pageY - 40 + 'px';
+            tooltip.classList.add('show');
+        }
+
+        // 툴팁을 숨기는 함수
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.classList.remove('show');
+        }
+
+        // Excel 파일에서 선수 데이터를 로드하는 함수
+        async function loadPlayerStats() {
+            try {
+                // 먼저 League_Team 데이터 로드
+                await loadLeagueTeamData();
+                
+                // 스탯 설명 로드
+                await loadStatDescriptions();
+                
+                // 진행중인 리그 찾기
+                const activeLeague = findActiveLeague();
+                if (!activeLeague) {
+                    throw new Error('진행중인 리그를 찾을 수 없습니다');
+                }
+                
+                console.log('진행중인 리그:', activeLeague);
+                
+                // PlayerStatsLeague에서 해당 리그의 타자 시트 찾기
+                const response = await fetch('./Data/PlayerStatsLeague.xlsx');
+                if (!response.ok) {
+                    throw new Error('Excel 파일을 불러올 수 없습니다');
+                }
+                
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                
+                console.log('PlayerStatsLeague 파일의 모든 시트:', workbook.SheetNames);
+                
+                // "(리그) 타자" 형태의 시트 찾기
+                const targetSheet = workbook.SheetNames.find(sheet => 
+                    sheet.includes(activeLeague) && sheet.includes('타자')
+                );
+                
+                if (!targetSheet) {
+                    throw new Error(`"${activeLeague} 타자" 시트를 찾을 수 없습니다`);
+                }
+                
+                console.log('찾은 타자 시트:', targetSheet);
+                
+                // 해당 시트의 데이터 파싱
+                playerData = parseExcelFileBySheet(arrayBuffer, targetSheet);
+                
+                // 팀별 통계 데이터 생성
+                generateTeamStats();
+                
+                // 초기 정렬 및 표시
+                sortAndDisplayData();
+                
+                // 헤더에 툴팁 이벤트 추가
+                addHeaderTooltipEvents();
+                
+            } catch (error) {
+                console.error('선수 데이터 로딩 실패:', error);
+                document.getElementById('statsTableBody').innerHTML = `
+                    <tr><td colspan="14" style="text-align: center; color: #666;">데이터를 불러올 수 없습니다</td></tr>
+                `;
+            }
+        }
+
         // 진행중인 리그를 찾는 함수
         function findActiveLeague() {
             try {
@@ -864,7 +943,7 @@
                 if (team.players.length === 0) return;
                 
                 const stats = {};
-                const numericColumns = ['wRC+', 'K%', 'BB%', 'BB/K', 'BABIP', 'IsoP', 'IsoD', 'R/ePA', 'wOBA', 'wRC', 'RC27'];
+                const numericColumns = ['wRC+', 'K%', 'BB%', 'BB/K', 'BABIP', 'IsoP', 'IsoD', 'wOBA', 'wRC', 'RC27'];
                 
                 numericColumns.forEach(column => {
                     const values = team.players
@@ -873,7 +952,7 @@
                     
                     if (values.length > 0) {
                         // 소수인 값은 평균, 자연수인 항목은 합
-                        if (column === 'wRC+' || column === 'K%' || column === 'BB%' || column === 'BABIP' || column === 'IsoP' || column === 'IsoD' || column === 'R/ePA' || column === 'wOBA') {
+                        if (column === 'wRC+' || column === 'K%' || column === 'BB%' || column === 'BABIP' || column === 'IsoP' || column === 'IsoD' || column === 'wOBA') {
                             // 소수인 값들 - 평균 계산
                             stats[column] = values.reduce((sum, val) => sum + val, 0) / values.length;
                         } else {
@@ -892,6 +971,27 @@
             teamStatsData = Object.values(teamStats).filter(team => team.players.length > 0);
             
             console.log('팀별 통계 데이터:', teamStatsData);
+        }
+
+        // 헤더에 툴팁 이벤트를 추가하는 함수
+        function addHeaderTooltipEvents() {
+            // 기본 헤더에 툴팁 이벤트 추가
+            document.querySelectorAll('.stats-table thead th').forEach(th => {
+                const sortColumn = th.getAttribute('data-sort');
+                if (sortColumn && sortColumn !== 'Rank' && sortColumn !== '팀') {
+                    th.addEventListener('mouseenter', (e) => showTooltip(e, sortColumn));
+                    th.addEventListener('mouseleave', hideTooltip);
+                }
+            });
+            
+            // 반복 헤더에 툴팁 이벤트 추가
+            document.querySelectorAll('.stats-table tbody th').forEach(th => {
+                const sortColumn = th.getAttribute('data-sort');
+                if (sortColumn && sortColumn !== 'Rank' && sortColumn !== 'Team') {
+                    th.addEventListener('mouseenter', (e) => showTooltip(e, sortColumn));
+                    th.addEventListener('mouseleave', hideTooltip);
+                }
+            });
         }
 
         // 특정 시트의 데이터를 파싱하는 함수
@@ -961,13 +1061,24 @@
                         <th class="sortable" data-sort="BABIP">BABIP</th>
                         <th class="sortable" data-sort="IsoP">IsoP</th>
                         <th class="sortable" data-sort="IsoD">IsoD</th>
-                        <th class="sortable" data-sort="R/ePA">R/ePA</th>
                         <th class="sortable" data-sort="wOBA">wOBA</th>
                         <th class="sortable" data-sort="wRC">wRC</th>
                         <th class="sortable" data-sort="RC27">RC27</th>
                         <th class="sortable" data-sort="wRC+">wRC+▼</th>
                     `;
                     tbody.appendChild(headerRow);
+                    
+                    // 반복 헤더에 툴팁 이벤트 추가
+                    setTimeout(() => {
+                        const newHeader = tbody.querySelector(`tr:nth-child(${tbody.children.length}) th`);
+                        if (newHeader) {
+                            const sortColumn = newHeader.getAttribute('data-sort');
+                            if (sortColumn) {
+                                newHeader.addEventListener('mouseenter', (e) => showTooltip(e, sortColumn));
+                                newHeader.addEventListener('mouseleave', hideTooltip);
+                            }
+                        }
+                    }, 0);
                 }
                 
                 const displayTeamName = team.teamName;
@@ -988,7 +1099,6 @@
                     <td>${parseFloat(team.stats['BABIP'] || 0).toFixed(3)}</td>
                     <td>${parseFloat(team.stats['IsoP'] || 0).toFixed(3)}</td>
                     <td>${parseFloat(team.stats['IsoD'] || 0).toFixed(3)}</td>
-                    <td>${parseFloat(team.stats['R/ePA'] || 0).toFixed(3)}</td>
                     <td>${parseFloat(team.stats['wOBA'] || 0).toFixed(3)}</td>
                     <td>${parseFloat(team.stats['wRC'] || 0).toFixed(1)}</td>
                     <td>${parseFloat(team.stats['RC27'] || 0).toFixed(2)}</td>
@@ -1146,6 +1256,7 @@
             loadPlayerStats = async function() {
                 await originalLoadPlayerStats();
                 addHeaderClickEvents();
+                addHeaderTooltipEvents(); // 데이터 로드 후 헤더에 툴팁 이벤트 추가
             };
             
             // 마우스 휠로 가로 스크롤

@@ -523,6 +523,30 @@
             font-weight: 500;
             color: #333;
         }
+
+        /* 데이터 없음 메시지 스타일 */
+        .no-data-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 60px 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .no-data-message h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .no-data-message p {
+            font-size: 16px;
+            color: #999;
+            margin: 0;
+        }
+
         /* 반응형 디자인 */
         @media (max-width: 768px) {
             .content-container {
@@ -541,6 +565,51 @@
                 padding: 6px 12px;
                 font-size: 12px;
             }
+
+            .no-data-container {
+                padding: 40px 20px;
+            }
+
+            .no-data-message h3 {
+                font-size: 20px;
+            }
+
+            .no-data-message p {
+                font-size: 14px;
+            }
+        }
+
+        /* 툴팁 스타일 */
+        .tooltip {
+            position: absolute;
+            background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 400;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            max-width: 300px;
+            white-space: normal;
+            line-height: 1.4;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #333;
         }
     </style>
 </head>
@@ -600,35 +669,18 @@
                 </div>
             </div>
 
-            <!-- 통계 테이블 -->
-            <div class="stats-table-container">
-                <table class="stats-table" id="statsTable">
-                    <thead>
-                        <tr>
-                            <th class="sortable" data-sort="Rank">Rank</th>
-                            <th class="sortable" data-sort="이름">Name</th>
-                            <th class="sortable" data-sort="팀">Team</th>
-                            <th class="sortable sort-desc" data-sort="WAR">WAR</th>
-                            <th class="sortable" data-sort="PA">PA</th>
-                            <th class="sortable" data-sort="타격RAA">타격 RAA</th>
-                            <th class="sortable" data-sort="도루RAA">도루 RAA</th>
-                            <th class="sortable" data-sort="주루RAA">주루 RAA</th>
-                            <th class="sortable" data-sort="공격RAA">공격 RAA</th>
-                            <th class="sortable" data-sort="필딩RAA">필딩 RAA</th>
-                            <th class="sortable" data-sort="수비RAA">수비 RAA</th>
-                            <th class="sortable" data-sort="종합RAA">종합 RAA</th>
-                            <th class="sortable" data-sort="RAR">RAR</th>
-                            <th class="sortable" data-sort="WAAOff">WAA Off</th>
-                            <th class="sortable" data-sort="WAA">WAA</th>
-                        </tr>
-                    </thead>
-                    <tbody id="statsTableBody">
-                        <!-- 데이터가 JavaScript로 동적 생성됨 -->
-                    </tbody>
-                </table>
+            <!-- 데이터 없음 메시지 -->
+            <div class="no-data-container">
+                <div class="no-data-message">
+                    <h3>데이터가 없습니다</h3>
+                    <p>현재 표시할 데이터가 없습니다.</p>
+                </div>
             </div>
         </div>
     </main>
+
+    <!-- 툴팁 요소 -->
+    <div id="tooltip" class="tooltip"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
@@ -636,6 +688,7 @@
         let leagueTeamData = {}; // 리그별 팀 정보를 저장할 객체
         let currentSortColumn = 'WAR';
         let currentSortDirection = 'desc';
+        let statDescriptions = {}; // 스탯 설명을 저장할 객체
 
         // League_Team 파일에서 리그별 팀 정보를 로드하는 함수
         async function loadLeagueTeamData() {
@@ -743,11 +796,57 @@
             }
         }
 
+        // 스탯 설명을 로드하는 함수
+        async function loadStatDescriptions() {
+            try {
+                const response = await fetch('./Data/Bat_StatName.csv');
+                if (!response.ok) {
+                    throw new Error('Bat_StatName 파일을 불러올 수 없습니다');
+                }
+                
+                const csvText = await response.text();
+                const lines = csvText.split('\n');
+                
+                // CSV 헤더 제거하고 데이터 파싱
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line) {
+                        const [stat, description] = line.split(',');
+                        if (stat && description) {
+                            statDescriptions[stat.trim()] = description.trim();
+                        }
+                    }
+                }
+                
+                console.log('로드된 스탯 설명:', statDescriptions);
+                
+            } catch (error) {
+                console.error('스탯 설명 로딩 실패:', error);
+            }
+        }
+
+        // 툴팁을 표시하는 함수
+        function showTooltip(event, statName) {
+            const tooltip = document.getElementById('tooltip');
+            const description = statDescriptions[statName] || '설명이 없습니다';
+            
+            tooltip.textContent = description;
+            tooltip.style.left = event.pageX + 10 + 'px';
+            tooltip.style.top = event.pageY - 40 + 'px';
+            tooltip.classList.add('show');
+        }
+
+        // 툴팁을 숨기는 함수
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.classList.remove('show');
+        }
+
         // Excel 파일에서 선수 데이터를 로드하는 함수
         async function loadPlayerStats() {
             try {
-                // 먼저 League_Team 데이터 로드
-                await loadLeagueTeamData();
+                // 먼저 League_Team 데이터와 스탯 설명 로드
+                await Promise.all([loadLeagueTeamData(), loadStatDescriptions()]);
                 
                 const response = await fetch('./Data/PlayerStatsLeague.xlsx');
                 if (!response.ok) {
@@ -783,6 +882,9 @@
                 
                 // 반복 헤더에 클릭 이벤트 추가
                 addHeaderClickEvents();
+                
+                // 반복 헤더에 툴팁 이벤트 추가
+                addHeaderTooltipEvents();
                 
             } catch (error) {
                 console.error('선수 데이터 로딩 실패:', error);
@@ -903,7 +1005,6 @@
                         <th>Name</th>
                         <th>Team</th>
                         <th class="sortable" data-sort="WAR">WAR</th>
-                        <th class="sortable" data-sort="PA">PA</th>
                         <th class="sortable" data-sort="타격RAA">타격 RAA</th>
                         <th class="sortable" data-sort="도루RAA">도루 RAA</th>
                         <th class="sortable" data-sort="주루RAA">주루 RAA</th>
@@ -916,6 +1017,18 @@
                         <th class="sortable" data-sort="WAA">WAA</th>
                     `;
                     tbody.appendChild(headerRow);
+                    
+                    // 반복 헤더에 툴팁 이벤트 추가
+                    setTimeout(() => {
+                        const newHeader = tbody.querySelector(`tr:nth-child(${tbody.children.length}) th`);
+                        if (newHeader) {
+                            const sortColumn = newHeader.getAttribute('data-sort');
+                            if (sortColumn) {
+                                newHeader.addEventListener('mouseenter', (e) => showTooltip(e, sortColumn));
+                                newHeader.addEventListener('mouseleave', hideTooltip);
+                            }
+                        }
+                    }, 0);
                 }
                 
                 // 리그와 선수명을 기반으로 팀명 찾기
@@ -937,7 +1050,6 @@
                         </div>
                     </td>
                     <td class="war-value">${parseFloat(player['WAR'] || 0).toFixed(2)}</td>
-                    <td>${player['PA'] || 0}</td>
                     <td class="${getRaaClass(player[타격RAA])}">${parseFloat(player[타격RAA] || 0).toFixed(2)}</td>
                     <td class="${getRaaClass(player[도루RAA])}">${parseFloat(player[도루RAA] || 0).toFixed(2)}</td>
                     <td class="${getRaaClass(player[주루RAA])}">${parseFloat(player[주루RAA] || 0).toFixed(2)}</td>
@@ -1008,6 +1120,27 @@
             });
         }
 
+        // 헤더에 툴팁 이벤트를 추가하는 함수
+        function addHeaderTooltipEvents() {
+            // 기본 헤더에 툴팁 이벤트 추가
+            document.querySelectorAll('.stats-table thead th').forEach(th => {
+                const sortColumn = th.getAttribute('data-sort');
+                if (sortColumn && sortColumn !== 'Rank' && sortColumn !== '이름' && sortColumn !== '팀') {
+                    th.addEventListener('mouseenter', (e) => showTooltip(e, sortColumn));
+                    th.addEventListener('mouseleave', hideTooltip);
+                }
+            });
+            
+            // 반복 헤더에 툴팁 이벤트 추가
+            document.querySelectorAll('.stats-table tbody th').forEach(th => {
+                const sortColumn = th.getAttribute('data-sort');
+                if (sortColumn && sortColumn !== 'Rank' && sortColumn !== 'Name' && sortColumn !== 'Team') {
+                    th.addEventListener('mouseenter', (e) => showTooltip(e, sortColumn));
+                    th.addEventListener('mouseleave', hideTooltip);
+                }
+            });
+        }
+
         // 이벤트 리스너 설정
         document.addEventListener('DOMContentLoaded', () => {
             // 초기 데이터 로딩
@@ -1064,7 +1197,7 @@
                     if (selectedTab === 'batting') {
                         console.log('타격 탭은 현재 페이지입니다');
                         // 타격 탭은 현재 페이지이므로 아무것도 하지 않음
-                    } else if (selectedTab === 'pitching') {
+                    }  else if (selectedTab === 'pitching') {
                         console.log('투수 페이지로 이동');
                         window.location.href = 'record_pitch_basic.html';
                     }

@@ -233,11 +233,11 @@
             z-index: 2;
         }
 
-        /* 첫 번째와 두 번째 컬럼 고정 (WAR TOP 10, 타율, 타율 우수 순위, 홈런 우수 순위에만 적용) */
-        #war-top-10 .data-table th:nth-child(1),
-        #war-top-10 .data-table th:nth-child(2),
-        #war-top-10 .data-table td:nth-child(1),
-        #war-top-10 .data-table td:nth-child(2),
+        /* 첫 번째와 두 번째 컬럼 고정 (wRC+ TOP 10, 타율, 타율 우수 순위, 홈런 우수 순위에만 적용) */
+        #wrc-top-10 .data-table th:nth-child(1),
+        #wrc-top-10 .data-table th:nth-child(2),
+        #wrc-top-10 .data-table td:nth-child(1),
+        #wrc-top-10 .data-table td:nth-child(2),
         #batting-average-2025 .data-table th:nth-child(1),
         #batting-average-2025 .data-table th:nth-child(2),
         #batting-average-2025 .data-table td:nth-child(1),
@@ -255,7 +255,7 @@
             z-index: 1;
         }
 
-        #war-top-10 .data-table th:nth-child(1),
+        #wrc-top-10 .data-table th:nth-child(1),
         #batting-average-2025 .data-table th:nth-child(1),
         #batting-excellence .data-table th:nth-child(1),
         #home-run-excellence .data-table th:nth-child(1) {
@@ -264,7 +264,7 @@
             background-color: #f8f9fa;
         }
         
-        #war-top-10 .data-table th:nth-child(2),
+        #wrc-top-10 .data-table th:nth-child(2),
         #batting-average-2025 .data-table th:nth-child(2),
         #batting-excellence .data-table th:nth-child(2),
         #home-run-excellence .data-table th:nth-child(2) {
@@ -273,7 +273,7 @@
             background-color: #f8f9fa;
         }
 
-        #war-top-10 .data-table td:nth-child(1),
+        #wrc-top-10 .data-table td:nth-child(1),
         #batting-average-2025 .data-table td:nth-child(1),
         #batting-excellence .data-table td:nth-child(1),
         #home-run-excellence .data-table td:nth-child(1) {
@@ -281,7 +281,7 @@
             background-color: #fafbfc;
         }
 
-        #war-top-10 .data-table td:nth-child(2),
+        #wrc-top-10 .data-table td:nth-child(2),
         #batting-average-2025 .data-table td:nth-child(2),
         #batting-excellence .data-table td:nth-child(2),
         #home-run-excellence .data-table td:nth-child(2) {
@@ -289,8 +289,8 @@
             background-color: #fafbfc;
         }
 
-        #war-top-10 .data-table tbody tr:nth-child(odd) td:nth-child(1),
-        #war-top-10 .data-table tbody tr:nth-child(odd) td:nth-child(2),
+        #wrc-top-10 .data-table tbody tr:nth-child(odd) td:nth-child(1),
+        #wrc-top-10 .data-table tbody tr:nth-child(odd) td:nth-child(2),
         #batting-average-2025 .data-table tbody tr:nth-child(odd) td:nth-child(1),
         #batting-average-2025 .data-table tbody tr:nth-child(odd) td:nth-child(2),
         #batting-excellence .data-table tbody tr:nth-child(odd) td:nth-child(1),
@@ -300,8 +300,8 @@
             background-color: #fafbfc;
         }
 
-        #war-top-10 .data-table tbody tr:nth-child(even) td:nth-child(1),
-        #war-top-10 .data-table tbody tr:nth-child(even) td:nth-child(2),
+        #wrc-top-10 .data-table tbody tr:nth-child(even) td:nth-child(1),
+        #wrc-top-10 .data-table tbody tr:nth-child(even) td:nth-child(2),
         #batting-average-2025 .data-table tbody tr:nth-child(even) td:nth-child(1),
         #batting-average-2025 .data-table tbody tr:nth-child(even) td:nth-child(2),
         #batting-excellence .data-table tbody tr:nth-child(even) td:nth-child(1),
@@ -311,8 +311,8 @@
             background-color: white;
         }
 
-        #war-top-10 .data-table tbody tr:hover td:nth-child(1),
-        #war-top-10 .data-table tbody tr:hover td:nth-child(2),
+        #wrc-top-10 .data-table tbody tr:hover td:nth-child(1),
+        #wrc-top-10 .data-table tbody tr:hover td:nth-child(2),
         #batting-average-2025 .data-table tbody tr:hover td:nth-child(1),
         #batting-average-2025 .data-table tbody tr:hover td:nth-child(2),
         #batting-excellence .data-table tbody tr:hover td:nth-child(1),
@@ -351,6 +351,35 @@
             min-width: 104px;
             max-width: 104px;
             text-align: center; /* 가운데 정렬 추가 */
+        }
+        
+        /* wRC+ TOP 10 테이블 컬럼 너비 설정 */
+        #wrc-top-10 .data-table th:nth-child(3),
+        #wrc-top-10 .data-table td:nth-child(3) {
+            width: 80px; /* wRC+ 컬럼 */
+            min-width: 80px;
+            max-width: 80px;
+        }
+        
+        #wrc-top-10 .data-table th:nth-child(4),
+        #wrc-top-10 .data-table td:nth-child(4) {
+            width: 80px; /* AVG 컬럼 */
+            min-width: 80px;
+            max-width: 80px;
+        }
+        
+        #wrc-top-10 .data-table th:nth-child(5),
+        #wrc-top-10 .data-table td:nth-child(5) {
+            width: 80px; /* OPS 컬럼 */
+            min-width: 80px;
+            max-width: 80px;
+        }
+        
+        #wrc-top-10 .data-table th:nth-child(6),
+        #wrc-top-10 .data-table td:nth-child(6) {
+            width: 80px; /* RBI 컬럼 */
+            min-width: 80px;
+            max-width: 80px;
         }
         
         /* 최근 경기 결과 테이블 스타일 */
@@ -1121,30 +1150,25 @@
             <div class="left-content">
                 <!-- 접을 수 있는 6개 영역 (2x3) -->
                 <div class="collapsible-section">
-                    <!-- WAR TOP 10 -->
-                    <div class="collapsible-item" id="war-top-10">
+                    <!-- wRC+ TOP 10 -->
+                    <div class="collapsible-item" id="wrc-top-10">
                         <div class="collapsible-header">
-                            <h3>WAR TOP 10</h3>
+                            <h3>wRC+ TOP 10</h3>
                         </div>
                         <div class="collapsible-content">
                             <div class="table-container">
-                                <table class="data-table" id="war-top-10-table">
+                                <table class="data-table" id="wrc-top-10-table">
                                 <thead>
                                     <tr>
                                         <th>순위</th>
                                             <th>이름</th>
-                                            <th>WAR</th>
-                                            <th>oWAR</th>
-                                            <th>dWAR</th>
-                                            <th>타격</th>
-                                            <th>도루</th>
-                                            <th>주루</th>
-                                            <th>수비</th>
-                                            <th>대체</th>
-                                            <th>종합 RAA</th>
+                                            <th>wRC+</th>
+                                            <th>AVG</th>
+                                            <th>OPS</th>
+                                            <th>RBI</th>
                                     </tr>
                                 </thead>
-                                    <tbody id="war-top-10-tbody">
+                                    <tbody id="wrc-top-10-tbody">
                                         <!-- 데이터가 JavaScript로 동적 생성됨 -->
                                 </tbody>
                             </table>
@@ -1186,13 +1210,13 @@
                     <div class="collapsible-item" id="batting-excellence">
                         <div class="collapsible-header">
                             <h3>타자 주요 순위</h3>
-                            </div>
+                        </div>
                         <div class="collapsible-content">
                             <div class="simple-rankings">
                                 <!-- 데이터가 JavaScript로 동적 생성됨 -->
+                            </div>
                         </div>
-                        </div>
-                        </div>
+                    </div>
                         
                     <!-- 투수 주요순위 -->
                     <div class="collapsible-item" id="pitching-excellence">
@@ -1249,8 +1273,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
-        // Excel 파일에서 WAR TOP 10 데이터를 읽어와서 테이블을 생성하는 함수
-        async function loadWARData() {
+        // Excel 파일에서 wRC+ TOP 10 데이터를 읽어와서 테이블을 생성하는 함수
+        async function loadWRCData() {
             try {
                 // Excel 파일을 직접 읽기
                 const response = await fetch('./Data/PlayerStatsLeague.xlsx');
@@ -1261,40 +1285,35 @@
                 const arrayBuffer = await response.arrayBuffer();
                 const data = parseExcelFile(arrayBuffer);
                 
-                // WAR 기준으로 정렬하고 TOP 10 추출
-                const warData = data
-                    .filter(row => row.WAR && row.이름)
-                    .sort((a, b) => parseFloat(b.WAR) - parseFloat(a.WAR))
+                // wRC+ 기준으로 정렬하고 TOP 10 추출 (isTitle이 true인 선수만)
+                const wrcData = data
+                    .filter(row => row['wRC+'] && row.이름 && row.isTitle === true)
+                    .sort((a, b) => parseFloat(b['wRC+']) - parseFloat(a['wRC+']))
                     .slice(0, 10);
                 
                 // 테이블 생성
-                const tbody = document.getElementById('war-top-10-tbody');
+                const tbody = document.getElementById('wrc-top-10-tbody');
                 tbody.innerHTML = '';
                 
-                warData.forEach((player, index) => {
+                wrcData.forEach((player, index) => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${index + 1}</td>
                         <td>${player.이름}</td>
-                        <td>${parseFloat(player.WAR).toFixed(2)}</td>
-                        <td>${parseFloat(player.oWAR || 0).toFixed(2)}</td>
-                        <td>${parseFloat(player.dWAR || 0).toFixed(2)}</td>
-                        <td>${parseFloat(player['타격 RAA'] || 0).toFixed(2)}</td>
-                        <td>${parseFloat(player['도루 RAA'] || 0).toFixed(2)}</td>
-                        <td>${parseFloat(player['주루 RAA'] || 0).toFixed(2)}</td>
-                        <td>${parseFloat(player['수비 RAA'] || 0).toFixed(2)}</td>
-                        <td>${parseFloat(player.RR || 0).toFixed(2)}</td>
-                        <td>${parseFloat(player['종합 RAA'] || 0).toFixed(2)}</td>
+                        <td>${parseFloat(player['wRC+']).toFixed(1)}</td>
+                        <td>${parseFloat(player.AVG || 0).toFixed(3)}</td>
+                        <td>${parseFloat(player.OPS || 0).toFixed(3)}</td>
+                        <td>${parseFloat(player.RBI || 0)}</td>
                     `;
                     tbody.appendChild(row);
                 });
                 
             } catch (error) {
-                console.error('WAR 데이터 로딩 실패:', error);
+                console.error('wRC+ 데이터 로딩 실패:', error);
                 // 에러 시 기본 데이터 표시
-                const tbody = document.getElementById('war-top-10-tbody');
+                const tbody = document.getElementById('wrc-top-10-tbody');
                 tbody.innerHTML = `
-                    <tr><td colspan="11" style="text-align: center; color: #666;">데이터를 불러올 수 없습니다</td></tr>
+                    <tr><td colspan="6" style="text-align: center; color: #666;">데이터를 불러올 수 없습니다</td></tr>
                 `;
             }
         }
@@ -1302,9 +1321,31 @@
         // Excel 파일 파싱 함수 (SheetJS 사용)
         function parseExcelFile(arrayBuffer) {
             const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-            const sheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[sheetName];
+            console.log('📚 사용 가능한 시트들:', workbook.SheetNames);
+            
+            // 타자 데이터가 있는 시트 찾기
+            let targetSheet = '2025 썸머시즌 타자';
+            if (!workbook.Sheets[targetSheet]) {
+                const possibleSheets = ['타자', 'Batter', 'Batting', '2025 타자', '썸머시즌 타자', 'Sheet1'];
+                for (const sheet of possibleSheets) {
+                    if (workbook.Sheets[sheet]) {
+                        targetSheet = sheet;
+                        console.log('✅ 타자 시트 찾음:', sheet);
+                        break;
+                    }
+                }
+            }
+            
+            if (!workbook.Sheets[targetSheet]) {
+                console.log('⚠️ 타자 시트를 찾을 수 없음, 첫 번째 시트 사용:', workbook.SheetNames[0]);
+                targetSheet = workbook.SheetNames[0];
+            }
+            
+            const worksheet = workbook.Sheets[targetSheet];
             const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            
+            console.log('📊 원본 JSON 데이터:', jsonData.length, '행');
+            console.log('📋 헤더:', jsonData[0]);
             
             // 헤더 추출
             const headers = jsonData[0];
@@ -1316,10 +1357,18 @@
                 const rowData = {};
                 
                 headers.forEach((header, index) => {
-                    rowData[header] = row[index] || '';
+                    if (header) {
+                        rowData[header] = row[index] || '';
+                    }
                 });
                 
                 data.push(rowData);
+            }
+            
+            console.log('🔍 처리된 데이터:', data.length, '행');
+            if (data.length > 0) {
+                console.log('📋 첫 번째 데이터 샘플:', data[0]);
+                console.log('🔑 사용 가능한 컬럼들:', Object.keys(data[0]));
             }
             
             return data;
@@ -1328,6 +1377,8 @@
         // Excel 파일에서 타자 주요 순위 데이터를 읽어와서 테이블을 생성하는 함수
         async function loadBattingRankings() {
             try {
+                console.log('🔍 타자 순위 데이터 로딩 시작...');
+                
                 // Excel 파일을 직접 읽기
                 const response = await fetch('./Data/PlayerStatsLeague.xlsx');
                 if (!response.ok) {
@@ -1336,6 +1387,9 @@
                 
                 const arrayBuffer = await response.arrayBuffer();
                 const data = parseExcelFile(arrayBuffer);
+                
+                console.log('📊 파싱된 데이터:', data.length, '행');
+                console.log('📋 첫 번째 행 샘플:', data[0]);
                 
                 // 팀 순위 데이터 생성 (비동기)
                 const teamRankings = await generateTeamRankings();
@@ -1351,16 +1405,20 @@
                     '도루': getTop3ByStat(data, 'SB')
                 };
                 
+                console.log('🏆 생성된 순위 데이터:', rankings);
+                
                 // 테이블 생성
                 generateBattingRankingsTable(rankings);
                 
             } catch (error) {
                 console.error('타자 순위 데이터 로딩 실패:', error);
                 // 에러 시 기본 데이터 표시
-                const tbody = document.querySelector('.simple-rankings');
-                tbody.innerHTML = `
-                    <div style="text-align: center; color: #666; padding: 20px;">데이터를 불러올 수 없습니다</div>
-                `;
+                const container = document.querySelector('#batting-excellence .simple-rankings');
+                if (container) {
+                    container.innerHTML = `
+                        <div style="text-align: center; color: #666; padding: 20px;">데이터를 불러올 수 없습니다: ${error.message}</div>
+                    `;
+                }
             }
         }
         
@@ -1469,29 +1527,60 @@
         
         // 특정 통계 기준으로 TOP 3 추출
         function getTop3ByStat(data, statColumn) {
-            const validData = data.filter(row => row[statColumn] && row.이름 && !isNaN(parseFloat(row[statColumn])));
+            console.log(`🔍 ${statColumn} 통계 데이터 필터링 시작...`);
+            console.log(`📊 전체 데이터:`, data.length, '행');
+            
+            // isTitle이 true인 선수만 필터링
+            const validData = data.filter(row => {
+                const hasStat = row[statColumn] && !isNaN(parseFloat(row[statColumn]));
+                const hasName = row.이름 && row.이름.trim() !== '';
+                const isTitle = row.isTitle === true;
+                const isValid = hasStat && hasName && isTitle;
+                
+                if (!isValid) {
+                    console.log(`❌ 필터링 제외:`, {
+                        이름: row.이름,
+                        [statColumn]: row[statColumn],
+                        isTitle: row.isTitle,
+                        hasStat,
+                        hasName,
+                        isTitle
+                    });
+                }
+                
+                return isValid;
+            });
+            
+            console.log(`✅ ${statColumn} 유효한 데이터 (isTitle=true):`, validData.length, '행');
+            if (validData.length > 0) {
+                console.log(`📋 ${statColumn} 샘플 데이터:`, validData.slice(0, 3));
+            }
             
             // 정수로 표시해야 하는 지표들
             const integerStats = ['HR', 'RBI', 'R', 'SO', 'BB', 'SB'];
             const isIntegerStat = integerStats.includes(statColumn);
             
-            return validData
+            const result = validData
                 .sort((a, b) => parseFloat(b[statColumn]) - parseFloat(a[statColumn]))
                 .slice(0, 3)
                 .map((player, index) => ({
                     rank: index + 1,
                     name: player.이름,
                     stat: isIntegerStat ? Math.round(parseFloat(player[statColumn])).toString() : parseFloat(player[statColumn]).toFixed(3),
-                    team: getTeamFromName(player.이름) || 'Unknown'
+                    team: player.팀 || getTeamFromName(player.이름) || 'Unknown'
                 }));
+            
+            console.log(`🏆 ${statColumn} TOP 3 결과:`, result);
+            return result;
         }
         
         // 선수 이름으로 팀 추정 (실제 데이터에 맞게 수정 필요)
         function getTeamFromName(name) {
             const teamMap = {
                 // 실제 데이터에서 팀 정보를 가져와야 함
+                // 임시로 기본값 반환
             };
-            return teamMap[name] || 'unknown';
+            return 'unknown';
         }
         
         // 이미지 로딩 상태 확인 함수
@@ -1604,32 +1693,33 @@
         
         // 투수 특정 통계 기준으로 TOP 3 추출
         function getTop3ByPitchingStat(data, statColumn, isLowerBetter = false) {
-            const validData = data.filter(row => row[statColumn] && row.이름 && !isNaN(parseFloat(row[statColumn])));
+            // isTitle이 true인 선수만 필터링
+            const validData = data.filter(row => row[statColumn] && row.이름 && !isNaN(parseFloat(row[statColumn])) && row.isTitle === true);
             
             // 정수로 표시해야 하는 지표들
             const integerStats = ['SO', 'W', 'SV', 'HLD', 'IP'];
             const isIntegerStat = integerStats.includes(statColumn);
             
-            // 홀드가 모두 0인 경우 WAR 순으로 정렬
-            if (statColumn === 'HLD') {
-                console.log('홀드 데이터 확인:', validData.map(row => ({ name: row.이름, hld: row[statColumn], war: row['WAR'] })));
-                const allZeroHLD = validData.every(row => parseFloat(row[statColumn]) === 0);
-                console.log('모든 홀드가 0인가?', allZeroHLD);
-                if (allZeroHLD || validData.length === 0) {
-                    // 홀드 데이터가 없거나 모두 0인 경우 WAR 순으로 정렬
-                    const allData = data.filter(row => row.이름 && row['WAR'] && !isNaN(parseFloat(row['WAR'])));
-                    const warSorted = allData
-                        .sort((a, b) => parseFloat(b['WAR']) - parseFloat(a['WAR']))
-                        .slice(0, 3);
-                    console.log('WAR 순 정렬 결과:', warSorted);
-                    return warSorted.map((player, index) => ({
-                        rank: index + 1,
-                        name: player.이름,
-                        stat: '0',
-                        team: player.팀 || 'Unknown'
-                    }));
+                            // 홀드가 모두 0인 경우 WAR 순으로 정렬
+                if (statColumn === 'HLD') {
+                    console.log('홀드 데이터 확인:', validData.map(row => ({ name: row.이름, hld: row[statColumn], war: row['WAR'] })));
+                    const allZeroHLD = validData.every(row => parseFloat(row[statColumn]) === 0);
+                    console.log('모든 홀드가 0인가?', allZeroHLD);
+                    if (allZeroHLD || validData.length === 0) {
+                        // 홀드 데이터가 없거나 모두 0인 경우 WAR 순으로 정렬 (isTitle이 true인 선수만)
+                        const allData = data.filter(row => row.이름 && row['WAR'] && !isNaN(parseFloat(row['WAR'])) && row.isTitle === true);
+                        const warSorted = allData
+                            .sort((a, b) => parseFloat(b['WAR']) - parseFloat(a['WAR']))
+                            .slice(0, 3);
+                        console.log('WAR 순 정렬 결과:', warSorted);
+                        return warSorted.map((player, index) => ({
+                            rank: index + 1,
+                            name: player.이름,
+                            stat: '0',
+                            team: player.팀 || 'Unknown'
+                        }));
+                    }
                 }
-            }
             
             if (isLowerBetter) {
                 // 낮을수록 좋은 통계 (ERA, WHIP)
@@ -1658,7 +1748,14 @@
         
         // 타자 주요 순위 테이블 생성
         function generateBattingRankingsTable(rankings) {
-            const container = document.querySelector('.simple-rankings');
+            const container = document.querySelector('#batting-excellence .simple-rankings');
+            if (!container) {
+                console.error('❌ 타자 순위 컨테이너를 찾을 수 없습니다');
+                return;
+            }
+            
+            console.log('🎯 타자 순위 테이블 생성 시작...');
+            console.log('📊 받은 순위 데이터:', rankings);
             container.innerHTML = '';
             
             // 헤더 추가
@@ -1676,6 +1773,7 @@
             const statNames = ['타율', '출루율', '장타율', '타점', '득점', '홈런', '도루'];
             
             statNames.forEach((statName) => {
+                console.log(`📝 ${statName} 행 생성 중...`);
                 const row = document.createElement('div');
                 row.className = 'ranking-row';
                 
@@ -1686,8 +1784,11 @@
                 
                 // 기존 선수 통계 처리
                 const top3 = rankings[statName] || [];
+                console.log(`👥 ${statName} TOP 3:`, top3);
+                
                 for (let i = 0; i < 3; i++) {
                     const player = top3[i] || { name: 'N/A', stat: '0.000', team: 'unknown' };
+                    console.log(`👤 ${statName} ${i+1}위:`, player);
                     
                     // 이미지 로딩 확인 (디버깅용)
                     if (player.name !== 'N/A') {
@@ -1714,6 +1815,8 @@
                 
                 container.appendChild(row);
             });
+            
+            console.log('✅ 타자 순위 테이블 생성 완료');
         }
         
         // 투수 주요순위 테이블 생성
@@ -1830,7 +1933,7 @@
             // 이미지 경로 확인
             checkImagePaths();
             
-            loadWARData();
+            loadWRCData();
             loadBattingRankings();
             loadPitchingExcellence();
             loadTeamRankings();
@@ -2091,8 +2194,7 @@
                     { name: '타점', key: 'RBI', lowerBetter: false },
                     { name: '도루', key: 'SB', lowerBetter: false },
                     { name: '볼넷', key: 'BB', lowerBetter: false },
-                    { name: '삼진', key: 'SO', lowerBetter: true },
-                    { name: 'WAR', key: 'WAR', lowerBetter: false }
+                    { name: '삼진', key: 'SO', lowerBetter: true }
                 ];
                 
                 const pitchingStats = [
@@ -2102,8 +2204,7 @@
                     { name: '세이브', key: 'SV', lowerBetter: false },
                     { name: '홀드', key: 'HLD', lowerBetter: false },
                     { name: '탈삼진', key: 'SO', lowerBetter: false },
-                    { name: '이닝', key: 'IP', lowerBetter: false },
-                    { name: 'WAR', key: 'WAR', lowerBetter: false }
+                    { name: '이닝', key: 'IP', lowerBetter: false }
                 ];
                 
                 // 타자-투수-타자-투수-타자 순서로 선택
@@ -2183,7 +2284,7 @@
                 }
                 
                 const battingData = parseExcelFileBySheet(arrayBuffer, battingSheet);
-                return battingData.filter(player => player.이름 && player.이름.trim() !== '');
+                return battingData.filter(player => player.이름 && player.이름.trim() !== '' && player.isTitle === true);
             } catch (error) {
                 console.error('타자 데이터 로딩 실패:', error);
                 return [];
@@ -2210,7 +2311,7 @@
                 }
                 
                 const pitchingData = parseExcelFileBySheet(arrayBuffer, pitchingSheet);
-                return pitchingData.filter(player => player.이름 && player.이름.trim() !== '');
+                return pitchingData.filter(player => player.이름 && player.이름.trim() !== '' && player.isTitle === true);
             } catch (error) {
                 console.error('투수 데이터 로딩 실패:', error);
                 return [];
@@ -2221,7 +2322,7 @@
         function getTopPlayersByStat(data, statKey, lowerBetter, count = 5) {
             const validData = data.filter(player => {
                 const value = parseFloat(player[statKey]);
-                return !isNaN(value) && value !== 0;
+                return !isNaN(value) && value !== 0 && player.isTitle === true;
             });
             
             if (lowerBetter) {

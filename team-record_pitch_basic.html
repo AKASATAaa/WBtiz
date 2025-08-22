@@ -677,7 +677,7 @@
                         <tr>
                             <th>Rank</th>
                             <th>Team</th>
-                            <th class="sortable" data-sort="WAR">WAR</th>
+                            <th class="sortable sort-desc" data-sort="WHIP">WHIP</th>
                             <th class="sortable" data-sort="W">W</th>
                             <th class="sortable" data-sort="L">L</th>
                             <th class="sortable" data-sort="SV">SV</th>
@@ -694,7 +694,6 @@
                             <th class="sortable" data-sort="SO">SO</th>
                             <th class="sortable" data-sort="ERA">ERA</th>
                             <th class="sortable" data-sort="RA9">RA9</th>
-                            <th class="sortable" data-sort="WHIP">WHIP</th>
                         </tr>
                     </thead>
                     <tbody id="statsTableBody">
@@ -709,7 +708,7 @@
     <script>
         let playerData = [];
         let leagueTeamData = {}; // 리그별 팀 정보를 저장할 객체
-        let currentSortColumn = 'WAR';
+        let currentSortColumn = 'WHIP';
         let currentSortDirection = 'desc';
         let currentTab = 'basic';
         
@@ -1075,7 +1074,7 @@
                     headerRow.innerHTML = `
                         <th>Rank</th>
                         <th>Team</th>
-                        <th class="sortable" data-sort="WAR">WAR</th>
+                        <th class="sortable" data-sort="WHIP">WHIP</th>
                         <th class="sortable" data-sort="W">W</th>
                         <th class="sortable" data-sort="L">L</th>
                         <th class="sortable" data-sort="SV">SV</th>
@@ -1092,7 +1091,6 @@
                         <th class="sortable" data-sort="SO">SO</th>
                         <th class="sortable" data-sort="ERA">ERA</th>
                         <th class="sortable" data-sort="RA9">RA9</th>
-                        <th class="sortable" data-sort="WHIP">WHIP</th>
                     `;
                     tbody.appendChild(headerRow);
                 }
@@ -1106,7 +1104,7 @@
                             <span class="team-name">${team.originalTeamName}</span>
                         </div>
                     </td>
-                    <td class="war-value">${parseFloat(team.WAR || 0).toFixed(2)}</td>
+                    <td class="war-value">${parseFloat(team.WHIP || 0).toFixed(2)}</td>
                     <td>${parseInt(team.W || 0)}</td>
                     <td>${parseInt(team.L || 0)}</td>
                     <td>${parseInt(team.SV || 0)}</td>
@@ -1123,7 +1121,6 @@
                     <td>${parseInt(team.SO || 0)}</td>
                     <td>${parseFloat(team.ERA || 0).toFixed(2)}</td>
                     <td>${parseFloat(team.RA9 || 0).toFixed(2)}</td>
-                    <td>${parseFloat(team.WHIP || 0).toFixed(2)}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1194,7 +1191,7 @@
                             <span class="team-name">${displayTeamName}</span>
                         </div>
                     </td>
-                    <td class="war-value">${parseFloat(player.WAR || 0).toFixed(2)}</td>
+                    <td class="war-value">${parseFloat(player.WHIP || 0).toFixed(2)}</td>
                     <td>${player.W || 0}</td>
                     <td>${player.L || 0}</td>
                     <td>${player.SV || 0}</td>
@@ -1211,7 +1208,6 @@
                     <td>${player.SO || 0}</td>
                     <td>${parseFloat(player.ERA || 0).toFixed(2)}</td>
                     <td>${parseFloat(player.RA9 || 0).toFixed(2)}</td>
-                    <td>${parseFloat(player.WHIP || 0).toFixed(2)}</td>
                 `;
                 tbody.appendChild(row);
             });

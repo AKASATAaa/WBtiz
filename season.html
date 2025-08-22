@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>시즌 정보 - WBD 기록실</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -139,6 +140,405 @@
             margin-bottom: 20px;
         }
 
+        .league-selector {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .league-selector h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .league-dropdown {
+            width: 100%;
+            max-width: 300px;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #333;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .league-dropdown:focus {
+            outline: none;
+            border-color: #ff4757;
+            box-shadow: 0 0 0 2px rgba(255, 71, 87, 0.1);
+        }
+
+        .selected-league-info {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .selected-league-info.show {
+            display: block;
+        }
+
+        .selected-league-info h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin: 0;
+        }
+
+        .league-badge {
+            background: linear-gradient(135deg, #ff4757, #ff3742);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .league-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .detail-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #ff4757;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .no-league-selected {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+        }
+
+        .mvp-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .mvp-section.show {
+            display: block;
+        }
+
+        .mvp-section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mvp-badge {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .league-record-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .league-record-section.show {
+            display: block;
+        }
+
+        .league-record-section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .record-badge {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .record-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .record-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 1px solid #e9ecef;
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .record-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-color: #4CAF50;
+        }
+
+        .record-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4CAF50, #45a049, #4CAF50);
+        }
+
+        /* 투수 카드 스타일 */
+        .record-card.pitcher::before {
+            background: linear-gradient(90deg, #2196F3, #1976D2, #2196F3);
+        }
+
+        .record-card.pitcher:hover {
+            border-color: #2196F3;
+        }
+
+        /* 타자 카드 스타일 */
+        .record-card.batter::before {
+            background: linear-gradient(90deg, #FF9800, #F57C00, #FF9800);
+        }
+
+        .record-card.batter:hover {
+            border-color: #FF9800;
+        }
+
+        /* 팀 카드 스타일 */
+        .record-card.team::before {
+            background: linear-gradient(90deg, #9C27B0, #7B1FA2, #9C27B0);
+        }
+
+        .record-card.team:hover {
+            border-color: #9C27B0;
+        }
+
+        .record-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .record-details {
+            text-align: center;
+        }
+
+        .nickname {
+            font-size: 28px;
+            font-weight: 700;
+            color: #4CAF50;
+            margin-bottom: 16px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* 투수 닉네임 색상 */
+        .record-card.pitcher .nickname {
+            color: #2196F3;
+        }
+
+        /* 타자 닉네임 색상 */
+        .record-card.batter .nickname {
+            color: #FF9800;
+        }
+
+        /* 팀 닉네임 색상 */
+        .record-card.team .nickname {
+            color: #9C27B0;
+        }
+
+        .date-info {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 12px;
+            font-weight: 500;
+            background: #f8f9fa;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .note-info {
+            font-size: 15px;
+            color: #888;
+            font-style: italic;
+            background: #f0f0f0;
+            padding: 12px 20px;
+            border-radius: 12px;
+            display: inline-block;
+            max-width: 80%;
+            line-height: 1.4;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 12px 8px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #4CAF50;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .win-loss {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 16px;
+            padding: 16px;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .win, .loss {
+            text-align: center;
+        }
+
+        .win .stat-value {
+            color: #4CAF50;
+        }
+
+        .loss .stat-value {
+            color: #ff4757;
+        }
+
+        .win-rate {
+            text-align: center;
+            padding: 12px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border-radius: 8px;
+            margin-top: 16px;
+        }
+
+        .win-rate .stat-value {
+            color: white;
+            font-size: 24px;
+        }
+
+        .win-rate .stat-label {
+            color: rgba(255,255,255,0.9);
+        }
+
+        .rank-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+        }
+
+        .mvp-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .mvp-table th,
+        .mvp-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .mvp-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .mvp-table td {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .mvp-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
         .content-placeholder {
             background: white;
             border-radius: 8px;
@@ -180,11 +580,338 @@
 
     <main class="main-content">
         <div class="content-container">
-            <h1 class="page-title">시즌 정보</h1>
+            <h1 class="page-title">시즌 기록</h1>
+            <div class="league-selector">
+                <h2>리그 선택</h2>
+                <select class="league-dropdown" id="leagueDropdown">
+                    <option value="">리그를 선택하세요</option>
+                </select>
+            </div>
+            <div class="selected-league-info" id="selectedLeagueInfo">
+                <h3>
+                    <span class="league-badge" id="selectedLeagueBadge"></span>
+                </h3>
+            </div>
+            <div class="mvp-section" id="mvpSection">
+                <h3>
+                    <span class="mvp-badge">수훈선수 명단</span>
+                </h3>
+                <table class="mvp-table">
+                    <thead>
+                        <tr>
+                            <th>순위</th>
+                            <th>선수명</th>
+                            <th>팀명</th>
+                            <th>타율</th>
+                            <th>홈런</th>
+                            <th>타점</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- MVP 데이터가 여기에 동적으로 채워집니다 -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="league-record-section" id="leagueRecordSection">
+                <h3>
+                    <span class="record-badge">리그 기록</span>
+                </h3>
+                <div class="record-cards">
+                    <!-- 리그 기록 데이터가 여기에 동적으로 채워집니다 -->
+                </div>
+            </div>
             <div class="content-placeholder">
                 시즌 정보 페이지 내용이 여기에 표시됩니다.
             </div>
         </div>
     </main>
+
+    <script>
+        // Excel 파일에서 리그 정보를 읽어오는 함수
+        async function loadLeagueData() {
+            try {
+                const response = await fetch('Data/League_Team.xlsx');
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                
+                // '리그분류' 시트 읽기
+                const sheetName = '리그분류';
+                if (workbook.SheetNames.includes(sheetName)) {
+                    const worksheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    // 첫 번째 행을 헤더로 사용
+                    const headers = jsonData[0];
+                    const data = jsonData.slice(1);
+                    
+                    // "League Name" 컬럼 찾기
+                    const leagueNameColumnIndex = headers.findIndex(header => 
+                        header && header.toString().toLowerCase().includes('league name')
+                    );
+                    
+                    // "isdef" 컬럼 찾기
+                    const isdefColumnIndex = headers.findIndex(header => 
+                        header && header.toString().toLowerCase().includes('isdef')
+                    );
+                    
+                    if (leagueNameColumnIndex !== -1) {
+                        // League Name 컬럼 아래의 리그명들 추출 (원본 순서 유지)
+                        const leagues = data.map(row => row[leagueNameColumnIndex]).filter(Boolean);
+                        
+                        // 드롭다운 업데이트
+                        updateLeagueDropdown(leagues);
+                        
+                        // 전체 데이터를 전역 변수에 저장 (선택 시 사용)
+                        window.leagueData = { headers, data, leagueNameColumnIndex, isdefColumnIndex };
+                        
+                        // isdef가 true인 리그를 찾아서 기본 선택
+                        if (isdefColumnIndex !== -1) {
+                            const defaultLeagueRow = data.find(row => 
+                                row[isdefColumnIndex] && 
+                                row[isdefColumnIndex].toString().toLowerCase() === 'true'
+                            );
+                            
+                            if (defaultLeagueRow) {
+                                const defaultLeague = defaultLeagueRow[leagueNameColumnIndex];
+                                if (defaultLeague) {
+                                    // 드롭다운에서 기본 리그 선택
+                                    const dropdown = document.getElementById('leagueDropdown');
+                                    dropdown.value = defaultLeague;
+                                    
+                                    // 기본 리그 정보 표시
+                                    displayLeagueInfo(defaultLeague);
+                                    document.getElementById('selectedLeagueInfo').classList.add('show');
+                                    
+                                    // 기본 리그의 수훈선수와 기록 데이터 로드
+                                    loadMVPData(defaultLeague);
+                                    loadLeagueRecordData(defaultLeague);
+                                }
+                            }
+                        }
+                        
+                        console.log('League Name 컬럼 인덱스:', leagueNameColumnIndex);
+                        console.log('isdef 컬럼 인덱스:', isdefColumnIndex);
+                        console.log('로드된 리그:', leagues);
+                        console.log('전체 리그 데이터:', window.leagueData);
+                    } else {
+                        console.error('League Name 컬럼을 찾을 수 없습니다.');
+                        updateLeagueDropdown([]);
+                    }
+                } else {
+                    console.error('리그분류 시트를 찾을 수 없습니다.');
+                    updateLeagueDropdown([]);
+                }
+            } catch (error) {
+                console.error('Excel 파일을 읽는 중 오류 발생:', error);
+                updateLeagueDropdown([]);
+            }
+        }
+
+        // 리그 드롭다운 업데이트 함수
+        function updateLeagueDropdown(leagues) {
+            const dropdown = document.getElementById('leagueDropdown');
+            dropdown.innerHTML = '<option value="">리그를 선택하세요</option>';
+            
+            leagues.forEach(league => {
+                const option = document.createElement('option');
+                option.value = league;
+                option.textContent = league;
+                dropdown.appendChild(option);
+            });
+
+            // 드롭다운 변경 이벤트 리스너 추가
+            dropdown.addEventListener('change', handleLeagueSelection);
+        }
+
+        // 리그 선택 처리 함수
+        function handleLeagueSelection(event) {
+            const selectedLeague = event.target.value;
+            const leagueInfo = document.getElementById('selectedLeagueInfo');
+            
+            if (!selectedLeague) {
+                leagueInfo.classList.remove('show');
+                // 리그가 선택되지 않았을 때는 수훈선수와 기록 섹션도 숨김
+                document.getElementById('mvpSection').classList.remove('show');
+                document.getElementById('leagueRecordSection').classList.remove('show');
+                return;
+            }
+
+            // 선택된 리그 정보 표시
+            displayLeagueInfo(selectedLeague);
+            leagueInfo.classList.add('show');
+            
+            // 선택된 리그의 수훈선수와 기록 데이터 로드
+            loadMVPData(selectedLeague);
+            loadLeagueRecordData(selectedLeague);
+        }
+
+        // 리그 정보 표시 함수
+        function displayLeagueInfo(leagueName) {
+            // 리그 배지 업데이트
+            const badge = document.getElementById('selectedLeagueBadge');
+            badge.textContent = leagueName;
+            
+            // Excel 데이터에서 해당 리그 정보 찾기
+            if (window.leagueData && window.leagueData.data) {
+                const leagueRow = window.leagueData.data.find(row => row[window.leagueData.leagueNameColumnIndex] === leagueName);
+                if (leagueRow) {
+                    // 헤더와 데이터 매칭하여 정보 표시
+                    const headers = window.leagueData.headers;
+                    const data = leagueRow;
+                    
+                    // 각 컬럼의 정보를 표시 (헤더가 있는 경우)
+                    if (headers && headers.length > 1) {
+                        for (let i = 1; i < Math.min(headers.length, 5); i++) {
+                            const header = headers[i];
+                            const value = data[i] || '정보 없음';
+                            
+                            // 해당하는 detail-value 요소 찾아서 업데이트
+                            const detailElements = document.querySelectorAll('.detail-value');
+                            if (detailElements[i]) {
+                                detailElements[i].textContent = value;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // MVP 데이터 로드 및 표시 함수
+        async function loadMVPData(leagueName) {
+            if (!leagueName) return;
+            
+            try {
+                const response = await fetch('Data/League_Team.xlsx');
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                
+                const sheetName = `${leagueName} 수훈`; // 선택된 리그명 + "수훈"
+                if (workbook.SheetNames.includes(sheetName)) {
+                    const worksheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    const headers = jsonData[0];
+                    const data = jsonData.slice(1);
+
+                    // 수훈선수가 있는지 확인
+                    if (data.length > 0 && data.some(row => row.some(cell => cell))) {
+                        const mvpTableBody = document.querySelector('#mvpSection tbody');
+                        mvpTableBody.innerHTML = ''; // 테이블 내용 초기화
+
+                        if (headers && headers.length > 1) {
+                            for (let i = 1; i < Math.min(headers.length, 6); i++) { // 순위, 선수명, 팀명, 타율, 홈런, 타점
+                                const header = headers[i];
+                                const value = data[0][i] || '정보 없음'; // 첫 번째 행의 데이터를 사용
+                                
+                                const row = document.createElement('tr');
+                                const rankCell = document.createElement('td');
+                                const playerCell = document.createElement('td');
+                                const teamCell = document.createElement('td');
+                                const avgCell = document.createElement('td');
+                                const hrCell = document.createElement('td');
+                                const rbiCell = document.createElement('td');
+
+                                rankCell.textContent = value;
+                                playerCell.textContent = data[1][i] || '정보 없음'; // 두 번째 행의 데이터를 사용
+                                teamCell.textContent = data[2][i] || '정보 없음'; // 세 번째 행의 데이터를 사용
+                                avgCell.textContent = data[3][i] || '정보 없음';
+                                hrCell.textContent = data[4][i] || '정보 없음';
+                                rbiCell.textContent = data[5][i] || '정보 없음';
+
+                                row.appendChild(rankCell);
+                                row.appendChild(playerCell);
+                                row.appendChild(teamCell);
+                                row.appendChild(avgCell);
+                                row.appendChild(hrCell);
+                                row.appendChild(rbiCell);
+                                mvpTableBody.appendChild(row);
+                            }
+                        }
+                        document.getElementById('mvpSection').classList.add('show');
+                    } else {
+                        // 수훈선수가 없으면 표시하지 않음
+                        document.getElementById('mvpSection').classList.remove('show');
+                    }
+                } else {
+                    console.error(`${sheetName} 시트를 찾을 수 없습니다.`);
+                    document.getElementById('mvpSection').classList.remove('show');
+                }
+            } catch (error) {
+                console.error('MVP 데이터를 읽는 중 오류 발생:', error);
+                document.getElementById('mvpSection').classList.remove('show');
+            }
+        }
+
+        // 리그 기록 데이터 로드 및 표시 함수
+        async function loadLeagueRecordData(leagueName) {
+            if (!leagueName) return;
+            
+            try {
+                const response = await fetch('Data/League_Team.xlsx');
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                
+                const sheetName = `${leagueName} 기록`; // 선택된 리그명 + "기록"
+                if (workbook.SheetNames.includes(sheetName)) {
+                    const worksheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    const headers = jsonData[0];
+                    const data = jsonData.slice(1);
+
+                    const recordCardsContainer = document.querySelector('#leagueRecordSection .record-cards');
+                    recordCardsContainer.innerHTML = ''; // 카드 컨테이너 내용 초기화
+
+                    if (data.length > 0) {
+                        data.forEach((row, index) => {
+                            if (row.some(cell => cell)) { // 빈 행이 아닌 경우만
+                                const recordCard = document.createElement('div');
+                                recordCard.classList.add('record-card');
+                                
+                                // 구분 컬럼 확인 (4번째 컬럼이 구분이라고 가정)
+                                const category = row[4] || '';
+                                let categoryClass = '';
+                                
+                                if (category.toString().toLowerCase().includes('투')) {
+                                    categoryClass = 'pitcher';
+                                } else if (category.toString().toLowerCase().includes('타')) {
+                                    categoryClass = 'batter';
+                                } else if (category.toString().toLowerCase().includes('팀')) {
+                                    categoryClass = 'team';
+                                }
+                                
+                                if (categoryClass) {
+                                    recordCard.classList.add(categoryClass);
+                                }
+                                
+                                recordCard.innerHTML = `
+                                    <div class="record-title">${row[0] || 'N/A'}</div>
+                                    <div class="record-details">
+                                        <div class="date-info">${row[1] || 'N/A'}</div>
+                                        <div class="nickname">${row[2] || 'N/A'}</div>
+                                        <div class="note-info">${row[3] || 'N/A'}</div>
+                                    </div>
+                                `;
+                                recordCardsContainer.appendChild(recordCard);
+                            }
+                        });
+                        
+                        document.getElementById('leagueRecordSection').classList.add('show');
+                    } else {
+                        document.getElementById('leagueRecordSection').classList.remove('show');
+                    }
+                } else {
+                    console.error(`${sheetName} 시트를 찾을 수 없습니다.`);
+                    document.getElementById('leagueRecordSection').classList.remove('show');
+                }
+            } catch (error) {
+                console.error('리그 기록 데이터를 읽는 중 오류 발생:', error);
+                document.getElementById('leagueRecordSection').classList.remove('show');
+            }
+        }
+
+        // 페이지 로드 시 Excel 파일 읽기
+        document.addEventListener('DOMContentLoaded', loadLeagueData);
+    </script>
 </body>
-</html> 
+</html>
