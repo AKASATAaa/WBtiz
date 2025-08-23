@@ -250,6 +250,57 @@
             color: #333;
         }
 
+        /* 규정 이닝 버튼 스타일 */
+        .qualification-button {
+            padding: 8px 16px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: white;
+            color: #666;
+            line-height: 1;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .qualification-button:hover {
+            border-color: #ff4757;
+            color: #ff4757;
+        }
+
+        .qualification-button.checked {
+            background-color: #ff4757;
+            color: white;
+            border-color: #ff4757;
+        }
+
+        .qualification-button .check-icon {
+            width: 14px;
+            height: 14px;
+            border: 2px solid currentColor;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .qualification-button.checked .check-icon {
+            background-color: currentColor;
+        }
+
+        .qualification-button.checked .check-icon::after {
+            content: '✓';
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
         /* 통계 탭 네비게이션 */
         .stats-nav {
             background: white;
@@ -630,6 +681,10 @@
                     <div class="category-buttons">
                         <button class="category-button" data-tab="batting">타격</button>
                         <button class="category-button active" data-tab="pitching">투구</button>
+                        <button class="qualification-button" id="qualificationBtn">
+                            <div class="check-icon"></div>
+                            규정 이닝
+                        </button>
                     </div>
                 </div>
             </div>
@@ -681,6 +736,7 @@
         let currentSortColumn = 'rRA9';
         let currentSortDirection = 'desc';
         let currentTab = 'basic';
+        let isQualificationChecked = false; // 규정 이닝 버튼 상태
         let actualColumns = [];
         let leagueColumn = '리그'; // 기본값 설정
         
@@ -952,7 +1008,7 @@
             console.log('사용할 이름 컬럼:', nameColumn);
             console.log('사용할 리그 컬럼:', leagueColumn);
             
-            const validData = playerData.filter(row => row[currentSortColumn] && row[nameColumn]);
+            let validData = playerData.filter(row => row[currentSortColumn] && row[nameColumn]);
             console.log('필터링 후 데이터 개수:', validData.length);
             
             if (validData.length === 0) {
@@ -966,16 +1022,47 @@
                 return;
             }
             
-            validData.sort((a, b) => {
-                const aValue = parseFloat(a[currentSortColumn]) || 0;
-                const bValue = parseFloat(b[currentSortColumn]) || 0;
-                
-                if (currentSortDirection === 'desc') {
-                    return bValue - aValue;
-                } else {
-                    return aValue - bValue;
-                }
-            });
+            // 규정 이닝 필터링 - isTitle이 true인 선수들만
+            if (isQualificationChecked) {
+                validData = validData.filter(row => row.isTitle === true);
+                console.log('규정 이닝 필터링 후 데이터 개수:', validData.length);
+            }
+            
+            // 정렬 로직
+            if (isQualificationChecked) {
+                // 활성화 상태에서는 isTitle이 true인 선수부터 정렬
+                validData.sort((a, b) => {
+                    // 먼저 isTitle로 정렬 (true가 먼저)
+                    const aIsTitle = a.isTitle === true;
+                    const bIsTitle = b.isTitle === true;
+                    
+                    if (aIsTitle !== bIsTitle) {
+                        return bIsTitle - aIsTitle; // true가 먼저
+                    }
+                    
+                    // isTitle이 같으면 현재 정렬 기준으로 정렬
+                    const aValue = parseFloat(a[currentSortColumn]) || 0;
+                    const bValue = parseFloat(b[currentSortColumn]) || 0;
+                    
+                    if (currentSortDirection === 'desc') {
+                        return bValue - aValue;
+                    } else {
+                        return aValue - bValue;
+                    }
+                });
+            } else {
+                // 비활성화 상태에서는 순수하게 스탯 순으로만 정렬
+                validData.sort((a, b) => {
+                    const aValue = parseFloat(a[currentSortColumn]) || 0;
+                    const bValue = parseFloat(b[currentSortColumn]) || 0;
+                    
+                    if (currentSortDirection === 'desc') {
+                        return bValue - aValue;
+                    } else {
+                        return aValue - bValue;
+                    }
+                });
+            }
 
             displayData(validData);
         }
@@ -1434,6 +1521,36 @@
                     // 투구는 현재 페이지이므로 아무것도 하지 않음
                 });
             });
+
+            // 규정 이닝 버튼 클릭 이벤트
+            document.getElementById('qualificationBtn').addEventListener('click', () => {
+                isQualificationChecked = !isQualificationChecked;
+                const btn = document.getElementById('qualificationBtn');
+                btn.classList.toggle('checked');
+                
+                // 체크 아이콘 업데이트
+                const checkIcon = btn.querySelector('.check-icon');
+                if (isQualificationChecked) {
+                    checkIcon.style.backgroundColor = 'currentColor';
+                    checkIcon.innerHTML = '✓';
+                } else {
+                    checkIcon.style.backgroundColor = 'transparent';
+                    checkIcon.innerHTML = '';
+                }
+                
+                console.log('규정 이닝 필터:', isQualificationChecked ? '활성화 (isTitle=true만 표시)' : '비활성화 (전체 표시)');
+                
+                // isTitle 필드 확인
+                if (playerData.length > 0) {
+                    const titleData = playerData.filter(p => p.isTitle === true);
+                    console.log(`isTitle=true인 선수 수: ${titleData.length}명`);
+                    console.log('isTitle=true인 선수들:', titleData.slice(0, 5).map(p => p.이름));
+                }
+                
+                sortAndDisplayData(); // 필터링 후 다시 정렬
+            });
+
+
         });
 
         // 언어 변경 함수
