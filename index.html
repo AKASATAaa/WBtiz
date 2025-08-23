@@ -64,6 +64,35 @@
             gap: 12px;
         }
         
+        .language-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .language-btn {
+            padding: 6px 12px;
+            border: 1px solid #e9ecef;
+            background-color: white;
+            color: #666;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .language-btn:hover {
+            border-color: #ff4757;
+            color: #ff4757;
+        }
+        
+        .language-btn.active {
+            background-color: #ff4757;
+            color: white;
+            border-color: #ff4757;
+        }
+        
         .search-icon, .user-icon {
             width: 24px;
             height: 24px;
@@ -1130,6 +1159,12 @@
                 <div class="logo-icon">W</div>
                 <span class="logo-text">WBD 기록실</span>
             </a>
+            <div class="header-actions">
+                <div class="language-selector">
+                    <button class="language-btn active" data-lang="ko">한국어</button>
+                    <button class="language-btn" data-lang="ja">日本語</button>
+                </div>
+            </div>
         </div>
     </header>
     
@@ -1391,6 +1426,20 @@
                 console.log('📊 파싱된 데이터:', data.length, '행');
                 console.log('📋 첫 번째 행 샘플:', data[0]);
                 
+                // isTitle 필드 확인
+                const titlePlayers = data.filter(row => row.isTitle === true);
+                console.log('🏷️ isTitle=true인 선수:', titlePlayers.length, '명');
+                if (titlePlayers.length > 0) {
+                    console.log('🏷️ isTitle=true 샘플:', titlePlayers.slice(0, 3));
+                }
+                
+                // 통계 필드 확인
+                const statFields = ['AVG', 'OBP', 'SLG', 'RBI', 'R', 'HR', 'SB'];
+                statFields.forEach(field => {
+                    const validData = data.filter(row => row[field] && !isNaN(parseFloat(row[field])));
+                    console.log(`📊 ${field} 유효한 데이터:`, validData.length, '행');
+                });
+                
                 // 팀 순위 데이터 생성 (비동기)
                 const teamRankings = await generateTeamRankings();
                 
@@ -1406,6 +1455,9 @@
                 };
                 
                 console.log('🏆 생성된 순위 데이터:', rankings);
+                
+                // 전역 변수에 데이터 저장
+                window.battingRankingsData = rankings;
                 
                 // 테이블 생성
                 generateBattingRankingsTable(rankings);
@@ -1530,7 +1582,7 @@
             console.log(`🔍 ${statColumn} 통계 데이터 필터링 시작...`);
             console.log(`📊 전체 데이터:`, data.length, '행');
             
-            // isTitle이 true인 선수만 필터링
+            // isTitle이 true인 선수만 필터링 (조건 완화)
             const validData = data.filter(row => {
                 const hasStat = row[statColumn] && !isNaN(parseFloat(row[statColumn]));
                 const hasName = row.이름 && row.이름.trim() !== '';
@@ -1550,6 +1602,29 @@
                 
                 return isValid;
             });
+
+            // isTitle 조건이 너무 엄격한 경우, 조건을 완화
+            if (validData.length === 0) {
+                console.log(`⚠️ isTitle=true인 데이터가 없음. 조건을 완화하여 재시도...`);
+                const relaxedData = data.filter(row => {
+                    const hasStat = row[statColumn] && !isNaN(parseFloat(row[statColumn]));
+                    const hasName = row.이름 && row.이름.trim() !== '';
+                    return hasStat && hasName;
+                });
+                
+                if (relaxedData.length > 0) {
+                    console.log(`✅ 완화된 조건으로 ${relaxedData.length}개 데이터 찾음`);
+                    return relaxedData
+                        .sort((a, b) => parseFloat(b[statColumn]) - parseFloat(a[statColumn]))
+                        .slice(0, 3)
+                        .map((player, index) => ({
+                            rank: index + 1,
+                            name: player.이름,
+                            stat: isIntegerStat ? Math.round(parseFloat(player[statColumn])).toString() : parseFloat(player[statColumn]).toFixed(3),
+                            team: player.팀 || getTeamFromName(player.이름) || 'Unknown'
+                        }));
+                }
+            }
             
             console.log(`✅ ${statColumn} 유효한 데이터 (isTitle=true):`, validData.length, '행');
             if (validData.length > 0) {
@@ -1679,6 +1754,9 @@
                     '이닝': getTop3ByPitchingStat(data, 'IP', false) // 높을수록 좋음
                 };
                 
+                // 전역 변수에 데이터 저장
+                window.pitchingRankingsData = rankings;
+                
                 // 테이블 생성
                 generatePitchingRankingsTable(rankings);
                 
@@ -1693,33 +1771,45 @@
         
         // 투수 특정 통계 기준으로 TOP 3 추출
         function getTop3ByPitchingStat(data, statColumn, isLowerBetter = false) {
-            // isTitle이 true인 선수만 필터링
-            const validData = data.filter(row => row[statColumn] && row.이름 && !isNaN(parseFloat(row[statColumn])) && row.isTitle === true);
+            // isTitle이 true인 선수만 필터링 (조건 완화)
+            let validData = data.filter(row => row[statColumn] && row.이름 && !isNaN(parseFloat(row[statColumn])) && row.isTitle === true);
+            
+            // isTitle 조건이 너무 엄격한 경우, 조건을 완화
+            if (validData.length === 0) {
+                console.log(`⚠️ 투수 ${statColumn} - isTitle=true인 데이터가 없음. 조건을 완화하여 재시도...`);
+                validData = data.filter(row => row[statColumn] && row.이름 && !isNaN(parseFloat(row[statColumn])));
+                if (validData.length > 0) {
+                    console.log(`✅ 완화된 조건으로 ${validData.length}개 투수 데이터 찾음`);
+                }
+            }
             
             // 정수로 표시해야 하는 지표들
             const integerStats = ['SO', 'W', 'SV', 'HLD', 'IP'];
             const isIntegerStat = integerStats.includes(statColumn);
             
-                            // 홀드가 모두 0인 경우 WAR 순으로 정렬
-                if (statColumn === 'HLD') {
-                    console.log('홀드 데이터 확인:', validData.map(row => ({ name: row.이름, hld: row[statColumn], war: row['WAR'] })));
-                    const allZeroHLD = validData.every(row => parseFloat(row[statColumn]) === 0);
-                    console.log('모든 홀드가 0인가?', allZeroHLD);
-                    if (allZeroHLD || validData.length === 0) {
-                        // 홀드 데이터가 없거나 모두 0인 경우 WAR 순으로 정렬 (isTitle이 true인 선수만)
-                        const allData = data.filter(row => row.이름 && row['WAR'] && !isNaN(parseFloat(row['WAR'])) && row.isTitle === true);
-                        const warSorted = allData
-                            .sort((a, b) => parseFloat(b['WAR']) - parseFloat(a['WAR']))
-                            .slice(0, 3);
-                        console.log('WAR 순 정렬 결과:', warSorted);
-                        return warSorted.map((player, index) => ({
-                            rank: index + 1,
-                            name: player.이름,
-                            stat: '0',
-                            team: player.팀 || 'Unknown'
-                        }));
+            // 홀드가 모두 0인 경우 WAR 순으로 정렬
+            if (statColumn === 'HLD') {
+                console.log('홀드 데이터 확인:', validData.map(row => ({ name: row.이름, hld: row[statColumn], war: row['WAR'] })));
+                const allZeroHLD = validData.every(row => parseFloat(row[statColumn]) === 0);
+                console.log('모든 홀드가 0인가?', allZeroHLD);
+                if (allZeroHLD || validData.length === 0) {
+                    // 홀드 데이터가 없거나 모두 0인 경우 WAR 순으로 정렬
+                    let allData = data.filter(row => row.이름 && row['WAR'] && !isNaN(parseFloat(row['WAR'])) && row.isTitle === true);
+                    if (allData.length === 0) {
+                        allData = data.filter(row => row.이름 && row['WAR'] && !isNaN(parseFloat(row['WAR'])));
                     }
+                    const warSorted = allData
+                        .sort((a, b) => parseFloat(b['WAR']) - parseFloat(a['WAR']))
+                        .slice(0, 3);
+                    console.log('WAR 순 정렬 결과:', warSorted);
+                    return warSorted.map((player, index) => ({
+                        rank: index + 1,
+                        name: player.이름,
+                        stat: '0',
+                        team: player.팀 || 'Unknown'
+                    }));
                 }
+            }
             
             if (isLowerBetter) {
                 // 낮을수록 좋은 통계 (ERA, WHIP)
@@ -1758,37 +1848,49 @@
             console.log('📊 받은 순위 데이터:', rankings);
             container.innerHTML = '';
             
-            // 헤더 추가
+            // 헤더 추가 (번역 적용)
             const header = document.createElement('div');
             header.className = 'ranking-header';
+            
+            // 현재 언어에 맞는 헤더 텍스트 설정
+            const currentLang = localStorage.getItem('selectedLanguage') || 'ko';
+            const headerText = {
+                ko: { item: '항목', rank1: '1위', rank2: '2위', rank3: '3위' },
+                ja: { item: '項目', rank1: '1位', rank2: '2位', rank3: '3位' }
+            };
+            
             header.innerHTML = `
-                <div class="stat-label">항목</div>
-                <div class="header-rank">1위</div>
-                <div class="header-rank">2위</div>
-                <div class="header-rank">3위</div>
+                <div class="stat-label">${headerText[currentLang].item}</div>
+                <div class="header-rank">${headerText[currentLang].rank1}</div>
+                <div class="header-rank">${headerText[currentLang].rank2}</div>
+                <div class="header-rank">${headerText[currentLang].rank3}</div>
             `;
             container.appendChild(header);
             
             // 각 통계 항목별로 행 생성
-            const statNames = ['타율', '출루율', '장타율', '타점', '득점', '홈런', '도루'];
+            const originalStatNames = ['타율', '출루율', '장타율', '타점', '득점', '홈런', '도루'];
+            const displayStatNames = currentLang === 'ja' 
+                ? ['打率', '出塁率', '長打率', '打点', '得点', '本塁打', '盗塁']
+                : ['타율', '출루율', '장타율', '타점', '득점', '홈런', '도루'];
             
-            statNames.forEach((statName) => {
-                console.log(`📝 ${statName} 행 생성 중...`);
+            originalStatNames.forEach((originalStatName, index) => {
+                const displayStatName = displayStatNames[index];
+                console.log(`📝 ${displayStatName} 행 생성 중... (원본: ${originalStatName})`);
                 const row = document.createElement('div');
                 row.className = 'ranking-row';
                 
                 const statLabel = document.createElement('div');
                 statLabel.className = 'stat-label';
-                statLabel.textContent = statName;
+                statLabel.textContent = displayStatName;
                 row.appendChild(statLabel);
                 
-                // 기존 선수 통계 처리
-                const top3 = rankings[statName] || [];
-                console.log(`👥 ${statName} TOP 3:`, top3);
+                // 원본 통계명으로 데이터 찾기
+                const top3 = rankings[originalStatName] || [];
+                console.log(`👥 ${displayStatName} (${originalStatName}) TOP 3:`, top3);
                 
                 for (let i = 0; i < 3; i++) {
                     const player = top3[i] || { name: 'N/A', stat: '0.000', team: 'unknown' };
-                    console.log(`👤 ${statName} ${i+1}위:`, player);
+                    console.log(`👤 ${displayStatName} ${i+1}위:`, player);
                     
                     // 이미지 로딩 확인 (디버깅용)
                     if (player.name !== 'N/A') {
@@ -1803,7 +1905,7 @@
                                  alt="${player.name}" 
                                  onerror="this.onerror=null; this.src='./Image/PlayerProfile/Default.png'; console.log('이미지 로딩 실패:', '${player.name}.png');"
                                  style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
-                            <div class="team-logo ${player.team}"></div>
+                            <div class="team-logo ${getTeamClass(player.team)}"></div>
                         </div>
                         <div class="player-info">
                             <div class="player-name">${player.name}</div>
@@ -1824,31 +1926,43 @@
             const container = document.querySelector('#pitching-excellence .simple-rankings');
             container.innerHTML = '';
             
-            // 헤더 추가
+            // 헤더 추가 (번역 적용)
             const header = document.createElement('div');
             header.className = 'ranking-header';
+            
+            // 현재 언어에 맞는 헤더 텍스트 설정
+            const currentLang = localStorage.getItem('selectedLanguage') || 'ko';
+            const headerText = {
+                ko: { item: '항목', rank1: '1위', rank2: '2위', rank3: '3위' },
+                ja: { item: '項目', rank1: '1位', rank2: '2位', rank3: '3位' }
+            };
+            
             header.innerHTML = `
-                <div class="stat-label">항목</div>
-                <div class="header-rank">1위</div>
-                <div class="header-rank">2위</div>
-                <div class="header-rank">3위</div>
+                <div class="stat-label">${headerText[currentLang].item}</div>
+                <div class="header-rank">${headerText[currentLang].rank1}</div>
+                <div class="header-rank">${headerText[currentLang].rank2}</div>
+                <div class="header-rank">${headerText[currentLang].rank3}</div>
             `;
             container.appendChild(header);
             
             // 각 통계 항목별로 행 생성
-            const statNames = ['ERA', 'WHIP', '삼진', '다승', '세이브', '홀드', '이닝'];
+            const originalStatNames = ['ERA', 'WHIP', '삼진', '다승', '세이브', '홀드', '이닝'];
+            const displayStatNames = currentLang === 'ja' 
+                ? ['ERA', 'WHIP', '三振', '多勝', 'セーブ', 'ホールド', 'イニング']
+                : ['ERA', 'WHIP', '삼진', '다승', '세이브', '홀드', '이닝'];
             
-            statNames.forEach((statName) => {
+            originalStatNames.forEach((originalStatName, index) => {
+                const displayStatName = displayStatNames[index];
                 const row = document.createElement('div');
                 row.className = 'ranking-row';
                 
                 const statLabel = document.createElement('div');
                 statLabel.className = 'stat-label';
-                statLabel.textContent = statName;
+                statLabel.textContent = displayStatName;
                 row.appendChild(statLabel);
                 
-                // 투수 통계 처리
-                const top3 = rankings[statName] || [];
+                // 원본 통계명으로 데이터 찾기
+                const top3 = rankings[originalStatName] || [];
                 for (let i = 0; i < 3; i++) {
                     const player = top3[i] || { name: 'N/A', stat: '0.00', team: 'unknown' };
                     
@@ -2193,8 +2307,7 @@
                     { name: '홈런', key: 'HR', lowerBetter: false },
                     { name: '타점', key: 'RBI', lowerBetter: false },
                     { name: '도루', key: 'SB', lowerBetter: false },
-                    { name: '볼넷', key: 'BB', lowerBetter: false },
-                    { name: '삼진', key: 'SO', lowerBetter: true }
+                    { name: '볼넷', key: 'BB', lowerBetter: false }
                 ];
                 
                 const pitchingStats = [
@@ -2203,13 +2316,14 @@
                     { name: '승수', key: 'W', lowerBetter: false },
                     { name: '세이브', key: 'SV', lowerBetter: false },
                     { name: '홀드', key: 'HLD', lowerBetter: false },
-                    { name: '탈삼진', key: 'SO', lowerBetter: false },
+                    { name: '삼진', key: 'SO', lowerBetter: false },
                     { name: '이닝', key: 'IP', lowerBetter: false }
                 ];
                 
                 // 타자-투수-타자-투수-타자 순서로 선택
                 const selectedStats = [];
-                const usedStats = new Set();
+                const usedBattingStats = new Set();
+                const usedPitchingStats = new Set();
                 
                 const patterns = [
                     { type: 'batting', count: 3 },
@@ -2219,6 +2333,7 @@
                 for (const pattern of patterns) {
                     const stats = pattern.type === 'batting' ? battingStats : pitchingStats;
                     const data = pattern.type === 'batting' ? battingData : pitchingData;
+                    const usedStats = pattern.type === 'batting' ? usedBattingStats : usedPitchingStats;
                     
                     for (let i = 0; i < pattern.count; i++) {
                         let availableStats = stats.filter(stat => !usedStats.has(stat.key));
@@ -2237,6 +2352,9 @@
                         });
                     }
                 }
+                
+                // 전역 변수에 사이드바 데이터 저장
+                window.currentSidebarStats = selectedStats;
                 
                 // 사이드바 업데이트
                 updateSidebarSections(selectedStats);
@@ -2396,17 +2514,62 @@
         
         // 사이드바 섹션 업데이트
         function updateSidebarSections(selectedStats) {
+            console.log('🔄 사이드바 섹션 업데이트 시작');
+            console.log('📊 받은 데이터:', selectedStats);
+            
             const sidebarContainer = document.querySelector('.right-sidebar');
+            if (!sidebarContainer) {
+                console.error('❌ 사이드바 컨테이너를 찾을 수 없음');
+                return;
+            }
+            
             sidebarContainer.innerHTML = '';
+            console.log('🧹 사이드바 컨테이너 초기화 완료');
             
             selectedStats.forEach((statGroup, index) => {
+                console.log(`📝 섹션 ${index + 1} 생성:`, statGroup);
+                
                 const section = document.createElement('div');
                 section.className = 'sidebar-section';
                 
                 const header = document.createElement('div');
                 header.className = 'sidebar-header';
-                const typeText = statGroup.type === 'batting' ? '타자' : '투수';
-                header.textContent = `${typeText} - ${statGroup.stat.name}`;
+                // 타자/투수 구분을 명확하게
+                const isBatting = statGroup.type === 'batting';
+                const typeText = isBatting ? '타자' : '투수';
+                
+                // 통계명 번역 처리 (강화된 버전)
+                let statName = statGroup.stat.name;
+                let currentLang = localStorage.getItem('selectedLanguage') || 'ko';
+                
+                // 언어 변경 중인 경우 전역 변수에서 언어 가져오기
+                if (window.currentLanguage) {
+                    currentLang = window.currentLanguage;
+                    console.log(`🌐 전역 언어 변수 사용: ${currentLang}`);
+                } else {
+                    console.log(`🌐 로컬 스토리지 언어 사용: ${currentLang}`);
+                }
+                
+                console.log(`🌐 현재 언어: ${currentLang}, 섹션 타입: ${typeText}, 원본 통계명: ${statName}`);
+                
+                // 전역 번역 함수 사용
+                if (typeof translateStatName === 'function') {
+                    statName = translateStatName(statName, currentLang);
+                    console.log(`🔄 번역된 통계명: ${statName}`);
+                } else {
+                    console.warn('⚠️ translateStatName 함수를 찾을 수 없음');
+                }
+                
+                // 타자/투수 텍스트를 현재 언어에 맞게 설정
+                let displayTypeText;
+                if (currentLang === 'ja') {
+                    displayTypeText = isBatting ? '打者' : '投手';
+                } else {
+                    displayTypeText = isBatting ? '타자' : '투수';
+                }
+                
+                header.textContent = `${displayTypeText} - ${statName}`;
+                console.log(`✅ 최종 헤더: "${header.textContent}"`);
                 
                 const content = document.createElement('div');
                 content.className = 'sidebar-content';
@@ -2433,6 +2596,486 @@
                 sidebarContainer.appendChild(section);
             });
         }
+
+        // 언어 변경 시 사이드바 제목 업데이트
+        function updateSidebarLanguage(lang) {
+            console.log(`🔄 사이드바 언어 업데이트 시작: ${lang}`);
+            
+            // 기존 사이드바 내용을 완전히 삭제하고 새로 생성
+            const sidebarContainer = document.querySelector('.right-sidebar');
+            if (sidebarContainer && window.currentSidebarStats && window.currentSidebarStats.length > 0) {
+                console.log('🔄 기존 사이드바 삭제 후 새로 생성');
+                sidebarContainer.innerHTML = '';
+                updateSidebarSections(window.currentSidebarStats);
+            } else {
+                console.log('⚠️ 사이드바 재생성 조건이 충족되지 않음');
+            }
+            
+            console.log('✅ 사이드바 언어 업데이트 완료');
+        }
+
+        // 통계명 번역 함수
+        function translateStatName(statName, lang) {
+            const translations = {
+                '타율': { ko: '타율', ja: '打率' },
+                '출루율': { ko: '출루율', ja: '出塁率' },
+                '장타율': { ko: '장타율', ja: '長打率' },
+                '타점': { ko: '타점', ja: '打点' },
+                '득점': { ko: '득점', ja: '得点' },
+                '홈런': { ko: '홈런', ja: '本塁打' },
+                '도루': { ko: '도루', ja: '盗塁' },
+                '볼넷': { ko: '볼넷', ja: '四球' },
+                'ERA': { ko: 'ERA', ja: 'ERA' },
+                'WHIP': { ko: 'WHIP', ja: 'WHIP' },
+                '삼진': { ko: '삼진', ja: '三振' },
+                '승수': { ko: '승수', ja: '勝数' },
+                '다승': { ko: '다승', ja: '多勝' },
+                '세이브': { ko: '세이브', ja: 'セーブ' },
+                '홀드': { ko: '홀드', ja: 'ホールド' },
+                '이닝': { ko: '이닝', ja: 'イニング' },
+                // 헤더 텍스트 번역
+                '항목': { ko: '항목', ja: '項目' },
+                '1위': { ko: '1위', ja: '1位' },
+                '2위': { ko: '2위', ja: '2位' },
+                '3위': { ko: '3위', ja: '3位' },
+                // 일본어에서 한국어로 돌아올 때를 위한 역방향 매핑
+                '打率': { ko: '타율', ja: '打率' },
+                '出塁率': { ko: '출루율', ja: '出塁率' },
+                '長打率': { ko: '장타율', ja: '長打率' },
+                '打点': { ko: '타점', ja: '打点' },
+                '得点': { ko: '득점', ja: '得点' },
+                '本塁打': { ko: '홈런', ja: '本塁打' },
+                '盗塁': { ko: '도루', ja: '盗塁' },
+                '四球': { ko: '볼넷', ja: '四球' },
+                '三振': { ko: '삼진', ja: '三振' },
+                '勝数': { ko: '승수', ja: '勝数' },
+                '多勝': { ko: '다승', ja: '多勝' },
+                'セーブ': { ko: '세이브', ja: 'セーブ' },
+                'ホールド': { ko: '홀드', ja: 'ホールド' },
+                'イニング': { ko: '이닝', ja: 'イニング' },
+                // 헤더 텍스트 역방향 매핑
+                '項目': { ko: '항목', ja: '項目' },
+                '1位': { ko: '1위', ja: '1位' },
+                '2位': { ko: '2위', ja: '2位' },
+                '3位': { ko: '3위', ja: '3位' }
+            };
+
+            if (translations[statName] && translations[statName][lang]) {
+                return translations[statName][lang];
+            }
+            return statName; // 번역이 없으면 원본 반환
+        }
+
+        // 통계명 번역 함수
+        function updateStatNames(lang) {
+            const translations = {
+                ko: {
+                    '타율': '타율',
+                    '출루율': '출루율',
+                    '장타율': '장타율',
+                    '타점': '타점',
+                    '득점': '득점',
+                    '홈런': '홈런',
+                    '도루': '도루',
+                    '볼넷': '볼넷',
+                    'ERA': 'ERA',
+                    'WHIP': 'WHIP',
+                    '삼진': '삼진',
+                    '승수': '승수',
+                    '다승': '다승',
+                    '세이브': '세이브',
+                    '홀드': '홀드',
+                    '이닝': '이닝',
+                    '항목': '항목',
+                    '1위': '1위',
+                    '2위': '2위',
+                    '3위': '3위'
+                },
+                ja: {
+                    '타율': '打率',
+                    '출루율': '出塁率',
+                    '장타율': '長打率',
+                    '타점': '打点',
+                    '득점': '得点',
+                    '홈런': '本塁打',
+                    '도루': '盗塁',
+                    '볼넷': '四球',
+                    'ERA': 'ERA',
+                    'WHIP': 'WHIP',
+                    '삼진': '三振',
+                    '승수': '勝数',
+                    '다승': '多勝',
+                    '세이브': 'セーブ',
+                    '홀드': 'ホールド',
+                    '이닝': 'イニング',
+                    '항목': '項目',
+                    '1위': '1位',
+                    '2위': '2위',
+                    '3위': '3位'
+                }
+            };
+
+            // 통계명 매핑 (원본 → 번역)
+            const statMapping = {
+                '타율': { ko: '타율', ja: '打率' },
+                '출루율': { ko: '출루율', ja: '出塁率' },
+                '장타율': { ko: '장타율', ja: '長打率' },
+                '타점': { ko: '타점', ja: '打点' },
+                '득점': { ko: '득점', ja: '得点' },
+                '홈런': { ko: '홈런', ja: '本塁打' },
+                '도루': { ko: '도루', ja: '盗塁' },
+                '볼넷': { ko: '볼넷', ja: '四球' },
+                'ERA': { ko: 'ERA', ja: 'ERA' },
+                'WHIP': { ko: 'WHIP', ja: 'WHIP' },
+                '삼진': { ko: '삼진', ja: '三振' },
+                '승수': { ko: '승수', ja: '勝数' },
+                '다승': { ko: '다승', ja: '多勝' },
+                '세이브': { ko: '세이브', ja: 'セーブ' },
+                '홀드': { ko: '홀드', ja: 'ホールド' },
+                '이닝': { ko: '이닝', ja: 'イニング' },
+                '항목': { ko: '항목', ja: '項目' },
+                '1위': { ko: '1위', ja: '1位' },
+                '2위': { ko: '2위', ja: '2位' },
+                '3위': { ko: '3위', ja: '3位' }
+            };
+
+            // 타자 주요 순위 섹션의 통계명 번역
+            const battingSection = document.getElementById('batting-excellence');
+            if (battingSection) {
+                const statLabels = battingSection.querySelectorAll('.stat-label');
+                statLabels.forEach(label => {
+                    const originalText = label.textContent;
+                    if (translations[lang][originalText]) {
+                        label.textContent = translations[lang][originalText];
+                    }
+                });
+            }
+
+            // 투수 주요 순위 섹션의 통계명 번역
+            const pitchingSection = document.getElementById('pitching-excellence');
+            if (pitchingSection) {
+                const statLabels = pitchingSection.querySelectorAll('.stat-label');
+                statLabels.forEach(label => {
+                    const originalText = label.textContent;
+                    if (translations[lang][originalText]) {
+                        label.textContent = translations[lang][originalText];
+                    }
+                });
+            }
+
+            // 사이드바의 통계명 번역
+            const sidebarHeaders = document.querySelectorAll('.sidebar-header');
+            sidebarHeaders.forEach(header => {
+                const text = header.textContent;
+                if (text.includes(' - ')) {
+                    const parts = text.split(' - ');
+                    const type = parts[0];
+                    const statName = parts[1];
+                    
+                    if (translations[lang][statName]) {
+                        const newType = type.includes('타자') ? (lang === 'ko' ? '타자' : '打者') : (lang === 'ko' ? '투수' : '投手');
+                        header.textContent = `${newType} - ${translations[lang][statName]}`;
+                    }
+                }
+            });
+
+            // 통계명 배열도 업데이트 (새로운 데이터 로드 시 번역 유지)
+            if (lang === 'ja') {
+                window.battingStatNames = ['타율', '출루율', '장타율', '타점', '득점', '홈런', '도루'];
+                window.pitchingStatNames = ['ERA', 'WHIP', '삼진', '다승', '세이브', '홀드', '이닝'];
+            } else {
+                window.battingStatNames = ['타율', '출루율', '장타율', '타점', '득점', '홈런', '도루'];
+                window.pitchingStatNames = ['ERA', 'WHIP', '삼진', '다승', '세이브', '홀드', '이닝'];
+            }
+
+            // 전역 변수에 현재 언어 설정 저장
+            window.currentLanguage = lang;
+        }
+
+        // 언어 변경 기능
+        document.addEventListener('DOMContentLoaded', function() {
+            const languageBtns = document.querySelectorAll('.language-btn');
+            
+            languageBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const selectedLang = this.getAttribute('data-lang');
+                    
+                    // 활성 버튼 상태 변경
+                    languageBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 언어 변경 처리
+                    changeLanguage(selectedLang);
+                });
+            });
+        });
+
+        // 언어 변경 함수
+        function changeLanguage(lang) {
+            const translations = {
+                ko: {
+                    title: 'WBD 기록실',
+                    // 네비게이션
+                    recordRoom: '기록실',
+                    seasonInfo: '시즌정보',
+                    teamInfo: '팀정보',
+                    playerInfo: '선수정보',
+                    schedule: '경기일정',
+                    // 섹션 제목
+                    wrcTop10: 'wRC+ TOP 10',
+                    teamRankings2025: '팀 순위 (2025)',
+                    battingExcellence: '타자 주요 순위',
+                    pitchingExcellence: '투수 주요 순위',
+                    recentGames: '최근 경기 결과',
+                    nextGames: '다음 경기 일정',
+                    // 테이블 헤더
+                    rank: '순위',
+                    name: '이름',
+                    team: '팀',
+                    games: '게임',
+                    win: '승',
+                    draw: '무',
+                    loss: '패',
+                    gamesBehind: '승차',
+                    winRate: '승률',
+                    runsScored: '득점',
+                    runsAllowed: '실점',
+                    // 사이드바
+                    sidebarTitle: '타자 - ',
+                    sidebarTitlePitcher: '투수 - ',
+                    // 타자 통계명
+                    avg: '타율',
+                    obp: '출루율',
+                    slg: '장타율',
+                    rbi: '타점',
+                    runs: '득점',
+                    hr: '홈런',
+                    sb: '도루',
+                    // 투수 통계명
+                    era: 'ERA',
+                    whip: 'WHIP',
+                    k: '삼진',
+                    wins: '다승',
+                    saves: '세이브',
+                    holds: '홀드',
+                    ip: '이닝',
+                    // 추가 통계 항목들
+                    ops: 'OPS',
+                    bb: 'BB'
+                },
+                ja: {
+                    title: 'WBD 記録室',
+                    // 네비게이션
+                    recordRoom: '記録室',
+                    seasonInfo: 'シーズン情報',
+                    teamInfo: 'チーム情報',
+                    playerInfo: '選手情報',
+                    schedule: '試合日程',
+                    // 섹션 제목
+                    wrcTop10: 'wRC+ TOP 10',
+                    teamRankings2025: 'チーム順位 (2025)',
+                    battingExcellence: '打者主要順位',
+                    pitchingExcellence: '投手主要順位',
+                    recentGames: '最近の試合結果',
+                    nextGames: '次の試合日程',
+                    // 테이블 헤더
+                    rank: '順位',
+                    name: '名前',
+                    team: 'チーム',
+                    games: '試合',
+                    win: '勝',
+                    draw: '分',
+                    loss: '負',
+                    gamesBehind: 'ゲーム差',
+                    winRate: '勝率',
+                    runsScored: '得点',
+                    runsAllowed: '失点',
+                    // 사이드바
+                    sidebarTitle: '打者 - ',
+                    sidebarTitlePitcher: '投手 - ',
+                    // 타자 통계명
+                    avg: '打率',
+                    obp: '出塁率',
+                    slg: '長打率',
+                    rbi: '打点',
+                    runs: '得点',
+                    hr: '本塁打',
+                    sb: '盗塁',
+                    // 투수 통계명
+                    era: 'ERA',
+                    whip: 'WHIP',
+                    k: '三振',
+                    wins: '多勝',
+                    saves: 'セーブ',
+                    holds: 'ホールド',
+                    ip: 'イニング',
+                    // 추가 통계 항목들
+                    ops: 'OPS',
+                    bb: 'BB'
+                }
+            };
+
+            // 전역 언어 변수 설정
+            window.currentLanguage = lang;
+            console.log(`🌐 전역 언어 변수 설정: ${lang}`);
+            
+            // 제목 변경
+            document.title = translations[lang].title;
+            document.querySelector('.logo-text').textContent = translations[lang].title;
+
+            // 네비게이션 메뉴 변경
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach((item, index) => {
+                if (index === 0) item.textContent = translations[lang].recordRoom;
+                else if (index === 1) item.textContent = translations[lang].seasonInfo;
+                else if (index === 2) item.textContent = translations[lang].teamInfo;
+                else if (index === 3) item.textContent = translations[lang].playerInfo;
+                else if (index === 4) item.textContent = translations[lang].schedule;
+            });
+
+            // 섹션 제목들 변경
+            const sectionTitles = {
+                'wrc-top-10': translations[lang].wrcTop10,
+                'batting-average-2025': translations[lang].teamRankings2025,
+                'batting-excellence': translations[lang].battingExcellence,
+                'pitching-excellence': translations[lang].pitchingExcellence,
+                'recent-games': translations[lang].recentGames,
+                'next-games': translations[lang].nextGames
+            };
+
+            Object.keys(sectionTitles).forEach(id => {
+                const section = document.getElementById(id);
+                if (section) {
+                    const header = section.querySelector('.collapsible-header h3');
+                    if (header) {
+                        header.textContent = sectionTitles[id];
+                    }
+                }
+            });
+
+            // 테이블 헤더 변경
+            const tables = document.querySelectorAll('.data-table');
+            tables.forEach(table => {
+                const headers = table.querySelectorAll('th');
+                headers.forEach(header => {
+                    const text = header.textContent;
+                    if (text === '순위' || text === '順位') {
+                        header.textContent = translations[lang].rank;
+                    } else if (text === '이름' || text === '名前') {
+                        header.textContent = translations[lang].name;
+                    } else if (text === '팀' || text === 'チーム') {
+                        header.textContent = translations[lang].team;
+                    } else if (text === '게임' || text === '試合') {
+                        header.textContent = translations[lang].games;
+                    } else if (text === '승' || text === '勝') {
+                        header.textContent = translations[lang].win;
+                    } else if (text === '무' || text === '分') {
+                        header.textContent = translations[lang].draw;
+                    } else if (text === '패' || text === '負') {
+                        header.textContent = translations[lang].loss;
+                    } else if (text === '승차' || text === 'ゲーム差') {
+                        header.textContent = translations[lang].gamesBehind;
+                    } else if (text === '승률' || text === '勝率') {
+                        header.textContent = translations[lang].winRate;
+                    } else if (text === '득점' || text === '得点') {
+                        header.textContent = translations[lang].runsScored;
+                    } else if (text === '실점' || text === '失点') {
+                        header.textContent = translations[lang].runsAllowed;
+                    }
+                });
+            });
+
+            // 최근 경기 결과와 다음 경기 일정 테이블 헤더도 변경
+            const recentGamesTable = document.querySelector('#recent-games .recent-games-table table');
+            if (recentGamesTable) {
+                const headers = recentGamesTable.querySelectorAll('th');
+                headers.forEach(header => {
+                    const text = header.textContent;
+                    if (text === '날짜' || text === '日付') {
+                        header.textContent = lang === 'ko' ? '날짜' : '日付';
+                    } else if (text === '홈팀' || text === 'ホームチーム') {
+                        header.textContent = lang === 'ko' ? '홈팀' : 'ホームチーム';
+                    } else if (text === '원정팀' || text === 'アウェイチーム') {
+                        header.textContent = lang === 'ko' ? '원정팀' : 'アウェイチーム';
+                    } else if (text === '스코어' || text === 'スコア') {
+                        header.textContent = lang === 'ko' ? '스코어' : 'スコア';
+                    }
+                });
+            }
+
+            const nextGamesTable = document.querySelector('#next-games .next-games-table table');
+            if (nextGamesTable) {
+                const headers = nextGamesTable.querySelectorAll('th');
+                headers.forEach(header => {
+                    const text = header.textContent;
+                    if (text === '날짜' || text === '日付') {
+                        header.textContent = lang === 'ko' ? '날짜' : '日付';
+                    } else if (text === '홈팀' || text === 'ホームチーム') {
+                        header.textContent = lang === 'ko' ? '홈팀' : 'アウェイチーム';
+                    } else if (text === '원정팀' || text === 'アウェイチーム') {
+                        header.textContent = lang === 'ko' ? '원정팀' : 'アウェイチーム';
+                    } else if (text === '시간' || text === '時間') {
+                        header.textContent = lang === 'ko' ? '시간' : '時間';
+                    }
+                });
+            }
+
+            // 사이드바 언어 업데이트 (강화된 버전)
+            console.log('🔄 사이드바 언어 업데이트 시작');
+            updateSidebarLanguage(lang);
+
+            // 통계명 번역 업데이트
+            updateStatNames(lang);
+
+            // 사이드바 완전 재생성 (언어 변경 시)
+            setTimeout(() => {
+                if (window.currentSidebarStats && window.currentSidebarStats.length > 0) {
+                    console.log('🔄 언어 변경 후 사이드바 완전 재생성');
+                    // 기존 사이드바 내용 완전 삭제
+                    const sidebarContainer = document.querySelector('.right-sidebar');
+                    if (sidebarContainer) {
+                        sidebarContainer.innerHTML = '';
+                        console.log('🧹 사이드바 컨테이너 완전 초기화');
+                    }
+                    // 새로운 언어로 사이드바 재생성
+                    updateSidebarSections(window.currentSidebarStats);
+                    
+                    // 언어 변경 후 사이드바 상태 확인
+                    setTimeout(() => {
+                        const newHeaders = document.querySelectorAll('.sidebar-header');
+                        console.log(`✅ 언어 변경 후 사이드바 헤더: ${newHeaders.length}개`);
+                        newHeaders.forEach((header, index) => {
+                            console.log(`📝 새 헤더 ${index + 1}: "${header.textContent}"`);
+                        });
+                    }, 100);
+                } else {
+                    console.log('⚠️ 저장된 사이드바 데이터가 없음, 새로 로드 시도');
+                    loadRandomSidebarStats();
+                }
+            }, 300);
+
+            // 주요순위 테이블 다시 생성 (언어 변경 후)
+            setTimeout(() => {
+                if (window.battingRankingsData) {
+                    generateBattingRankingsTable(window.battingRankingsData);
+                }
+                if (window.pitchingRankingsData) {
+                    generatePitchingRankingsTable(window.pitchingRankingsData);
+                }
+            }, 100);
+
+            // 로컬 스토리지에 언어 설정 저장
+            localStorage.setItem('selectedLanguage', lang);
+        }
+
+        // 페이지 로드 시 저장된 언어 설정 복원
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('selectedLanguage') || 'ko';
+            const languageBtn = document.querySelector(`[data-lang="${savedLang}"]`);
+            if (languageBtn) {
+                languageBtn.click();
+            }
+        });
     </script>
 </body>
 </html>

@@ -64,6 +64,35 @@
             gap: 12px;
         }
         
+        .language-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .language-btn {
+            padding: 6px 12px;
+            border: 1px solid #e9ecef;
+            background-color: white;
+            color: #666;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .language-btn:hover {
+            border-color: #ff4757;
+            color: #ff4757;
+        }
+        
+        .language-btn.active {
+            background-color: #ff4757;
+            color: white;
+            border-color: #ff4757;
+        }
+        
         .search-icon, .user-icon {
             width: 24px;
             height: 24px;
@@ -1002,6 +1031,12 @@
                 <div class="logo-icon">W</div>
                 <span class="logo-text">WBD 기록실</span>
             </a>
+            <div class="header-actions">
+                <div class="language-selector">
+                    <button class="language-btn active" data-lang="ko">한국어</button>
+                    <button class="language-btn" data-lang="ja">日本語</button>
+                </div>
+            </div>
         </div>
     </header>
     
@@ -2143,11 +2178,35 @@
             console.log('오늘 날짜:', today.toISOString().split('T')[0]);
         }
 
-        // 이벤트 리스너 등록
+        // 언어 변경 기능
         document.addEventListener('DOMContentLoaded', function() {
-            // 데이터 초기화
+            // 기존 함수 호출
             initializeData();
             
+            // 언어 변경 버튼 이벤트 리스너
+            const languageBtns = document.querySelectorAll('.language-btn');
+            
+            languageBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const selectedLang = this.getAttribute('data-lang');
+                    
+                    // 활성 버튼 상태 변경
+                    languageBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 언어 변경 처리
+                    changeLanguage(selectedLang);
+                });
+            });
+            
+            // 저장된 언어 설정 복원
+            const savedLang = localStorage.getItem('selectedLanguage') || 'ko';
+            const languageBtn = document.querySelector(`[data-lang="${savedLang}"]`);
+            if (languageBtn) {
+                languageBtn.click();
+            }
+            
+            // 기존 이벤트 리스너
             document.getElementById('team-filter').addEventListener('change', filterTeams);
             document.getElementById('overall-filter').addEventListener('change', filterTeams);
             
@@ -2176,6 +2235,71 @@
                 }
             });
         });
+
+        // 언어 변경 함수
+        function changeLanguage(lang) {
+            const translations = {
+                ko: {
+                    title: '팀정보 - WBD 기록실',
+                    logoText: 'WBD 기록실',
+                    recordRoom: '기록실',
+                    seasonInfo: '시즌정보',
+                    teamInfo: '팀정보',
+                    playerInfo: '선수정보',
+                    schedule: '경기일정',
+                    pageTitle: '팀정보',
+                    teamFilter: '팀',
+                    overallFilter: '팀종합',
+                    nameSort: '이름순'
+                },
+                ja: {
+                    title: 'チーム情報 - WBD 記録室',
+                    logoText: 'WBD 記録室',
+                    recordRoom: '記録室',
+                    seasonInfo: 'シーズン情報',
+                    teamInfo: 'チーム情報',
+                    playerInfo: '選手情報',
+                    schedule: '試合日程',
+                    pageTitle: 'チーム情報',
+                    teamFilter: 'チーム',
+                    overallFilter: 'チーム総合',
+                    nameSort: '名前順'
+                }
+            };
+
+            // 제목 변경
+            document.title = translations[lang].title;
+            document.querySelector('.logo-text').textContent = translations[lang].logoText;
+
+            // 네비게이션 메뉴 변경
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach((item, index) => {
+                if (index === 0) item.textContent = translations[lang].recordRoom;
+                else if (index === 1) item.textContent = translations[lang].seasonInfo;
+                else if (index === 2) item.textContent = translations[lang].teamInfo;
+                else if (index === 3) item.textContent = translations[lang].playerInfo;
+                else if (index === 4) item.textContent = translations[lang].schedule;
+            });
+
+            // 페이지 제목 변경
+            document.querySelector('.page-title').textContent = translations[lang].pageTitle;
+
+            // 필터 옵션 변경
+            const teamFilter = document.getElementById('team-filter');
+            const overallFilter = document.getElementById('overall-filter');
+            
+            if (teamFilter) {
+                teamFilter.options[0].textContent = translations[lang].teamFilter;
+            }
+            
+            if (overallFilter) {
+                overallFilter.options[0].textContent = translations[lang].overallFilter;
+                overallFilter.options[1].textContent = translations[lang].nameSort;
+            }
+
+            // 로컬 스토리지에 언어 설정 저장
+            localStorage.setItem('selectedLanguage', lang);
+        }
     </script>
 </body>
 </html>
