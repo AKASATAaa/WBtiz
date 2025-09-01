@@ -330,17 +330,17 @@
         }
 
         .record-cards {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
         }
 
         .record-card {
             background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
             border: 1px solid #e9ecef;
-            border-radius: 16px;
-            padding: 24px;
+            border-radius: 12px;
+            padding: 16px;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -391,12 +391,12 @@
         }
 
         .record-title {
-            font-size: 20px;
+            font-size: 16px;
             font-weight: 700;
             color: #333;
             text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 16px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
             border-bottom: 2px solid #f0f0f0;
         }
 
@@ -405,10 +405,10 @@
         }
 
         .nickname {
-            font-size: 28px;
+            font-size: 20px;
             font-weight: 700;
             color: #4CAF50;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
             text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
@@ -428,67 +428,67 @@
         }
 
         .date-info {
-            font-size: 16px;
+            font-size: 14px;
             color: #666;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             font-weight: 500;
             background: #f8f9fa;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 6px 12px;
+            border-radius: 16px;
             display: inline-block;
         }
 
         .note-info {
-            font-size: 15px;
+            font-size: 13px;
             color: #888;
             font-style: italic;
             background: #f0f0f0;
-            padding: 12px 20px;
-            border-radius: 12px;
+            padding: 8px 12px;
+            border-radius: 8px;
             display: inline-block;
-            max-width: 80%;
-            line-height: 1.4;
+            max-width: 90%;
+            line-height: 1.3;
         }
 
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 16px;
+            gap: 8px;
+            margin-top: 12px;
         }
 
         .stat-item {
             text-align: center;
-            padding: 12px 8px;
+            padding: 8px 6px;
             background: white;
-            border-radius: 8px;
+            border-radius: 6px;
             border: 1px solid #f0f0f0;
         }
 
         .stat-value {
-            font-size: 20px;
+            font-size: 16px;
             font-weight: 700;
             color: #4CAF50;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .stat-label {
-            font-size: 12px;
+            font-size: 10px;
             color: #666;
             font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
 
         .win-loss {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 16px;
-            margin-top: 16px;
-            padding: 16px;
+            gap: 12px;
+            margin-top: 12px;
+            padding: 10px;
             background: linear-gradient(135deg, #f8f9fa, #ffffff);
-            border-radius: 8px;
+            border-radius: 6px;
             border: 1px solid #e9ecef;
         }
 
@@ -506,16 +506,16 @@
 
         .win-rate {
             text-align: center;
-            padding: 12px;
+            padding: 8px;
             background: linear-gradient(135deg, #4CAF50, #45a049);
             color: white;
-            border-radius: 8px;
-            margin-top: 16px;
+            border-radius: 6px;
+            margin-top: 12px;
         }
 
         .win-rate .stat-value {
             color: white;
-            font-size: 24px;
+            font-size: 18px;
         }
 
         .win-rate .stat-label {
@@ -523,6 +523,217 @@
         }
 
         .rank-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-weight: 700;
+            font-size: 12px;
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+        }
+
+        .title-holder-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .mvp-special-card {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border: 2px solid #ffb300;
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.3);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .mvp-special-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.4);
+            border-color: #ff9500;
+        }
+
+        .mvp-special-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #ff9500, #ffb300, #ff9500);
+        }
+
+        .mvp-special-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #b8860b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 16px;
+            border-radius: 25px;
+            display: inline-block;
+        }
+
+        .mvp-special-name {
+            font-size: 32px;
+            font-weight: 800;
+            color: #8b4513;
+            margin-bottom: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .mvp-special-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #b8860b;
+            font-size: 24px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .regular-title-holder-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .outstanding-card {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 2px solid #2196f3;
+            border-radius: 14px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(33, 150, 243, 0.2);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .outstanding-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(33, 150, 243, 0.3);
+            border-color: #1976d2;
+        }
+
+        .outstanding-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1976d2, #2196f3, #1976d2);
+        }
+
+        .outstanding-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1565c0;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 6px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .outstanding-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0d47a1;
+            margin-bottom: 0;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .outstanding-icon {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1565c0;
+            font-size: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .title-holder-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .title-holder-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-color: #ffd700;
+        }
+
+        .title-holder-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ffd700, #ffed4e, #ffd700);
+        }
+
+        .title-holder-category {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .title-holder-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0;
+            text-align: center;
+            padding: 12px 0;
+        }
+
+        .title-holder-icon {
             position: absolute;
             top: 16px;
             right: 16px;
@@ -535,37 +746,8 @@
             justify-content: center;
             color: #333;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 16px;
             box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
-        }
-
-        .mvp-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .mvp-table th,
-        .mvp-table td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-
-        .mvp-table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-        }
-
-        .mvp-table td {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .mvp-table tr:hover {
-            background-color: #f8f9fa;
         }
 
         .content-placeholder {
@@ -581,6 +763,55 @@
         @media (max-width: 768px) {
             .content-container {
                 padding: 0 12px;
+            }
+            
+            .record-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .title-holder-cards {
+                gap: 12px;
+            }
+            
+            .mvp-special-card {
+                padding: 24px;
+            }
+            
+            .mvp-special-name {
+                font-size: 24px;
+            }
+            
+            .mvp-special-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
+            
+            .outstanding-card {
+                padding: 20px;
+            }
+            
+            .outstanding-name {
+                font-size: 20px;
+            }
+            
+            .outstanding-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
+            
+            .regular-title-holder-cards {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .title-holder-card {
+                padding: 16px;
+            }
+            
+            .title-holder-name {
+                font-size: 18px;
             }
         }
     </style>
@@ -629,23 +860,11 @@
             </div>
             <div class="mvp-section" id="mvpSection">
                 <h3>
-                    <span class="mvp-badge">수훈선수 명단</span>
+                    <span class="mvp-badge">타이틀 홀더</span>
                 </h3>
-                <table class="mvp-table">
-                    <thead>
-                        <tr>
-                            <th>순위</th>
-                            <th>선수명</th>
-                            <th>팀명</th>
-                            <th>타율</th>
-                            <th>홈런</th>
-                            <th>타점</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- MVP 데이터가 여기에 동적으로 채워집니다 -->
-                    </tbody>
-                </table>
+                <div class="title-holder-cards">
+                    <!-- 타이틀 홀더 데이터가 여기에 동적으로 채워집니다 -->
+                </div>
             </div>
             <div class="league-record-section" id="leagueRecordSection">
                 <h3>
@@ -828,43 +1047,108 @@
                     const headers = jsonData[0];
                     const data = jsonData.slice(1);
 
-                    // 수훈선수가 있는지 확인
+                    // 타이틀 홀더가 있는지 확인
                     if (data.length > 0 && data.some(row => row.some(cell => cell))) {
-                        const mvpTableBody = document.querySelector('#mvpSection tbody');
-                        mvpTableBody.innerHTML = ''; // 테이블 내용 초기화
+                        const titleHolderCards = document.querySelector('#mvpSection .title-holder-cards');
+                        titleHolderCards.innerHTML = ''; // 카드 컨테이너 내용 초기화
 
-                        if (headers && headers.length > 1) {
-                            for (let i = 1; i < Math.min(headers.length, 6); i++) { // 순위, 선수명, 팀명, 타율, 홈런, 타점
-                                const header = headers[i];
-                                const value = data[0][i] || '정보 없음'; // 첫 번째 행의 데이터를 사용
+                        let mvpFound = false;
+                        const outstandingCards = [];
+                        const regularCards = [];
+
+                        // 부문과 이름 구조로 데이터 처리
+                        data.forEach((row, rowIndex) => {
+                            if (row && row.length >= 2 && (row[0] || row[1])) { // 부문과 이름이 있는 행만
+                                const category = row[0] || '';
+                                const name = row[1] || '정보 없음';
                                 
-                                const row = document.createElement('tr');
-                                const rankCell = document.createElement('td');
-                                const playerCell = document.createElement('td');
-                                const teamCell = document.createElement('td');
-                                const avgCell = document.createElement('td');
-                                const hrCell = document.createElement('td');
-                                const rbiCell = document.createElement('td');
-
-                                rankCell.textContent = value;
-                                playerCell.textContent = data[1][i] || '정보 없음'; // 두 번째 행의 데이터를 사용
-                                teamCell.textContent = data[2][i] || '정보 없음'; // 세 번째 행의 데이터를 사용
-                                avgCell.textContent = data[3][i] || '정보 없음';
-                                hrCell.textContent = data[4][i] || '정보 없음';
-                                rbiCell.textContent = data[5][i] || '정보 없음';
-
-                                row.appendChild(rankCell);
-                                row.appendChild(playerCell);
-                                row.appendChild(teamCell);
-                                row.appendChild(avgCell);
-                                row.appendChild(hrCell);
-                                row.appendChild(rbiCell);
-                                mvpTableBody.appendChild(row);
+                                // MVP 부문 확인 (대소문자 구분 없이)
+                                if (category.toString().toLowerCase().includes('mvp')) {
+                                    
+                                    // MVP 특별 카드 생성
+                                    const mvpCard = document.createElement('div');
+                                    mvpCard.classList.add('mvp-special-card');
+                                    mvpCard.innerHTML = `
+                                        <div class="mvp-special-icon">👑</div>
+                                        <div class="mvp-special-label">MVP</div>
+                                        <div class="mvp-special-name">${name}</div>
+                                    `;
+                                    titleHolderCards.appendChild(mvpCard);
+                                    mvpFound = true;
+                                } else if (category.toString().toLowerCase().includes('최우수')) {
+                                    // 최우수 부문 카드 정보 저장
+                                    outstandingCards.push({ category, name });
+                                } else {
+                                    // 일반 타이틀 홀더 카드 정보 저장
+                                    regularCards.push({ category, name });
+                                }
                             }
+                        });
+
+                        // 최우수 부문 카드들을 MVP 아래에 표시
+                        if (outstandingCards.length > 0) {
+                            outstandingCards.forEach(({ category, name }) => {
+                                const card = document.createElement('div');
+                                card.classList.add('outstanding-card');
+                                
+                                // 부문에 따른 아이콘 설정
+                                let iconText = '⭐';
+                                
+                                if (category.toString().toLowerCase().includes('타')) {
+                                    iconText = '⚾';
+                                } else if (category.toString().toLowerCase().includes('투')) {
+                                    iconText = '🎯';
+                                }
+
+                                card.innerHTML = `
+                                    <div class="outstanding-icon">${iconText}</div>
+                                    <div class="outstanding-label">${category}</div>
+                                    <div class="outstanding-name">${name}</div>
+                                `;
+                                
+                                titleHolderCards.appendChild(card);
+                            });
                         }
+
+                        // 일반 타이틀 홀더 카드들을 그리드로 표시
+                        if (regularCards.length > 0) {
+                            const regularCardsContainer = document.createElement('div');
+                            regularCardsContainer.classList.add('regular-title-holder-cards');
+                            
+                            regularCards.forEach(({ category, name }) => {
+                                const card = document.createElement('div');
+                                card.classList.add('title-holder-card');
+                                
+                                // 부문에 따른 아이콘 설정
+                                let iconText = '🏆';
+                                
+                                if (category.toString().toLowerCase().includes('타')) {
+                                    iconText = '⚾';
+                                } else if (category.toString().toLowerCase().includes('투')) {
+                                    iconText = '🎯';
+                                } else if (category.toString().toLowerCase().includes('팀')) {
+                                    iconText = '🏅';
+                                } else if (category.toString().toLowerCase().includes('수비')) {
+                                    iconText = '🛡️';
+                                } else if (category.toString().toLowerCase().includes('주루')) {
+                                    iconText = '🏃';
+                                }
+
+                                card.innerHTML = `
+                                    <div class="title-holder-icon">${iconText}</div>
+                                    <div class="title-holder-category">${category}</div>
+                                    <div class="title-holder-name">${name}</div>
+                                `;
+                                
+                                regularCardsContainer.appendChild(card);
+                            });
+                            
+                            titleHolderCards.appendChild(regularCardsContainer);
+                        }
+
                         document.getElementById('mvpSection').classList.add('show');
                     } else {
-                        // 수훈선수가 없으면 표시하지 않음
+                        // 타이틀 홀더가 없으면 표시하지 않음
                         document.getElementById('mvpSection').classList.remove('show');
                     }
                 } else {
@@ -988,14 +1272,10 @@
                     pageTitle: '시즌 기록',
                     leagueSelector: '리그 선택',
                     leagueSelectPlaceholder: '리그를 선택하세요',
-                    mvpSection: '수훈선수 명단',
+                    mvpSection: '타이틀 홀더',
                     leagueRecordSection: '리그 기록',
-                    rank: '순위',
-                    playerName: '선수명',
-                    teamName: '팀명',
-                    avg: '타율',
-                    hr: '홈런',
-                    rbi: '타점',
+                    category: '부문',
+                    name: '이름',
                     contentPlaceholder: '시즌 정보 페이지 내용이 여기에 표시됩니다.'
                 },
                 ja: {
@@ -1009,14 +1289,10 @@
                     pageTitle: 'シーズン記録',
                     leagueSelector: 'リーグ選択',
                     leagueSelectPlaceholder: 'リーグを選択してください',
-                    mvpSection: '殊勲選手名簿',
+                    mvpSection: 'タイトルホルダー',
                     leagueRecordSection: 'リーグ記録',
-                    rank: '順位',
-                    playerName: '選手名',
-                    teamName: 'チーム名',
-                    avg: '打率',
-                    hr: '本塁打',
-                    rbi: '打点',
+                    category: '部門',
+                    name: '名前',
                     contentPlaceholder: 'シーズン情報ページの内容がここに表示されます。'
                 }
             };
@@ -1048,19 +1324,7 @@
             // 리그 기록 섹션 변경
             document.querySelector('.record-badge').textContent = translations[lang].leagueRecordSection;
 
-            // 테이블 헤더 변경
-            const mvpTable = document.querySelector('.mvp-table');
-            if (mvpTable) {
-                const headers = mvpTable.querySelectorAll('th');
-                if (headers.length >= 6) {
-                    headers[0].textContent = translations[lang].rank;
-                    headers[1].textContent = translations[lang].playerName;
-                    headers[2].textContent = translations[lang].teamName;
-                    headers[3].textContent = translations[lang].avg;
-                    headers[4].textContent = translations[lang].hr;
-                    headers[5].textContent = translations[lang].rbi;
-                }
-            }
+            // 타이틀 홀더 카드 업데이트 (언어 변경 시 필요시 구현)
 
             // 콘텐츠 플레이스홀더 변경
             const contentPlaceholder = document.querySelector('.content-placeholder');
