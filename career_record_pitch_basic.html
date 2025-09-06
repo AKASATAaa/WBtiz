@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>팀기록실 - WBD 기록실</title>
+    <title>통산기록실 - WBD 기록실</title>
     <style>
         * {
             margin: 0;
@@ -250,6 +250,57 @@
             color: #333;
         }
 
+        /* 규정 타석 버튼 스타일 */
+        .qualification-button {
+            padding: 8px 16px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: white;
+            color: #666;
+            line-height: 1;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .qualification-button:hover {
+            border-color: #ff4757;
+            color: #ff4757;
+        }
+
+        .qualification-button.checked {
+            background-color: #ff4757;
+            color: white;
+            border-color: #ff4757;
+        }
+
+        .qualification-button .check-icon {
+            width: 14px;
+            height: 14px;
+            border: 2px solid currentColor;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .qualification-button.checked .check-icon {
+            background-color: currentColor;
+        }
+
+        .qualification-button.checked .check-icon::after {
+            content: '✓';
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
         /* 통계 탭 네비게이션 */
         .stats-nav {
             background: white;
@@ -298,7 +349,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 12px;
-            min-width: 2000px;
+            min-width: 1400px;
         }
 
         .stats-table th {
@@ -362,7 +413,7 @@
             background-color: #fafbfc;
         }
 
-        /* 랭크와 이름 컬럼 고정 */
+        /* 랭크, 이름 컬럼만 고정 (팀 컬럼은 고정하지 않음) */
         .stats-table th:nth-child(1),
         .stats-table th:nth-child(2),
         .stats-table td:nth-child(1),
@@ -479,8 +530,17 @@
             cursor: default;
         }
 
+        .stats-table tbody th:nth-child(3) {
+            left: 160px;
+            z-index: 3;
+            background-color: #f8f9fa;
+            min-width: 80px;
+            cursor: default;
+        }
+
         .stats-table tbody th:nth-child(1)::after,
-        .stats-table tbody th:nth-child(2)::after {
+        .stats-table tbody th:nth-child(2)::after,
+        .stats-table tbody th:nth-child(3)::after {
             display: none;
         }
 
@@ -513,55 +573,10 @@
         }
 
         /* 팀별 고유 색상 (이미지가 없을 때를 위한 fallback) */
-        .team-logo-moonshot {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-        }
-
-        .team-logo-nyanko {
-            background: linear-gradient(135deg, #feca57, #ff9ff3);
-        }
-
-        .team-logo-leroleros {
-            background: linear-gradient(135deg, #48dbfb, #0abde3);
-        }
-
-        .team-logo-ishikawa {
-            background: linear-gradient(135deg, #ff9ff3, #f368e0);
-        }
-
-        .team-logo-florian {
-            background: linear-gradient(135deg, #1dd1a1, #10ac84);
-        }
-
-        .team-logo-bubble {
-            background: linear-gradient(135deg, #ff9ff3, #f368e0);
-        }
-
-        .team-logo-default {
-            background: linear-gradient(135deg, #c8d6e5, #8395a7);
-        }
-
-        .player-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .player-number {
-            background-color: #ff4757;
-            color: white;
-            font-size: 10px;
-            font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 10px;
-            min-width: 20px;
-            text-align: center;
-        }
 
         /* WAR 값 강조 */
         .war-value {
-            font-weight: 700;
+            font-weight: 600;
             color: #ff4757;
         }
 
@@ -584,13 +599,19 @@
             font-weight: 500;
         }
 
-        .player-name {
+        .player-position {
+            font-size: 11px;
+            color: #666;
             font-weight: 500;
-            color: #333;
         }
 
         .team-name {
             font-size: 12px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .player-name {
             font-weight: 500;
             color: #333;
         }
@@ -601,58 +622,64 @@
             color: #333;
         }
 
-        .team-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .team-logo {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #e9ecef;
-        }
-
-        .team-name {
-            font-size: 12px;
-            font-weight: 500;
-            color: #333;
-        }
-
+        /* 반응형 디자인 */
         @media (max-width: 768px) {
             .content-container {
-                padding: 0 12px;
+                padding: 0 10px;
+            }
+            
+            .page-title {
+                font-size: 20px;
+            }
+            
+            .category-buttons {
+                gap: 4px;
+            }
+            
+            .category-button {
+                padding: 6px 12px;
+                font-size: 12px;
             }
         }
-        .stats-table th:nth-child(1) { width: 60px; } /* Rank */
-        .stats-table th:nth-child(2) { width: 120px; } /* Team */
-        .stats-table th:nth-child(3) { width: 80px; } /* WAR */
-        .stats-table th:nth-child(4) { width: 60px; } /* W */
-        .stats-table th:nth-child(5) { width: 60px; } /* L */
-        .stats-table th:nth-child(6) { width: 60px; } /* SV */
-        .stats-table th:nth-child(7) { width: 60px; } /* HLD */
-        .stats-table th:nth-child(8) { width: 80px; } /* IP */
-        .stats-table th:nth-child(9) { width: 60px; } /* ER */
-        .stats-table th:nth-child(10) { width: 60px; } /* R */
-        .stats-table th:nth-child(11) { width: 80px; } /* TBF */
-        .stats-table th:nth-child(12) { width: 60px; } /* H */
-        .stats-table th:nth-child(13) { width: 60px; } /* HR */
-        .stats-table th:nth-child(14) { width: 60px; } /* BB */
-        .stats-table th:nth-child(15) { width: 60px; } /* IBB */
-        .stats-table th:nth-child(16) { width: 60px; } /* HBP */
-        .stats-table th:nth-child(17) { width: 60px; } /* SO */
-        .stats-table th:nth-child(18) { width: 80px; } /* ERA */
-        .stats-table th:nth-child(19) { width: 80px; } /* RA9 */
-        .stats-table th:nth-child(20) { width: 80px; } /* WHIP */
+
+        /* 툴팁 스타일 */
+        .tooltip {
+            position: absolute;
+            background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 400;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            max-width: 300px;
+            white-space: normal;
+            line-height: 1.4;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #333;
+        }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="header-container">
-            <a href="index.html" class="logo">
+            <a href="/" class="logo">
                 <div class="logo-icon">W</div>
                 <span class="logo-text">WBD 기록실</span>
             </a>
@@ -680,8 +707,8 @@
     <nav class="sub-nav-container">
         <div class="sub-nav">
             <a href="record_bat_basic.html" class="sub-nav-item">시즌기록실</a>
-            <a href="career_record_bat_basic.html" class="sub-nav-item">통산기록실</a>
-            <a href="team-record_pitch_basic.html" class="sub-nav-item active">팀기록실</a>
+            <a href="career_record_bat_basic.html" class="sub-nav-item active">통산기록실</a>
+            <a href="team-record_bat_basic.html" class="sub-nav-item">팀기록실</a>
         </div>
     </nav>
 
@@ -689,10 +716,14 @@
         <div class="content-container">
             <div class="page-header">
                 <div class="page-title-section">
-                    <h1 class="page-title">팀기록실</h1>
+                    <h1 class="page-title">통산기록실</h1>
                     <div class="category-buttons">
                         <button class="category-button" data-tab="batting">타격</button>
                         <button class="category-button active" data-tab="pitching">투구</button>
+                        <button class="qualification-button" id="qualificationBtn">
+                            <div class="check-icon"></div>
+                            규정 이닝
+                        </button>
                     </div>
                 </div>
             </div>
@@ -700,8 +731,9 @@
             <!-- 통계 탭 네비게이션 -->
             <div class="stats-nav">
                 <div class="stats-nav-container">
-                    <a href="#" class="stats-nav-item active" data-tab="basic">기본</a>
-                    <a href="#" class="stats-nav-item" data-tab="advanced">심화</a>
+                    <a href="career_record_pitch_basic.html" class="stats-nav-item active" data-tab="basic">기본</a>
+                    <a href="career_record_pitch_advanced.html" class="stats-nav-item" data-tab="advanced">심화</a>
+                    <!-- <a href="record_bat_value.html" class="stats-nav-item" data-tab="value">가치</a> -->
                 </div>
             </div>
 
@@ -710,25 +742,34 @@
                 <table class="stats-table" id="statsTable">
                     <thead>
                         <tr>
-                            <th>Rank</th>
-                            <th>Team</th>
-                            <th class="sortable sort-desc" data-sort="WHIP">WHIP</th>
-                            <th class="sortable" data-sort="W">W</th>
-                            <th class="sortable" data-sort="L">L</th>
-                            <th class="sortable" data-sort="SV">SV</th>
-                            <th class="sortable" data-sort="HLD">HLD</th>
-                            <th class="sortable" data-sort="IP">IP</th>
-                            <th class="sortable" data-sort="ER">ER</th>
+                            <th data-sort="Rank">Rank</th>
+                            <th data-sort="이름">Name</th>
+                            <th data-sort="팀">Team</th>
+                            <th class="sortable sort-desc" data-sort="OPS">OPS</th>
+                            <th class="sortable" data-sort="PA">PA</th>
+                            <th class="sortable" data-sort="ePA">ePA</th>
+                            <th class="sortable" data-sort="AB">AB</th>
                             <th class="sortable" data-sort="R">R</th>
-                            <th class="sortable" data-sort="TBF">TBF</th>
                             <th class="sortable" data-sort="H">H</th>
+                            <th class="sortable" data-sort="2B">2B</th>
+                            <th class="sortable" data-sort="3B">3B</th>
                             <th class="sortable" data-sort="HR">HR</th>
+                            <th class="sortable" data-sort="TB">TB</th>
+                            <th class="sortable" data-sort="RBI">RBI</th>
+                            <th class="sortable" data-sort="SB">SB</th>
+                            <th class="sortable" data-sort="CS">CS</th>
                             <th class="sortable" data-sort="BB">BB</th>
-                            <th class="sortable" data-sort="IBB">IBB</th>
-                            <th class="sortable" data-sort="HBP">HBP</th>
+                            <th class="sortable" data-sort="HP">HP</th>
+                            <th class="sortable" data-sort="IB">IB</th>
                             <th class="sortable" data-sort="SO">SO</th>
-                            <th class="sortable" data-sort="ERA">ERA</th>
-                            <th class="sortable" data-sort="RA9">RA9</th>
+                            <th class="sortable" data-sort="GDP">GDP</th>
+                            <th class="sortable" data-sort="SH">SH</th>
+                            <th class="sortable" data-sort="SF">SF</th>
+                            <th class="sortable" data-sort="AVG">AVG</th>
+                            <th class="sortable" data-sort="OBP">OBP</th>
+                            <th class="sortable" data-sort="SLG">SLG</th>
+                            <th class="sortable" data-sort="OPS">OPS</th>
+                            <th class="sortable" data-sort="wRC+">wRC+</th>
                         </tr>
                     </thead>
                     <tbody id="statsTableBody">
@@ -739,67 +780,19 @@
         </div>
     </main>
 
+    <!-- 툴팁 요소 -->
+    <div id="tooltip" class="tooltip"></div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         let playerData = [];
         let leagueTeamData = {}; // 리그별 팀 정보를 저장할 객체
-        let currentSortColumn = 'WHIP';
+        let currentSortColumn = 'OPS';
         let currentSortDirection = 'desc';
-        let currentTab = 'basic';
-        
-        // 실제 Excel 파일의 컬럼명을 확인하기 위한 디버깅
-        let actualColumns = [];
+        let statDescriptions = {}; // 스탯 설명을 저장할 객체
+        let isQualificationChecked = false; // 규정 타석 버튼 상태
 
-        // Excel 파일에서 선수 데이터를 로드하는 함수
-        async function loadPlayerStats() {
-            try {
-                // 먼저 League_Team 데이터 로드
-                await loadLeagueTeamData();
-                
-                const response = await fetch('./Data/PlayerStatsLeague.xlsx');
-                if (!response.ok) {
-                    throw new Error('Excel 파일을 불러올 수 없습니다');
-                }
-                
-                const arrayBuffer = await response.arrayBuffer();
-                
-                // Excel 파일의 구조 확인
-                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                console.log('Excel 파일의 모든 시트:', workbook.SheetNames);
-                
-                // 투수 데이터가 포함된 시트 찾기
-                let targetSheet = '2025 썸머시즌 투수';
-                
-                // 기본 시트가 없으면 첫 번째 시트 사용
-                if (!workbook.SheetNames.includes(targetSheet)) {
-                    targetSheet = workbook.SheetNames[0];
-                    console.log(`기본 시트를 찾을 수 없어 첫 번째 시트 사용: "${targetSheet}"`);
-                }
-                
-                // 선택된 시트의 헤더 정보 출력
-                const selectedWorksheet = workbook.Sheets[targetSheet];
-                const selectedSheetData = XLSX.utils.sheet_to_json(selectedWorksheet, { header: 1 });
-                if (selectedSheetData.length > 0) {
-                    console.log(`선택된 시트 "${targetSheet}"의 헤더:`, selectedSheetData[0]);
-                }
-                
-                playerData = parseExcelFileBySheet(arrayBuffer, targetSheet);
-                
-                // 초기 정렬 및 표시
-                sortAndDisplayData();
-                
-                // 반복 헤더에 클릭 이벤트 추가
-                addHeaderClickEvents();
-                
-            } catch (error) {
-                console.error('선수 데이터 로딩 실패:', error);
-                document.getElementById('statsTableBody').innerHTML = `
-                    <tr><td colspan="20" style="text-align: center; color: #666;">데이터를 불러올 수 없습니다</td></tr>
-                `;
-            }
-        }
-
-        // League_Team 데이터를 로드하는 함수
+        // League_Team 파일에서 리그별 팀 정보를 로드하는 함수
         async function loadLeagueTeamData() {
             try {
                 const response = await fetch('./Data/League_Team.xlsx');
@@ -905,6 +898,150 @@
             }
         }
 
+        // 스탯 설명을 로드하는 함수
+        async function loadStatDescriptions() {
+            try {
+                const response = await fetch('./Data/Bat_StatName.csv');
+                if (!response.ok) {
+                    throw new Error('Bat_StatName 파일을 불러올 수 없습니다');
+                }
+                
+                const csvText = await response.text();
+                const lines = csvText.split('\n');
+                
+                // CSV 헤더 제거하고 데이터 파싱
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line) {
+                        const [stat, description] = line.split(',');
+                        if (stat && description) {
+                            statDescriptions[stat.trim()] = description.trim();
+                        }
+                    }
+                }
+                
+                console.log('로드된 스탯 설명:', statDescriptions);
+                
+            } catch (error) {
+                console.error('스탯 설명 로딩 실패:', error);
+            }
+        }
+
+        // 툴팁을 표시하는 함수
+        function showTooltip(event, statName) {
+            const tooltip = document.getElementById('tooltip');
+            const description = statDescriptions[statName] || '설명이 없습니다';
+            
+            tooltip.textContent = description;
+            tooltip.style.left = event.pageX + 10 + 'px';
+            tooltip.style.top = event.pageY - 40 + 'px';
+            tooltip.classList.add('show');
+        }
+
+        // 툴팁을 숨기는 함수
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.classList.remove('show');
+        }
+
+        // 반복되는 헤더 클릭 이벤트를 동적으로 추가
+        function addHeaderClickEvents() {
+            document.querySelectorAll('.stats-table tbody th.sortable').forEach(th => {
+                th.addEventListener('click', () => {
+                    const sortColumn = th.getAttribute('data-sort');
+                    const currentSort = th.classList.contains('sort-desc') ? 'desc' : 
+                                     th.classList.contains('sort-asc') ? 'asc' : 'desc';
+                    
+                    // 모든 헤더에서 정렬 클래스 제거
+                    document.querySelectorAll('.stats-table th').forEach(header => {
+                        header.classList.remove('sort-asc', 'sort-desc');
+                    });
+                    
+                    // 새로운 정렬 방향 설정
+                    const newSort = currentSort === 'desc' ? 'asc' : 'desc';
+                    th.classList.add(newSort === 'desc' ? 'sort-desc' : 'sort-asc');
+                    
+                    // 데이터 정렬
+                    currentSortColumn = sortColumn;
+                    currentSortDirection = newSort;
+                    sortAndDisplayData();
+                });
+            });
+        }
+
+        // 헤더에 툴팁 이벤트를 추가하는 함수
+        function addHeaderTooltipEvents() {
+            // 기본 헤더에 툴팁 이벤트 추가
+            document.querySelectorAll('.stats-table thead th').forEach(th => {
+                const sortColumn = th.getAttribute('data-sort');
+                if (sortColumn && sortColumn !== 'Rank' && sortColumn !== '이름' && sortColumn !== '팀') {
+                    th.addEventListener('mouseenter', (e) => showTooltip(e, sortColumn));
+                    th.addEventListener('mouseleave', hideTooltip);
+                }
+            });
+            
+            // 반복 헤더에 툴팁 이벤트 추가
+            document.querySelectorAll('.stats-table tbody th').forEach(th => {
+                const sortColumn = th.getAttribute('data-sort');
+                if (sortColumn && sortColumn !== 'Rank' && sortColumn !== 'Name' && sortColumn !== 'Team') {
+                    th.addEventListener('mouseenter', (e) => showTooltip(e, sortColumn));
+                    th.addEventListener('mouseleave', hideTooltip);
+                }
+            });
+        }
+
+        // Excel 파일에서 선수 데이터를 로드하는 함수
+        async function loadPlayerStats() {
+            try {
+                // 먼저 League_Team 데이터와 스탯 설명 로드
+                await Promise.all([loadLeagueTeamData(), loadStatDescriptions()]);
+                
+                const response = await fetch('./Data/PlayerStatsLeague.xlsx');
+                if (!response.ok) {
+                    throw new Error('Excel 파일을 불러올 수 없습니다');
+                }
+                
+                const arrayBuffer = await response.arrayBuffer();
+                
+                // Excel 파일의 구조 확인
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                console.log('Excel 파일의 모든 시트:', workbook.SheetNames);
+                
+                // RAA 데이터가 포함된 시트 찾기
+                let targetSheet = '2025 썸머시즌 투수';
+                
+                // 기본 시트가 없으면 첫 번째 시트 사용
+                if (!workbook.SheetNames.includes(targetSheet)) {
+                    targetSheet = workbook.SheetNames[0];
+                    console.log(`기본 시트를 찾을 수 없어 첫 번째 시트 사용: "${targetSheet}"`);
+                }
+                
+                // 선택된 시트의 헤더 정보 출력
+                const selectedWorksheet = workbook.Sheets[targetSheet];
+                const selectedSheetData = XLSX.utils.sheet_to_json(selectedWorksheet, { header: 1 });
+                if (selectedSheetData.length > 0) {
+                    console.log(`선택된 시트 "${targetSheet}"의 헤더:`, selectedSheetData[0]);
+                }
+                
+                playerData = parseExcelFileBySheet(arrayBuffer, targetSheet);
+                
+                // 초기 정렬 및 표시
+                sortAndDisplayData();
+                
+                // 반복 헤더에 클릭 이벤트 추가
+                addHeaderClickEvents();
+                
+                // 반복 헤더에 툴팁 이벤트 추가
+                addHeaderTooltipEvents();
+                
+            } catch (error) {
+                console.error('선수 데이터 로딩 실패:', error);
+                document.getElementById('statsTableBody').innerHTML = `
+                    <tr><td colspan="32" style="text-align: center; color: #666;">데이터를 불러올 수 없습니다</td></tr>
+                `;
+            }
+        }
+
         // 특정 시트의 데이터를 파싱하는 함수
         function parseExcelFileBySheet(arrayBuffer, sheetName) {
             const workbook = XLSX.read(arrayBuffer, { type: 'array' });
@@ -939,31 +1076,6 @@
             return data;
         }
 
-        // 반복되는 헤더 클릭 이벤트를 동적으로 추가
-        function addHeaderClickEvents() {
-            document.querySelectorAll('.stats-table tbody th.sortable').forEach(th => {
-                th.addEventListener('click', () => {
-                    const sortColumn = th.getAttribute('data-sort');
-                    const currentSort = th.classList.contains('sort-desc') ? 'desc' : 
-                                     th.classList.contains('sort-asc') ? 'asc' : 'desc';
-                    
-                    // 모든 헤더에서 정렬 클래스 제거
-                    document.querySelectorAll('.stats-table th').forEach(header => {
-                        header.classList.remove('sort-asc', 'sort-desc');
-                    });
-                    
-                    // 새로운 정렬 방향 설정
-                    const newSort = currentSort === 'desc' ? 'asc' : 'desc';
-                    th.classList.add(newSort === 'desc' ? 'sort-desc' : 'sort-asc');
-                    
-                    // 데이터 정렬
-                    currentSortColumn = sortColumn;
-                    currentSortDirection = newSort;
-                    sortAndDisplayData();
-                });
-            });
-        }
-
         // 리그와 선수명을 기반으로 팀명을 찾는 함수
         function findTeamByLeagueAndPlayer(leagueName, playerName) {
             if (!leagueTeamData[leagueName]) {
@@ -987,181 +1099,52 @@
             return { displayName: 'N/A', originalName: 'N/A' };
         }
 
-        // 소수 값 컬럼인지 판단하는 함수
-        function isDecimalColumn(columnName) {
-            // 소수 값이어야 하는 컬럼들 (투수 기본 통계)
-            const decimalColumns = [
-                'WAR', 'IP', 'ERA', 'RA9', 'WHIP'
-            ];
-            
-            return decimalColumns.some(col => columnName.includes(col));
-        }
-
-        // 팀별로 데이터를 그룹화하고 합산하는 함수
-        function aggregateDataByTeam(playerData) {
-            const teamGroups = {};
-            
-            playerData.forEach(player => {
-                const leagueName = player.리그 || '';
-                const playerName = player.이름 || '';
-                const teamInfo = findTeamByLeagueAndPlayer(leagueName, playerName);
-                
-                // 팀명이 N/A인 경우 원본 팀 정보 사용
-                const teamName = teamInfo.displayName !== 'N/A' ? teamInfo.displayName : (player.팀 || 'N/A');
-                const originalTeamName = teamInfo.originalName !== 'N/A' ? teamInfo.originalName : (player.팀 || 'N/A');
-                
-                if (!teamGroups[teamName]) {
-                    teamGroups[teamName] = {
-                        teamName: teamName,
-                        originalTeamName: originalTeamName,
-                        players: [],
-                        counts: {},
-                        sums: {},
-                        averages: {}
-                    };
-                }
-                
-                teamGroups[teamName].players.push(player);
-            });
-            
-            // 각 팀의 데이터를 합산
-            Object.values(teamGroups).forEach(team => {
-                const firstPlayer = team.players[0];
-                
-                // 모든 가능한 컬럼에 대해 처리
-                Object.keys(firstPlayer).forEach(key => {
-                    if (key === '이름' || key === '리그' || key === '팀') return; // 제외할 컬럼
-                    
-                    const values = team.players.map(p => parseFloat(p[key]) || 0).filter(v => !isNaN(v));
-                    
-                    if (values.length > 0) {
-                        // 소수 값인지 확인 (소수점이 있거나 평균이 필요한 항목)
-                        const shouldUseAverage = isDecimalColumn(key);
-                        
-                        if (shouldUseAverage) {
-                            // 평균 계산
-                            const average = values.reduce((sum, val) => sum + val, 0) / values.length;
-                            team.averages[key] = average;
-                        } else {
-                            // 합계 계산
-                            const sum = values.reduce((sum, val) => sum + val, 0);
-                            team.sums[key] = sum;
-                        }
-                        
-                        team.counts[key] = values.length;
-                    }
-                });
-            });
-            
-            // 팀 데이터를 배열로 변환
-            return Object.values(teamGroups).map(team => {
-                const aggregatedPlayer = {};
-                
-                // 기본 팀 정보
-                aggregatedPlayer.teamName = team.teamName;
-                aggregatedPlayer.originalTeamName = team.originalTeamName;
-                aggregatedPlayer.playerCount = team.players.length;
-                
-                // 모든 컬럼에 대해 합산된 값 설정
-                Object.keys(team.sums).forEach(key => {
-                    aggregatedPlayer[key] = team.sums[key];
-                });
-                
-                Object.keys(team.averages).forEach(key => {
-                    aggregatedPlayer[key] = team.averages[key];
-                });
-                
-                return aggregatedPlayer;
-            });
-        }
-
         // 데이터 정렬 및 표시 함수
         function sortAndDisplayData() {
-            const validData = playerData.filter(row => row[currentSortColumn] && row.이름);
+            let validData = playerData.filter(row => row[currentSortColumn] && row.이름);
             
-            // 팀별로 데이터 그룹화 및 합산
-            const teamAggregatedData = aggregateDataByTeam(validData);
-            
-            // 팀별 데이터를 정렬
-            teamAggregatedData.sort((a, b) => {
-                const aValue = parseFloat(a[currentSortColumn]) || 0;
-                const bValue = parseFloat(b[currentSortColumn]) || 0;
+            // 규정 타석 필터링 - isTitle이 true인 선수들만
+            if (isQualificationChecked) {
+                validData = validData.filter(row => row.isTitle === true);
                 
-                if (currentSortDirection === 'desc') {
-                    return bValue - aValue;
-                } else {
-                    return aValue - bValue;
-                }
-            });
+                // 활성화 상태에서는 isTitle이 true인 선수부터 정렬
+                validData.sort((a, b) => {
+                    // 먼저 isTitle로 정렬 (true가 먼저)
+                    const aIsTitle = a.isTitle === true;
+                    const bIsTitle = b.isTitle === true;
+                    
+                    if (aIsTitle !== bIsTitle) {
+                        return bIsTitle - aIsTitle; // true가 먼저
+                    }
+                    
+                    // isTitle이 같으면 현재 정렬 기준으로 정렬
+                    const aValue = parseFloat(a[currentSortColumn]) || 0;
+                    const bValue = parseFloat(b[currentSortColumn]) || 0;
+                    
+                    if (currentSortDirection === 'desc') {
+                        return bValue - aValue;
+                    } else {
+                        return aValue - bValue;
+                    }
+                });
+            } else {
+                // 비활성화 상태에서는 순수하게 스탯 순으로만 정렬
+                validData.sort((a, b) => {
+                    const aValue = parseFloat(a[currentSortColumn]) || 0;
+                    const bValue = parseFloat(b[currentSortColumn]) || 0;
+                    
+                    if (currentSortDirection === 'desc') {
+                        return bValue - aValue;
+                    } else {
+                        return aValue - bValue;
+                    }
+                });
+            }
 
-            displayTeamData(teamAggregatedData);
+            displayData(validData);
         }
 
-        // 팀 데이터를 표시하는 함수
-        function displayTeamData(teamData) {
-            const tbody = document.getElementById('statsTableBody');
-            tbody.innerHTML = '';
-            
-            teamData.forEach((team, index) => {
-                // 10행마다 헤더 추가
-                if (index % 10 === 0 && index > 0) {
-                    const headerRow = document.createElement('tr');
-                    headerRow.innerHTML = `
-                        <th>Rank</th>
-                        <th>Team</th>
-                        <th class="sortable" data-sort="WHIP">WHIP</th>
-                        <th class="sortable" data-sort="W">W</th>
-                        <th class="sortable" data-sort="L">L</th>
-                        <th class="sortable" data-sort="SV">SV</th>
-                        <th class="sortable" data-sort="HLD">HLD</th>
-                        <th class="sortable" data-sort="IP">IP</th>
-                        <th class="sortable" data-sort="ER">ER</th>
-                        <th class="sortable" data-sort="R">R</th>
-                        <th class="sortable" data-sort="TBF">TBF</th>
-                        <th class="sortable" data-sort="H">H</th>
-                        <th class="sortable" data-sort="HR">HR</th>
-                        <th class="sortable" data-sort="BB">BB</th>
-                        <th class="sortable" data-sort="IBB">IBB</th>
-                        <th class="sortable" data-sort="HBP">HBP</th>
-                        <th class="sortable" data-sort="SO">SO</th>
-                        <th class="sortable" data-sort="ERA">ERA</th>
-                        <th class="sortable" data-sort="RA9">RA9</th>
-                    `;
-                    tbody.appendChild(headerRow);
-                }
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td class="team-name-cell">
-                        <div class="team-info">
-                            <img src="Image/Team/${getTeamLogo(team.originalTeamName)}" alt="${team.originalTeamName}" class="team-logo ${getTeamLogoClass(team.originalTeamName)}" onerror="this.style.display='none'">
-                            <span class="team-name">${team.originalTeamName}</span>
-                        </div>
-                    </td>
-                    <td class="war-value">${parseFloat(team.WHIP || 0).toFixed(2)}</td>
-                    <td>${parseInt(team.W || 0)}</td>
-                    <td>${parseInt(team.L || 0)}</td>
-                    <td>${parseInt(team.SV || 0)}</td>
-                    <td>${parseInt(team.HLD || 0)}</td>
-                    <td>${parseFloat(team.IP || 0).toFixed(1)}</td>
-                    <td>${parseInt(team.ER || 0)}</td>
-                    <td>${parseInt(team.R || 0)}</td>
-                    <td>${parseInt(team.TBF || 0)}</td>
-                    <td>${parseInt(team.H || 0)}</td>
-                    <td>${parseInt(team.HR || 0)}</td>
-                    <td>${parseInt(team.BB || 0)}</td>
-                    <td>${parseInt(team.IBB || 0)}</td>
-                    <td>${parseInt(team.HBP || 0)}</td>
-                    <td>${parseInt(team.SO || 0)}</td>
-                    <td>${parseFloat(team.ERA || 0).toFixed(2)}</td>
-                    <td>${parseFloat(team.RA9 || 0).toFixed(2)}</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // 데이터 표시 함수 (기존 함수는 유지하되 사용하지 않음)
+        // 데이터 표시 함수
         function displayData(data) {
             const tbody = document.getElementById('statsTableBody');
             tbody.innerHTML = '';
@@ -1174,26 +1157,45 @@
                         <th>Rank</th>
                         <th>Name</th>
                         <th>Team</th>
-                        <th class="sortable" data-sort="WAR">WAR</th>
-                        <th class="sortable" data-sort="W">W</th>
-                        <th class="sortable" data-sort="L">L</th>
-                        <th class="sortable" data-sort="SV">SV</th>
-                        <th class="sortable" data-sort="HLD">HLD</th>
-                        <th class="sortable" data-sort="IP">IP</th>
-                        <th class="sortable" data-sort="ER">ER</th>
+                        <th class="sortable" data-sort="OPS">OPS</th>
+                        <th class="sortable" data-sort="PA">PA</th>
+                        <th class="sortable" data-sort="ePA">ePA</th>
+                        <th class="sortable" data-sort="AB">AB</th>
                         <th class="sortable" data-sort="R">R</th>
-                        <th class="sortable" data-sort="TBF">TBF</th>
                         <th class="sortable" data-sort="H">H</th>
+                        <th class="sortable" data-sort="2B">2B</th>
+                        <th class="sortable" data-sort="3B">3B</th>
                         <th class="sortable" data-sort="HR">HR</th>
+                        <th class="sortable" data-sort="TB">TB</th>
+                        <th class="sortable" data-sort="RBI">RBI</th>
+                        <th class="sortable" data-sort="SB">SB</th>
+                        <th class="sortable" data-sort="CS">CS</th>
                         <th class="sortable" data-sort="BB">BB</th>
-                        <th class="sortable" data-sort="IBB">IBB</th>
-                        <th class="sortable" data-sort="HBP">HBP</th>
+                        <th class="sortable" data-sort="HP">HP</th>
+                        <th class="sortable" data-sort="IB">IB</th>
                         <th class="sortable" data-sort="SO">SO</th>
-                        <th class="sortable" data-sort="ERA">ERA</th>
-                        <th class="sortable" data-sort="RA9">RA9</th>
-                        <th class="sortable" data-sort="WHIP">WHIP</th>
+                        <th class="sortable" data-sort="GDP">GDP</th>
+                        <th class="sortable" data-sort="SH">SH</th>
+                        <th class="sortable" data-sort="SF">SF</th>
+                        <th class="sortable" data-sort="AVG">AVG</th>
+                        <th class="sortable" data-sort="OBP">OBP</th>
+                        <th class="sortable" data-sort="SLG">SLG</th>
+                        <th class="sortable" data-sort="OPS">OPS</th>
+                        <th class="sortable" data-sort="wRC+">wRC+</th>
                     `;
                     tbody.appendChild(headerRow);
+                    
+                    // 반복 헤더에 툴팁 이벤트 추가
+                    setTimeout(() => {
+                        const newHeader = tbody.querySelector(`tr:nth-child(${tbody.children.length}) th`);
+                        if (newHeader) {
+                            const sortColumn = newHeader.getAttribute('data-sort');
+                            if (sortColumn) {
+                                newHeader.addEventListener('mouseenter', (e) => showTooltip(e, sortColumn));
+                                newHeader.addEventListener('mouseleave', hideTooltip);
+                            }
+                        }
+                    }, 0);
                 }
                 
                 // 리그와 선수명을 기반으로 팀명 찾기
@@ -1215,34 +1217,38 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${index + 1}</td>
-                    <td>
-                        <div class="player-info">
-                            <span>${playerName}</span>
-                        </div>
-                    </td>
+                    <td class="player-name">${playerName}</td>
                     <td class="team-name-cell">
                         <div class="team-info">
                             <img src="Image/Team/${getTeamLogo(teamInfo.originalName)}" alt="${displayTeamName}" class="team-logo ${getTeamLogoClass(teamInfo.originalName)}" onerror="this.style.display='none'">
                             <span class="team-name">${displayTeamName}</span>
                         </div>
                     </td>
-                    <td class="war-value">${parseFloat(player.WHIP || 0).toFixed(2)}</td>
-                    <td>${player.W || 0}</td>
-                    <td>${player.L || 0}</td>
-                    <td>${player.SV || 0}</td>
-                    <td>${player.HLD || 0}</td>
-                    <td>${parseFloat(player.IP || 0).toFixed(1)}</td>
-                    <td>${player.ER || 0}</td>
+                    <td class="war-value">${parseFloat(player.OPS || 0).toFixed(3)}</td>
+                    <td>${player.PA || 0}</td>
+                    <td>${player.ePA || 0}</td>
+                    <td>${player.AB || 0}</td>
                     <td>${player.R || 0}</td>
-                    <td>${player.TBF || 0}</td>
                     <td>${player.H || 0}</td>
+                    <td>${player['2B'] || 0}</td>
+                    <td>${player['3B'] || 0}</td>
                     <td>${player.HR || 0}</td>
+                    <td>${player.TB || 0}</td>
+                    <td>${player.RBI || 0}</td>
+                    <td>${player.SB || 0}</td>
+                    <td>${player.CS || 0}</td>
                     <td>${player.BB || 0}</td>
-                    <td>${player.IBB || 0}</td>
-                    <td>${player.HBP || 0}</td>
+                    <td>${player.HP || 0}</td>
+                    <td>${player.IB || 0}</td>
                     <td>${player.SO || 0}</td>
-                    <td>${parseFloat(player.ERA || 0).toFixed(2)}</td>
-                    <td>${parseFloat(player.RA9 || 0).toFixed(2)}</td>
+                    <td>${player.GDP || 0}</td>
+                    <td>${player.SH || 0}</td>
+                    <td>${player.SF || 0}</td>
+                    <td>${parseFloat(player.AVG || 0).toFixed(3)}</td>
+                    <td>${parseFloat(player.OBP || 0).toFixed(3)}</td>
+                    <td>${parseFloat(player.SLG || 0).toFixed(3)}</td>
+                    <td>${parseFloat(player.OPS || 0).toFixed(3)}</td>
+                    <td>${parseFloat(player['wRC+'] || 0).toFixed(1)}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1251,16 +1257,7 @@
         // 팀 이름을 CSS 클래스로 변환
         function getTeamClass(teamName) {
             const teamMap = {
-                'KT': 'kt-wiz',
-                '삼성': 'lions',
-                'SSG': 'giants',
-                'KIA': 'tigers',
-                'LG': 'twins',
-                'NC': 'dinos',
-                '한화': 'landers',
-                '두산': 'bears',
-                '롯데': 'marines',
-                '키움': 'heroes'
+
             };
             return teamMap[teamName] || 'unknown';
         }
@@ -1408,31 +1405,6 @@
                 });
             });
             
-            // 반복되는 헤더 클릭 이벤트를 동적으로 추가
-            function addHeaderClickEvents() {
-                document.querySelectorAll('.stats-table tbody th.sortable').forEach(th => {
-                    th.addEventListener('click', () => {
-                        const sortColumn = th.getAttribute('data-sort');
-                        const currentSort = th.classList.contains('sort-desc') ? 'desc' : 
-                                         th.classList.contains('sort-asc') ? 'asc' : 'desc';
-                        
-                        // 모든 헤더에서 정렬 클래스 제거
-                        document.querySelectorAll('.stats-table th').forEach(header => {
-                            header.classList.remove('sort-asc', 'sort-desc');
-                        });
-                        
-                        // 새로운 정렬 방향 설정
-                        const newSort = currentSort === 'desc' ? 'asc' : 'desc';
-                        th.classList.add(newSort === 'desc' ? 'sort-desc' : 'sort-asc');
-                        
-                        // 데이터 정렬
-                        currentSortColumn = sortColumn;
-                        currentSortDirection = newSort;
-                        sortAndDisplayData();
-                    });
-                });
-            }
-            
             // 데이터 로드 후 반복 헤더에 이벤트 추가
             const originalLoadPlayerStats = loadPlayerStats;
             loadPlayerStats = async function() {
@@ -1450,23 +1422,10 @@
             // 탭 네비게이션
             document.querySelectorAll('.stats-nav-item').forEach(item => {
                 item.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const tabType = item.getAttribute('data-tab');
-                    
-                    if (tabType === 'advanced') {
-                        // 심화 탭 클릭 시 팀 기록실 심화 페이지로 이동
-                        window.location.href = 'team-record_pitch_advanced.html';
-                        return;
-                    }
-                    
+                    // e.preventDefault() 제거 - 링크가 제대로 작동하도록 함
                     document.querySelectorAll('.stats-nav-item').forEach(nav => nav.classList.remove('active'));
                     item.classList.add('active');
-                    
-                    currentTab = tabType;
-                    console.log('탭 변경:', currentTab);
-                    
-                    // 탭 변경 시 현재 데이터로 다시 표시
-                    sortAndDisplayData();
+                    // 여기에 탭별 다른 데이터 로드 로직 추가 가능
                 });
             });
 
@@ -1481,19 +1440,49 @@
                     console.log('선택된 탭:', selectedTab);
                     
                     if (selectedTab === 'batting') {
-                        console.log('타자 페이지로 이동');
-                        window.location.href = 'team-record_bat_basic.html';
+                        console.log('타격 페이지로 이동');
+                        window.location.href = 'career_record_bat_basic.html';
                     }
                     // 투구는 현재 페이지이므로 아무것도 하지 않음
                 });
             });
+
+            // 규정 타석 버튼 클릭 이벤트
+            document.getElementById('qualificationBtn').addEventListener('click', () => {
+                isQualificationChecked = !isQualificationChecked;
+                const btn = document.getElementById('qualificationBtn');
+                btn.classList.toggle('checked');
+                
+                // 체크 아이콘 업데이트
+                const checkIcon = btn.querySelector('.check-icon');
+                if (isQualificationChecked) {
+                    checkIcon.style.backgroundColor = 'currentColor';
+                    checkIcon.innerHTML = '✓';
+                } else {
+                    checkIcon.style.backgroundColor = 'transparent';
+                    checkIcon.innerHTML = '';
+                }
+                
+                console.log('규정 타석 필터:', isQualificationChecked ? '활성화 (isTitle=true만 표시)' : '비활성화 (전체 표시)');
+                
+                // isTitle 필드 확인
+                if (playerData.length > 0) {
+                    const titleData = playerData.filter(p => p.isTitle === true);
+                    console.log(`isTitle=true인 선수 수: ${titleData.length}명`);
+                    console.log('isTitle=true인 선수들:', titleData.slice(0, 5).map(p => p.이름));
+                }
+                
+                sortAndDisplayData(); // 필터링 후 다시 정렬
+            });
+
+
         });
 
         // 언어 변경 함수
         function changeLanguage(lang) {
             const translations = {
                 ko: {
-                    title: '팀 기록실 - WBD 기록실',
+                    title: '통산기록실 - WBD 기록실',
                     logoText: 'WBD 기록실',
                     recordRoom: '기록실',
                     seasonInfo: '시즌정보',
@@ -1503,14 +1492,15 @@
                     subNavSeason: '시즌기록실',
                     subNavCareer: '통산기록실',
                     subNavTeam: '팀기록실',
-                    pageTitle: '팀기록실',
+                    pageTitle: '통산기록실',
                     batting: '타격',
                     pitching: '투구',
                     basic: '기본',
-                    advanced: '심화'
+                    advanced: '심화',
+                    value: '가치'
                 },
                 ja: {
-                    title: 'チーム記録室 - WBD 記録室',
+                    title: '通算記録室 - WBD 記録室',
                     logoText: 'WBD 記録室',
                     recordRoom: '記録室',
                     seasonInfo: 'シーズン情報',
@@ -1520,11 +1510,12 @@
                     subNavSeason: 'シーズン記録室',
                     subNavCareer: '通算記録室',
                     subNavTeam: 'チーム記録室',
-                    pageTitle: 'チーム記録室',
+                    pageTitle: '通算記録室',
                     batting: '打撃',
                     pitching: '投球',
                     basic: '基本',
-                    advanced: '応用'
+                    advanced: '応用',
+                    value: '価値'
                 }
             };
 
@@ -1572,6 +1563,8 @@
                     item.textContent = translations[lang].basic;
                 } else if (dataTab === 'advanced') {
                     item.textContent = translations[lang].advanced;
+                } else if (dataTab === 'value') {
+                    item.textContent = translations[lang].value;
                 }
             });
 
