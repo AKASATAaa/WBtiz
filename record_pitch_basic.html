@@ -268,6 +268,33 @@
             gap: 6px;
         }
 
+        /* 시즌 선택 드롭다운 스타일 */
+        .season-selector {
+            padding: 8px 16px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            background-color: white;
+            color: #666;
+            line-height: 1;
+            height: 32px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 120px;
+        }
+
+        .season-selector:hover {
+            border-color: #ff4757;
+            color: #ff4757;
+        }
+
+        .season-selector:focus {
+            outline: none;
+            border-color: #ff4757;
+            box-shadow: 0 0 0 2px rgba(255, 71, 87, 0.2);
+        }
+
         .qualification-button:hover {
             border-color: #ff4757;
             color: #ff4757;
@@ -757,6 +784,9 @@
                     <div class="category-buttons">
                         <button class="category-button" data-tab="batting">타격</button>
                         <button class="category-button active" data-tab="pitching">투구</button>
+                        <select class="season-selector" id="seasonSelector">
+                            <option value="">시즌 선택</option>
+                        </select>
                         <button class="qualification-button" id="qualificationBtn">
                             <div class="check-icon"></div>
                             규정 이닝
@@ -819,6 +849,8 @@
         let currentSortDirection = 'desc';
         let currentTab = 'basic';
         let isQualificationChecked = false; // 규정 이닝 버튼 상태
+        let availableSeasons = []; // 사용 가능한 시즌 목록
+        let currentSeason = ''; // 현재 선택된 시즌
         
         // League_Team 데이터를 저장할 변수
         let leagueTeamData = {};
@@ -846,24 +878,44 @@
                 // 사용 가능한 시트 목록 출력
                 console.log('사용 가능한 시트:', workbook.SheetNames);
                 
-                // 투수 시트를 찾기 위한 시도
-                let pitcherSheet = '2025 썸머시즌 투수';
+                // 선택된 시즌에 해당하는 시트 찾기 (시즌명 + "투수" 조합)
+                let pitcherSheet = currentSeason ? `${currentSeason} 투수` : '2025 썸머시즌 투수';
+                
+                console.log('loadPlayerStats에서 사용할 시즌:', currentSeason);
+                console.log('현재 선택된 시즌:', currentSeason);
+                console.log('찾고 있는 시트명:', pitcherSheet);
+                console.log('사용 가능한 시트들:', workbook.SheetNames);
+                
+                // 정확한 시트명이 없으면 유사한 시트 찾기
                 if (!workbook.Sheets[pitcherSheet]) {
-                    // 다른 가능한 시트 이름들 시도
-                    const possibleSheets = [
-                        '투수',
-                        'Pitcher',
-                        'Pitching',
-                        '2025 투수',
-                        '썸머시즌 투수',
-                        '2025 썸머시즌 타자' // 임시로 타자 시트도 확인
-                    ];
+                    const similarSheets = workbook.SheetNames.filter(sheetName => 
+                        sheetName.includes(currentSeason) && sheetName.includes('투수')
+                    );
                     
-                    for (const sheet of possibleSheets) {
-                        if (workbook.Sheets[sheet]) {
-                            pitcherSheet = sheet;
-                            console.log('시트를 찾았습니다:', sheet);
-                            break;
+                    if (similarSheets.length > 0) {
+                        pitcherSheet = similarSheets[0];
+                        console.log(`유사한 시트를 찾았습니다: "${pitcherSheet}"`);
+                    } else {
+                        // 다른 가능한 시트 이름들 시도
+                        const possibleSheets = [
+                            '투수',
+                            'Pitcher',
+                            'Pitching',
+                            '2025 투수',
+                            '썸머시즌 투수'
+                        ];
+                        
+                        for (const sheet of possibleSheets) {
+                            if (workbook.Sheets[sheet]) {
+                                pitcherSheet = sheet;
+                                console.log('대체 시트를 찾았습니다:', sheet);
+                                break;
+                            }
+                        }
+                        
+                        if (!workbook.Sheets[pitcherSheet]) {
+                            pitcherSheet = workbook.SheetNames[0];
+                            console.log(`해당 시즌의 투수 시트를 찾을 수 없어 첫 번째 시트 사용: "${pitcherSheet}"`);
                         }
                     }
                 }
@@ -915,6 +967,9 @@
                 const workbook = XLSX.read(arrayBuffer, { type: 'array' });
                 
                 console.log('League_Team 파일의 모든 시트:', workbook.SheetNames);
+                
+                // 리그 분류 시트에서 isRecorded가 True인 시즌 정보 로드
+                await loadAvailableSeasons(workbook);
                 
                 // 각 시트(리그)의 팀 정보를 파싱
                 workbook.SheetNames.forEach(sheetName => {
@@ -1001,6 +1056,113 @@
                 
             } catch (error) {
                 console.error('League_Team 데이터 로딩 실패:', error);
+            }
+        }
+
+        // 사용 가능한 시즌 목록을 로드하는 함수
+        async function loadAvailableSeasons(workbook) {
+            try {
+                const leagueClassificationSheet = workbook.Sheets['리그분류'];
+                if (!leagueClassificationSheet) {
+                    console.error('리그분류 시트를 찾을 수 없습니다');
+                    return;
+                }
+
+                const sheetData = XLSX.utils.sheet_to_json(leagueClassificationSheet, { header: 1 });
+                console.log('리그분류 시트 데이터:', sheetData);
+
+                // 헤더 찾기
+                const headers = sheetData[0];
+                console.log('리그분류 시트의 헤더:', headers);
+                
+                const leagueNameIndex = headers.findIndex(h => h === 'LeagueName' || h === 'League Name' || h === '리그명');
+                const isRecordedIndex = headers.findIndex(h => h === 'isRecorded' || h === 'IsRecorded' || h === '기록여부');
+                const isDefIndex = headers.findIndex(h => 
+                    h === 'isDef' || h === 'IsDef' || h === '기본여부' || 
+                    h === 'isdef' || h === 'ISDEF' || h === 'IsDef' ||
+                    h === '기본' || h === 'default' || h === 'Default'
+                );
+
+                if (leagueNameIndex === -1 || isRecordedIndex === -1) {
+                    console.error('LeagueName 또는 isRecorded 컬럼을 찾을 수 없습니다');
+                    console.log('사용 가능한 헤더:', headers);
+                    return;
+                }
+
+                console.log('컬럼 인덱스:', { leagueNameIndex, isRecordedIndex, isDefIndex });
+
+                availableSeasons = [];
+                
+                // 데이터 행들 처리 (헤더 제외)
+                for (let i = 1; i < sheetData.length; i++) {
+                    const row = sheetData[i];
+                    if (row && row[leagueNameIndex] && row[isRecordedIndex]) {
+                        const leagueName = row[leagueNameIndex].toString().trim();
+                        const isRecorded = row[isRecordedIndex];
+                        const isDef = isDefIndex !== -1 ? row[isDefIndex] : false; // isDef 컬럼이 있으면 사용, 없으면 false
+                        
+                        console.log(`행 ${i}: ${leagueName}, isRecorded: ${isRecorded}, isDef: ${isDef}`);
+                        
+                        // isRecorded가 true인 경우만 추가
+                        if (isRecorded === true || isRecorded === 'true' || isRecorded === 'True' || isRecorded === 1) {
+                            availableSeasons.push({
+                                name: leagueName,
+                                isDef: isDef === true || isDef === 'true' || isDef === 'True' || isDef === 1
+                            });
+                            console.log(`사용 가능한 시즌 추가: ${leagueName}, isDef: ${isDef}`);
+                        }
+                    }
+                }
+
+                console.log('사용 가능한 시즌 목록:', availableSeasons);
+                
+                // 드롭다운 메뉴 업데이트 (currentSeason이 없을 때만 초기 로드)
+                if (!currentSeason) {
+                    updateSeasonDropdown(true);
+                } else {
+                    updateSeasonDropdown(false);
+                }
+                
+            } catch (error) {
+                console.error('시즌 목록 로딩 실패:', error);
+            }
+        }
+
+        // 시즌 드롭다운 메뉴를 업데이트하는 함수
+        function updateSeasonDropdown(isInitialLoad = false) {
+            const seasonSelector = document.getElementById('seasonSelector');
+            if (!seasonSelector) return;
+
+            // 현재 선택된 값 저장
+            const currentValue = seasonSelector.value;
+
+            // 기존 옵션 제거 (첫 번째 옵션 제외)
+            while (seasonSelector.children.length > 1) {
+                seasonSelector.removeChild(seasonSelector.lastChild);
+            }
+
+            // 새로운 시즌 옵션 추가
+            availableSeasons.forEach(season => {
+                const option = document.createElement('option');
+                option.value = season.name;
+                option.textContent = season.name;
+                seasonSelector.appendChild(option);
+            });
+
+            // 초기 로드이거나 현재 선택된 값이 유효하지 않은 경우
+            if (isInitialLoad || !currentValue || !availableSeasons.some(season => season.name === currentValue)) {
+                // isDef가 true인 시즌을 기본값으로 설정, 없으면 첫 번째 시즌
+                const defaultSeason = availableSeasons.find(season => season.isDef) || availableSeasons[0];
+                if (defaultSeason) {
+                    currentSeason = defaultSeason.name;
+                    seasonSelector.value = currentSeason;
+                    console.log('기본 시즌 설정 (isDef=true):', currentSeason);
+                }
+            } else {
+                // 기존 선택값 유지
+                seasonSelector.value = currentValue;
+                currentSeason = currentValue;
+                console.log('기존 선택값 유지:', currentSeason);
             }
         }
 
@@ -1651,6 +1813,24 @@
                     }
                     // 투구는 현재 페이지이므로 아무것도 하지 않음
                 });
+            });
+
+            // 시즌 선택 드롭다운 이벤트
+            document.getElementById('seasonSelector').addEventListener('change', (e) => {
+                const newSeason = e.target.value;
+                console.log('이전 시즌:', currentSeason);
+                console.log('새로 선택된 시즌:', newSeason);
+                
+                if (newSeason && newSeason !== currentSeason) {
+                    currentSeason = newSeason;
+                    console.log('시즌 변경으로 인한 데이터 재로드 시작');
+                    
+                    // 기존 데이터 초기화
+                    playerData = [];
+                    
+                    // 데이터 다시 로드
+                    loadPlayerStats();
+                }
             });
 
             // 규정 이닝 버튼 클릭 이벤트

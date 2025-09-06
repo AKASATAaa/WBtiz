@@ -413,7 +413,7 @@
             background-color: #fafbfc;
         }
 
-        /* 랭크, 이름 컬럼만 고정 (팀 컬럼은 고정하지 않음) */
+        /* 랭크, 이름 컬럼만 고정 */
         .stats-table th:nth-child(1),
         .stats-table th:nth-child(2),
         .stats-table td:nth-child(1),
@@ -530,17 +530,8 @@
             cursor: default;
         }
 
-        .stats-table tbody th:nth-child(3) {
-            left: 160px;
-            z-index: 3;
-            background-color: #f8f9fa;
-            min-width: 80px;
-            cursor: default;
-        }
-
         .stats-table tbody th:nth-child(1)::after,
-        .stats-table tbody th:nth-child(2)::after,
-        .stats-table tbody th:nth-child(3)::after {
+        .stats-table tbody th:nth-child(2)::after {
             display: none;
         }
 
@@ -720,10 +711,6 @@
                     <div class="category-buttons">
                         <button class="category-button active" data-tab="batting">타격</button>
                         <button class="category-button" data-tab="pitching">투구</button>
-                        <button class="qualification-button" id="qualificationBtn">
-                            <div class="check-icon"></div>
-                            규정 타석
-                        </button>
                     </div>
                 </div>
             </div>
@@ -744,7 +731,6 @@
                         <tr>
                             <th data-sort="Rank">Rank</th>
                             <th data-sort="이름">Name</th>
-                            <th data-sort="팀">Team</th>
                             <th class="sortable sort-desc" data-sort="OPS">OPS</th>
                             <th class="sortable" data-sort="PA">PA</th>
                             <th class="sortable" data-sort="ePA">ePA</th>
@@ -790,7 +776,6 @@
         let currentSortColumn = 'OPS';
         let currentSortDirection = 'desc';
         let statDescriptions = {}; // 스탯 설명을 저장할 객체
-        let isQualificationChecked = false; // 규정 타석 버튼 상태
 
         // League_Team 파일에서 리그별 팀 정보를 로드하는 함수
         async function loadLeagueTeamData() {
@@ -974,7 +959,7 @@
             // 기본 헤더에 툴팁 이벤트 추가
             document.querySelectorAll('.stats-table thead th').forEach(th => {
                 const sortColumn = th.getAttribute('data-sort');
-                if (sortColumn && sortColumn !== 'Rank' && sortColumn !== '이름' && sortColumn !== '팀') {
+                if (sortColumn && sortColumn !== 'Rank' && sortColumn !== '이름') {
                     th.addEventListener('mouseenter', (e) => showTooltip(e, sortColumn));
                     th.addEventListener('mouseleave', hideTooltip);
                 }
@@ -983,7 +968,7 @@
             // 반복 헤더에 툴팁 이벤트 추가
             document.querySelectorAll('.stats-table tbody th').forEach(th => {
                 const sortColumn = th.getAttribute('data-sort');
-                if (sortColumn && sortColumn !== 'Rank' && sortColumn !== 'Name' && sortColumn !== 'Team') {
+                if (sortColumn && sortColumn !== 'Rank' && sortColumn !== 'Name') {
                     th.addEventListener('mouseenter', (e) => showTooltip(e, sortColumn));
                     th.addEventListener('mouseleave', hideTooltip);
                 }
@@ -1008,7 +993,7 @@
                 console.log('Excel 파일의 모든 시트:', workbook.SheetNames);
                 
                 // RAA 데이터가 포함된 시트 찾기
-                let targetSheet = '2025 썸머시즌 타자';
+                let targetSheet = '통산기록 타자';
                 
                 // 기본 시트가 없으면 첫 번째 시트 사용
                 if (!workbook.SheetNames.includes(targetSheet)) {
@@ -1101,51 +1086,56 @@
 
         // 데이터 정렬 및 표시 함수
         function sortAndDisplayData() {
-            let validData = playerData.filter(row => row[currentSortColumn] && row.이름);
+            console.log('sortAndDisplayData 호출됨');
+            console.log('전체 playerData:', playerData);
+            console.log('현재 정렬 컬럼:', currentSortColumn);
+            console.log('현재 정렬 방향:', currentSortDirection);
             
-            // 규정 타석 필터링 - isTitle이 true인 선수들만
-            if (isQualificationChecked) {
-                validData = validData.filter(row => row.isTitle === true);
-                
-                // 활성화 상태에서는 isTitle이 true인 선수부터 정렬
-                validData.sort((a, b) => {
-                    // 먼저 isTitle로 정렬 (true가 먼저)
-                    const aIsTitle = a.isTitle === true;
-                    const bIsTitle = b.isTitle === true;
-                    
-                    if (aIsTitle !== bIsTitle) {
-                        return bIsTitle - aIsTitle; // true가 먼저
-                    }
-                    
-                    // isTitle이 같으면 현재 정렬 기준으로 정렬
-                    const aValue = parseFloat(a[currentSortColumn]) || 0;
-                    const bValue = parseFloat(b[currentSortColumn]) || 0;
-                    
-                    if (currentSortDirection === 'desc') {
-                        return bValue - aValue;
-                    } else {
-                        return aValue - bValue;
-                    }
+            // 필터링 조건을 완화: 이름만 있으면 표시
+            let validData = playerData.filter(row => row.이름);
+            console.log('이름이 있는 데이터 개수:', validData.length);
+            
+            if (validData.length === 0) {
+                console.log('유효한 데이터가 없습니다. 모든 데이터 확인:');
+                playerData.forEach((row, index) => {
+                    console.log(`행 ${index}:`, row);
                 });
-            } else {
-                // 비활성화 상태에서는 순수하게 스탯 순으로만 정렬
-                validData.sort((a, b) => {
-                    const aValue = parseFloat(a[currentSortColumn]) || 0;
-                    const bValue = parseFloat(b[currentSortColumn]) || 0;
-                    
-                    if (currentSortDirection === 'desc') {
-                        return bValue - aValue;
-                    } else {
-                        return aValue - bValue;
-                    }
-                });
+                return;
             }
+            
+            
+            // 정렬 컬럼이 있는 데이터만 정렬
+            const sortableData = validData.filter(row => row[currentSortColumn] !== undefined && row[currentSortColumn] !== '');
+            console.log('정렬 가능한 데이터 개수:', sortableData.length);
+            
+            if (sortableData.length === 0) {
+                console.log('정렬 컬럼이 없는 데이터들:');
+                validData.forEach((row, index) => {
+                    console.log(`행 ${index}:`, row);
+                });
+                // 정렬 컬럼이 없어도 이름 순으로 표시
+                displayData(validData);
+                return;
+            }
+            
+            // 정렬 로직
+            sortableData.sort((a, b) => {
+                const aValue = parseFloat(a[currentSortColumn]) || 0;
+                const bValue = parseFloat(b[currentSortColumn]) || 0;
+                
+                if (currentSortDirection === 'desc') {
+                    return bValue - aValue;
+                } else {
+                    return aValue - bValue;
+                }
+            });
 
-            displayData(validData);
+            displayData(sortableData);
         }
 
         // 데이터 표시 함수
         function displayData(data) {
+            console.log('displayData 호출됨, 데이터 개수:', data.length);
             const tbody = document.getElementById('statsTableBody');
             tbody.innerHTML = '';
             
@@ -1156,7 +1146,6 @@
                     headerRow.innerHTML = `
                         <th>Rank</th>
                         <th>Name</th>
-                        <th>Team</th>
                         <th class="sortable" data-sort="OPS">OPS</th>
                         <th class="sortable" data-sort="PA">PA</th>
                         <th class="sortable" data-sort="ePA">ePA</th>
@@ -1198,32 +1187,13 @@
                     }, 0);
                 }
                 
-                // 리그와 선수명을 기반으로 팀명 찾기
-                const leagueName = player.리그 || '';
+                // 선수명만 사용
                 const playerName = player.이름 || '';
-                const teamInfo = findTeamByLeagueAndPlayer(leagueName, playerName);
-                
-                // 팀명이 N/A인 경우 원본 팀 정보 사용
-                const displayTeamName = teamInfo.displayName !== 'N/A' ? teamInfo.displayName : (player.팀 || 'N/A');
-                
-                console.log(`선수 ${playerName}의 팀 정보:`, {
-                    leagueName,
-                    playerName,
-                    teamInfo,
-                    originalTeam: player.팀,
-                    displayTeamName
-                });
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${index + 1}</td>
                     <td class="player-name">${playerName}</td>
-                    <td class="team-name-cell">
-                        <div class="team-info">
-                            <img src="Image/Team/${getTeamLogo(teamInfo.originalName)}" alt="${displayTeamName}" class="team-logo ${getTeamLogoClass(teamInfo.originalName)}" onerror="this.style.display='none'">
-                            <span class="team-name">${displayTeamName}</span>
-                        </div>
-                    </td>
                     <td class="war-value">${parseFloat(player.OPS || 0).toFixed(3)}</td>
                     <td>${player.PA || 0}</td>
                     <td>${player.ePA || 0}</td>
@@ -1447,33 +1417,6 @@
                 });
             });
 
-            // 규정 타석 버튼 클릭 이벤트
-            document.getElementById('qualificationBtn').addEventListener('click', () => {
-                isQualificationChecked = !isQualificationChecked;
-                const btn = document.getElementById('qualificationBtn');
-                btn.classList.toggle('checked');
-                
-                // 체크 아이콘 업데이트
-                const checkIcon = btn.querySelector('.check-icon');
-                if (isQualificationChecked) {
-                    checkIcon.style.backgroundColor = 'currentColor';
-                    checkIcon.innerHTML = '✓';
-                } else {
-                    checkIcon.style.backgroundColor = 'transparent';
-                    checkIcon.innerHTML = '';
-                }
-                
-                console.log('규정 타석 필터:', isQualificationChecked ? '활성화 (isTitle=true만 표시)' : '비활성화 (전체 표시)');
-                
-                // isTitle 필드 확인
-                if (playerData.length > 0) {
-                    const titleData = playerData.filter(p => p.isTitle === true);
-                    console.log(`isTitle=true인 선수 수: ${titleData.length}명`);
-                    console.log('isTitle=true인 선수들:', titleData.slice(0, 5).map(p => p.이름));
-                }
-                
-                sortAndDisplayData(); // 필터링 후 다시 정렬
-            });
 
 
         });
